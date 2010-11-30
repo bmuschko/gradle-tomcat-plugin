@@ -1,0 +1,52 @@
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+version = '0.1'
+ant.property(environment: 'env')
+
+if(!ant.properties['env.GRADLE_HOME']) {
+    throw new Exception('Please set $GRADLE_HOME')
+}
+
+def gradleHomeDir = System.getenv().get('GRADLE_HOME')
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def tomcatVersion = '6.0.29'
+
+    groovy 'org.codehaus.groovy:groovy:1.7.5'
+    compile fileTree(
+        dir: gradleHomeDir,
+        includes: ['**/*.jar']
+    )
+    compile "org.apache.tomcat:catalina:${tomcatVersion}",
+            "org.apache.tomcat:coyote:${tomcatVersion}",
+            "org.apache.tomcat:jasper:${tomcatVersion}"
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Tomcat plugin',
+                   'Implementation-Version': version,
+                   'Built-By': System.getProperty("user.name"),
+                   'Built-Date': new Date(),
+                   'Built-JDK': System.getProperty("java.version")
+    }
+}
+
+ideaProject {
+    javaVersion = '1.6'
+  
+    withXml { provider ->
+		def node = provider.asNode()
+
+        // Set Gradle home
+        def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
+        gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradleHomeDir])
+    }
+}
