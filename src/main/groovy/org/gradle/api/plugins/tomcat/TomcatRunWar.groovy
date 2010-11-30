@@ -22,6 +22,11 @@ import org.gradle.api.tasks.InputFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * Deploys a WAR to an embedded Tomcat web container.
+ *
+ * @author Benjamin Muschko
+ */
 class TomcatRunWar extends AbstractTomcatRunTask {
     static Logger logger = LoggerFactory.getLogger(TomcatRunWar.class)
 

@@ -28,6 +28,11 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.apache.catalina.*
 
+/**
+ * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
+ *
+ * @author Benjamin Muschko
+ */
 abstract class AbstractTomcatRunTask extends ConventionTask {
     private static Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class);
     protected boolean reloadable

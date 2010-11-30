@@ -24,6 +24,12 @@ import org.gradle.api.tasks.InputFiles
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * Deploys an exploded web application to an embedded Tomcat web container. Does not require that the web application
+ * be assembled into a war, saving time during the development cycle.
+ *
+ * @author Benjamin Muschko
+ */
 class TomcatRun extends AbstractTomcatRunTask {
     static Logger logger = LoggerFactory.getLogger(TomcatRun.class)
 
@@ -40,7 +46,7 @@ class TomcatRun extends AbstractTomcatRunTask {
                         + " does not exist")
             }
             else {
-                logger.info "Webapp source directory = " + getWebAppSourceDirectory().getCanonicalPath()
+                logger.info "Webapp source directory = ${getWebAppSourceDirectory().getCanonicalPath()}"
             }
         }
         catch(IOException e) {
@@ -61,25 +67,23 @@ class TomcatRun extends AbstractTomcatRunTask {
         getContext().setReloadable(reloadable)
         configureDefaultServlet()
         configureJspServlet()
-
-        logger.info "Webapp directory = " + getWebAppSourceDirectory().getCanonicalPath()
     }
 
     @InputFiles
     public FileCollection getClasspath() {
-        return classpath;
+        return classpath
     }
 
     public void setClasspath(FileCollection classpath) {
-        this.classpath = classpath;
+        this.classpath = classpath
     }
 
     @InputDirectory
     public File getWebAppSourceDirectory() {
-        return webAppSourceDirectory;
+        return webAppSourceDirectory
     }
 
     public void setWebAppSourceDirectory(File webAppSourceDirectory) {
-        this.webAppSourceDirectory = webAppSourceDirectory;
+        this.webAppSourceDirectory = webAppSourceDirectory
     }
 }

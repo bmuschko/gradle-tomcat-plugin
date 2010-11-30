@@ -22,6 +22,11 @@ import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * Stops the embedded Tomcat web container.
+ *
+ * @author Benjamin Muschko 
+ */
 class TomcatStop extends ConventionTask {
     private static Logger logger = LoggerFactory.getLogger(TomcatStop.class)
     private Integer stopPort

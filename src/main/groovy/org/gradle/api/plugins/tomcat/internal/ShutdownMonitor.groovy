@@ -20,6 +20,11 @@ import org.gradle.api.plugins.tomcat.TomcatRun
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * Monitor that keeps thread running until stop command got issued.
+ *
+ * @author Benjamin Muschko
+ */
 class ShutdownMonitor {
     static Logger logger = LoggerFactory.getLogger(TomcatRun.class)
     ServerSocket serverSocket

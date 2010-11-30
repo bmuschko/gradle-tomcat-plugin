@@ -16,6 +16,11 @@
 
 package org.gradle.api.plugins.tomcat
 
+/**
+ * Defines Tomcat plugin convention.
+ *
+ * @author Benjamin Muschko
+ */
 class TomcatPluginConvention {
     Integer httpPort = 8080
     Integer stopPort = 8081
