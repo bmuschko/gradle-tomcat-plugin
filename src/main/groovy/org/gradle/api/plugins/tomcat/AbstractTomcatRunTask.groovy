@@ -125,8 +125,10 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             setLoadOnStartup 1
         }
 
-		getContext().addChild defaultServlet
-		getContext().addServletMapping "/", "default"
+		getContext().with {
+            addChild defaultServlet
+            addServletMapping "/", "default"
+        }
     }
 
     /**
@@ -143,9 +145,11 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             setLoadOnStartup 3
         }
 
-		getContext().addChild jspServlet
-		getContext().addServletMapping "*.jsp", "jsp"
-		getContext().addServletMapping "*.jspx", "jsp"
+		getContext().with {
+            addChild jspServlet
+            addServletMapping "*.jsp", "jsp"
+            addServletMapping "*.jspx", "jsp"
+        }
     }
 
     Embedded createServer() {
