@@ -18,6 +18,7 @@ package org.gradle.api.plugins.tomcat
 import org.apache.catalina.connector.Connector
 import org.apache.catalina.startup.Embedded
 import org.gradle.api.GradleException
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.tasks.InputFile
@@ -44,7 +45,6 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     private Context context
     private Realm realm
 
-    abstract void validateConfiguration()
     abstract void configureWebApplication()
 
     @TaskAction
@@ -56,6 +56,18 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         logger.info "Configuring Tomcat for ${getProject()}"
         validateConfiguration()
         startTomcatInternal()
+    }
+
+    void validateConfiguration() {
+        // Check existence of default web.xml if provided
+        if(getWebDefaultXml()) {
+            if(!getWebDefaultXml().exists()) {
+                throw new InvalidUserDataException("The provided default web.xml file does not exist")
+            }
+            else {
+                logger.info "Default web.xml = ${getWebDefaultXml().getCanonicalPath()}"
+            }
+        }
     }
 
     void startTomcatInternal() {

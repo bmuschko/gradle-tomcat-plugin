@@ -36,6 +36,8 @@ class TomcatRun extends AbstractTomcatRunTask {
 
     @Override
     void validateConfiguration() {
+        super.validateConfiguration()
+
         // Check the location of the static content/JSPs etc.
         try {
             if(!getWebAppSourceDirectory() || !getWebAppSourceDirectory().exists()) {
@@ -49,16 +51,6 @@ class TomcatRun extends AbstractTomcatRunTask {
         }
         catch(IOException e) {
             throw new InvalidUserDataException("Webapp source directory does not exist", e)
-        }
-
-        // Check existence of default web.xml if provided
-        if(getWebDefaultXml()) {
-            if(!getWebDefaultXml().exists()) {
-                throw new InvalidUserDataException("The provided default web.xml file does not exist")
-            }
-            else {
-                logger.info "Default web.xml = ${getWebDefaultXml().getCanonicalPath()}"
-            }
         }
     }
 
