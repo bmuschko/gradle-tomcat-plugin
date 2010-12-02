@@ -69,7 +69,7 @@ class TomcatRun extends AbstractTomcatRunTask {
 
     @InputFiles
     public FileCollection getClasspath() {
-        return classpath
+        classpath
     }
 
     public void setClasspath(FileCollection classpath) {
@@ -78,7 +78,7 @@ class TomcatRun extends AbstractTomcatRunTask {
 
     @InputDirectory
     public File getWebAppSourceDirectory() {
-        return webAppSourceDirectory
+        webAppSourceDirectory
     }
 
     public void setWebAppSourceDirectory(File webAppSourceDirectory) {

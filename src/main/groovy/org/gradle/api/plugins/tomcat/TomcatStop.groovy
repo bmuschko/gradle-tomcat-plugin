@@ -62,14 +62,14 @@ class TomcatStop extends ConventionTask {
      * Returns port to listen to stop Tomcat on sending stop command.
      */
     public Integer getStopPort() {
-        return stopPort;
+        stopPort
     }
 
     /**
      * Sets port to listen to stop Tomcat on sending stop command.
      */
     public void setStopPort(Integer stopPort) {
-        this.stopPort = stopPort;
+        this.stopPort = stopPort
     }
 
     /**
@@ -78,13 +78,13 @@ class TomcatStop extends ConventionTask {
      * @see #setStopKey(String)
      */
     public String getStopKey() {
-        return stopKey;
+        stopKey
     }
 
     /**
      * Sets key to provide when stopping Tomcat.
      */
     public void setStopKey(String stopKey) {
-        this.stopKey = stopKey;
+        this.stopKey = stopKey
     }
 }

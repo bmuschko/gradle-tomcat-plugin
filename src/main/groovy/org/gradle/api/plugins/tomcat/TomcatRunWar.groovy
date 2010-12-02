@@ -55,10 +55,10 @@ class TomcatRunWar extends AbstractTomcatRunTask {
 
     @InputFile
     public File getWebApp() {
-        return webApp;
+        webApp
     }
 
     public void setWebApp(File webApp) {
-        this.webApp = webApp;
+        this.webApp = webApp
     }
 }

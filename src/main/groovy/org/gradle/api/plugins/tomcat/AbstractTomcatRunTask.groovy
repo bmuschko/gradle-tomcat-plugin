@@ -34,7 +34,7 @@ import org.apache.catalina.*
  * @author Benjamin Muschko
  */
 abstract class AbstractTomcatRunTask extends ConventionTask {
-    private static Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class);
+    static Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class);
     protected boolean reloadable
     private String contextPath
     private Integer httpPort
@@ -178,7 +178,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     public String getContextPath() {
-        return contextPath;
+        contextPath
     }
 
     public void setContextPath(String contextPath) {
@@ -186,36 +186,36 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     public Integer getHttpPort() {
-        return httpPort;
+        httpPort
     }
 
     public void setHttpPort(Integer httpPort) {
-        this.httpPort = httpPort;
+        this.httpPort = httpPort
     }
 
     public Integer getStopPort() {
-        return stopPort;
+        stopPort
     }
 
     public void setStopPort(Integer stopPort) {
-        this.stopPort = stopPort;
+        this.stopPort = stopPort
     }
 
     public String getStopKey() {
-        return stopKey;
+        stopKey
     }
 
     public void setStopKey(String stopKey) {
-        this.stopKey = stopKey;
+        this.stopKey = stopKey
     }
 
     @InputFile
     @Optional
     public File getWebDefaultXml() {
-        return webDefaultXml;
+        webDefaultXml
     }
 
     public void setWebDefaultXml(File webDefaultXml) {
-        this.webDefaultXml = webDefaultXml;
+        this.webDefaultXml = webDefaultXml
     }
 }
