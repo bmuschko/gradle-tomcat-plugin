@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.gradle.api.plugins.tomcat
 
 import org.apache.catalina.loader.WebappLoader
@@ -37,7 +36,7 @@ class TomcatRun extends AbstractTomcatRunTask {
 
     @Override
     void validateConfiguration() {
-        // check the location of the static content/jsps etc
+        // Check the location of the static content/JSPs etc.
         try {
             if(!getWebAppSourceDirectory() || !getWebAppSourceDirectory().exists()) {
                 throw new InvalidUserDataException("Webapp source directory "
@@ -50,6 +49,16 @@ class TomcatRun extends AbstractTomcatRunTask {
         }
         catch(IOException e) {
             throw new InvalidUserDataException("Webapp source directory does not exist", e)
+        }
+
+        // Check existence of default web.xml if provided
+        if(!getWebDefaultXml()) {
+            if(!getWebDefaultXml().exists()) {
+                throw new InvalidUserDataException("The provided default web.xml file does not exist")
+            }
+            else {
+                logger.info "Default web.xml = ${getWebDefaultXml().getCanonicalPath()}"
+            }
         }
     }
 
