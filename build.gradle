@@ -20,10 +20,7 @@ dependencies {
     def tomcatVersion = '6.0.29'
 
     groovy 'org.codehaus.groovy:groovy:1.7.5'
-    compile fileTree(
-        dir: gradleHomeDir,
-        includes: ['**/*.jar']
-    )
+    compile gradleApi()
     compile "org.apache.tomcat:catalina:${tomcatVersion}",
             "org.apache.tomcat:coyote:${tomcatVersion}",
             "org.apache.tomcat:jasper:${tomcatVersion}"
@@ -43,7 +40,7 @@ ideaProject {
     javaVersion = '1.6'
   
     withXml { provider ->
-		def node = provider.asNode()
+        def node = provider.asNode()
 
         // Set Gradle home
         def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
