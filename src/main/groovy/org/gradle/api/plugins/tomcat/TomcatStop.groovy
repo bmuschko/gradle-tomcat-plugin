@@ -61,7 +61,8 @@ class TomcatStop extends ConventionTask {
      * Returns port to listen to stop Tomcat on sending stop command.
      */
     public Integer getStopPort() {
-        stopPort
+        Integer stopPortSystemProperty = TomcatSystemProperty.getStopPort()
+        stopPortSystemProperty ? stopPortSystemProperty : stopPort
     }
 
     /**
@@ -77,7 +78,8 @@ class TomcatStop extends ConventionTask {
      * @see #setStopKey(String)
      */
     public String getStopKey() {
-        stopKey
+        String stopKeySystemProperty = TomcatSystemProperty.getStopKey()
+        stopKeySystemProperty ? stopKeySystemProperty : stopKey
     }
 
     /**

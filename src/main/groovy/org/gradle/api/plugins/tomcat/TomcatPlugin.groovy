@@ -16,7 +16,6 @@
 package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Action
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.IConventionAware
@@ -37,9 +36,6 @@ class TomcatPlugin implements Plugin<Project> {
     static final String TOMCAT_RUN = "tomcatRun"
     static final String TOMCAT_RUN_WAR = "tomcatRunWar"
     static final String TOMCAT_STOP = "tomcatStop"
-    static final String HTTP_PORT_SYSPROPERTY = "tomcat.http.port"
-    static final String STOP_PORT_SYSPROPERTY = "tomcat.stop.port"
-    static final String STOP_KEY_SYSPROPERTY = "tomcat.stop.key"
 
     @Override
     public void apply(Project project) {
@@ -73,19 +69,19 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatTask.getConventionMapping().map("httpPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-                getHttpPort(tomcatConvention)
+                tomcatConvention.httpPort
             }
         })
         tomcatTask.getConventionMapping().map("stopPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-                getStopPort(tomcatConvention)
+                tomcatConvention.stopPort
             }
         })
         tomcatTask.getConventionMapping().map("stopKey", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-                getStopKey(tomcatConvention)
+                tomcatConvention.stopKey
             }
         })
     }
@@ -125,13 +121,13 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatStop.getConventionMapping().map("stopPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-                getStopPort(tomcatConvention)
+                tomcatConvention.stopPort
             }
         })
         tomcatStop.getConventionMapping().map("stopKey", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-                getStopKey(tomcatConvention)
+                tomcatConvention.stopKey
             }
         })
     }
@@ -173,46 +169,6 @@ class TomcatPlugin implements Plugin<Project> {
         public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
             ((War)project.getTasks().getByName(WarPlugin.WAR_TASK_NAME)).getArchivePath()
         }
-    }
-
-    private Integer getHttpPort(final TomcatPluginConvention tomcatConvention) {
-        String httpPortSystemProperty = System.getProperty(HTTP_PORT_SYSPROPERTY)
-
-        if(httpPortSystemProperty) {
-            try {
-                return httpPortSystemProperty.toInteger()
-            }
-            catch(NumberFormatException e) {
-                throw new InvalidUserDataException("Bad HTTP port provided as system property: ${httpPortSystemProperty}", e)
-            }
-        }
-
-        tomcatConvention.httpPort
-    }
-
-    private Integer getStopPort(final TomcatPluginConvention tomcatConvention) {
-        String stopPortSystemProperty = System.getProperty(STOP_PORT_SYSPROPERTY)
-
-        if(stopPortSystemProperty) {
-            try {
-                return stopPortSystemProperty.toInteger()
-            }
-            catch(NumberFormatException e) {
-                throw new InvalidUserDataException("Bad stop port provided as system property: ${stopPortSystemProperty}", e)
-            }
-        }
-
-        tomcatConvention.stopPort
-    }
-
-    private String getStopKey(final TomcatPluginConvention tomcatConvention) {
-        String stopKeySystemProperty = System.getProperty(STOP_KEY_SYSPROPERTY)
-
-        if(stopKeySystemProperty) {
-            return stopKeySystemProperty
-        }
-
-        tomcatConvention.stopKey
     }
 
     JavaPluginConvention getJavaConvention(Project project) {

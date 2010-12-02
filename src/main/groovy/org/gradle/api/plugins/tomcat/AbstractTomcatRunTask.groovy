@@ -34,7 +34,7 @@ import org.apache.catalina.*
  * @author Benjamin Muschko
  */
 abstract class AbstractTomcatRunTask extends ConventionTask {
-    static Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class);
+    static final Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class);
     protected boolean reloadable
     private String contextPath
     private Integer httpPort
@@ -201,7 +201,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     public Integer getHttpPort() {
-        httpPort
+        Integer httpPortSystemProperty = TomcatSystemProperty.getHttpPort()
+        httpPortSystemProperty ? httpPortSystemProperty : httpPort
     }
 
     public void setHttpPort(Integer httpPort) {
@@ -209,7 +210,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     public Integer getStopPort() {
-        stopPort
+        Integer stopPortSystemProperty = TomcatSystemProperty.getStopPort()
+        stopPortSystemProperty ? stopPortSystemProperty : stopPort
     }
 
     public void setStopPort(Integer stopPort) {
@@ -217,7 +219,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     public String getStopKey() {
-        stopKey
+        String stopKeySystemProperty = TomcatSystemProperty.getStopKey()
+        stopKeySystemProperty ? stopKeySystemProperty : stopKey
     }
 
     public void setStopKey(String stopKey) {
