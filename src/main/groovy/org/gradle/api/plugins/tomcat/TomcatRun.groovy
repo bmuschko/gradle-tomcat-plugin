@@ -52,7 +52,7 @@ class TomcatRun extends AbstractTomcatRunTask {
         }
 
         // Check existence of default web.xml if provided
-        if(!getWebDefaultXml()) {
+        if(getWebDefaultXml()) {
             if(!getWebDefaultXml().exists()) {
                 throw new InvalidUserDataException("The provided default web.xml file does not exist")
             }
