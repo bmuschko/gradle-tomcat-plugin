@@ -40,14 +40,13 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     private Integer httpPort
     private Integer stopPort
     private String stopKey
-
     private File webDefaultXml
     private Embedded server
     private Context context
     private Realm realm
 
-    public abstract void validateConfiguration()
-    public abstract void configureWebApplication()
+    abstract void validateConfiguration()
+    abstract void configureWebApplication()
 
     @TaskAction
     protected void start() {
@@ -100,6 +99,22 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         }
     }
 
+    /**
+     * Configures default web XML if provided. Otherwise, set it up programmatically.
+     */
+    void configureDefaultWebXml() {
+        if(getWebDefaultXml()) {
+            getContext().setDefaultWebXml(getWebDefaultXml().getAbsolutePath()) 
+        }
+        else {
+            configureDefaultServlet()
+            configureJspServlet()
+        }
+    }
+
+    /**
+     * Configures default servlet and adds it to the context.
+     */
     void configureDefaultServlet() {
         Wrapper defaultServlet = getContext().createWrapper()
 
@@ -115,6 +130,9 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 		getContext().addServletMapping "/", "default"
     }
 
+    /**
+     * Configures JSP servlet and adds it to the context.
+     */
     void configureJspServlet() {
         Wrapper jspServlet = getContext().createWrapper()
 
@@ -149,6 +167,14 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setContext(Context context) {
         this.context = context
+    }
+
+    public Realm getRealm() {
+        realm
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm
     }
 
     public String getContextPath() {
