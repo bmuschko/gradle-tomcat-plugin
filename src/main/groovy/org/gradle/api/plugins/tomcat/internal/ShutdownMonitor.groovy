@@ -25,16 +25,18 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 class ShutdownMonitor {
-    static Logger logger = LoggerFactory.getLogger(TomcatRun.class)
-    ServerSocket serverSocket
-    int port
+    static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
+    final int port
+    final String key
+    final ServerSocket serverSocket
 
-    public ShutdownMonitor(int port) {
+    public ShutdownMonitor(int port, String key) {
         if(port <= 0) {
             throw new IllegalStateException("Bad stop port")
         }
 
         this.port = port
+        this.key = key
         serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"))
     }
 
@@ -46,6 +48,13 @@ class ShutdownMonitor {
                 socket = serverSocket.accept()
                 socket.setSoLinger(false, 0)
                 LineNumberReader lin = new LineNumberReader(new InputStreamReader(socket.getInputStream()))
+
+                String keyCmd = lin.readLine()
+
+                if(key && !(key == keyCmd)) {
+                    continue
+                }
+
                 String cmd = lin.readLine()
 
                 if("stop".equals(cmd)) {

@@ -100,7 +100,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
             logger.info "Started Tomcat Server"
 
-            new ShutdownMonitor(getStopPort()).start()
+            new ShutdownMonitor(getStopPort(), getStopKey()).start()
         }
         catch(Exception e) {
             throw new GradleException("An error occurred starting the Tomcat server.", e)
