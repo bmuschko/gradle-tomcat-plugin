@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory
  */
 class TomcatRunWar extends AbstractTomcatRunTask {
     static Logger logger = LoggerFactory.getLogger(TomcatRunWar.class)
-
     private File webApp
 
     @Override
@@ -51,8 +50,7 @@ class TomcatRunWar extends AbstractTomcatRunTask {
         setContext(getServer().createContext("/" + getContextPath(), getWebApp().getCanonicalPath()))
         getContext().setLoader(loader)
         getContext().setReloadable(reloadable)
-        configureDefaultServlet()
-        configureJspServlet()
+        configureDefaultWebXml()
     }
 
     @InputFile

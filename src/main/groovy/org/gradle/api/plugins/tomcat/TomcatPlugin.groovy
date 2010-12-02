@@ -44,7 +44,7 @@ class TomcatPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        project.plugins.apply(WarPlugin.class);
+        project.plugins.apply(WarPlugin.class)
         TomcatPluginConvention tomcatConvention = new TomcatPluginConvention()
         project.convention.plugins.tomcat = tomcatConvention
 
@@ -60,7 +60,7 @@ class TomcatPlugin implements Plugin<Project> {
             public void execute(AbstractTomcatRunTask abstractTomcatRunTask) {
                 configureAbstractTomcatTask(project, tomcatConvention, abstractTomcatRunTask);
             }
-        });
+        })
     }
 
     private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
@@ -70,25 +70,25 @@ class TomcatPlugin implements Plugin<Project> {
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 ((War)project.getTasks().getByName(WarPlugin.WAR_TASK_NAME)).getBaseName()
             }
-        });
+        })
         tomcatTask.getConventionMapping().map("httpPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 getHttpPort(tomcatConvention)
             }
-        });
+        })
         tomcatTask.getConventionMapping().map("stopPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 getStopPort(tomcatConvention)
             }
-        });
+        })
         tomcatTask.getConventionMapping().map("stopKey", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 getStopKey(tomcatConvention)
             }
-        });
+        })
     }
 
     private void configureTomcatRun(final Project project) {

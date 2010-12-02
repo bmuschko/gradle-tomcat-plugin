@@ -28,16 +28,16 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko 
  */
 class TomcatStop extends ConventionTask {
-    private static Logger logger = LoggerFactory.getLogger(TomcatStop.class)
+    static Logger logger = LoggerFactory.getLogger(TomcatStop.class)
     private Integer stopPort
     private String stopKey
 
     @TaskAction
     public void stop() {
-        if(getStopPort() == null) {
+        if(!getStopPort()) {
             throw new InvalidUserDataException("Please specify a valid port")
         }
-        if(getStopKey() == null) {
+        if(!getStopKey()) {
             throw new InvalidUserDataException("Please specify a valid stopKey")
         }
 

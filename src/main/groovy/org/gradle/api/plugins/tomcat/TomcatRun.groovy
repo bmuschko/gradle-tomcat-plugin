@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory
  */
 class TomcatRun extends AbstractTomcatRunTask {
     static Logger logger = LoggerFactory.getLogger(TomcatRun.class)
-
     private FileCollection classpath
     private File webAppSourceDirectory
 
@@ -65,8 +64,7 @@ class TomcatRun extends AbstractTomcatRunTask {
         setContext(getServer().createContext("/" + getContextPath(), getWebAppSourceDirectory().getCanonicalPath()))
         getContext().setLoader(loader)
         getContext().setReloadable(reloadable)
-        configureDefaultServlet()
-        configureJspServlet()
+        configureDefaultWebXml()
     }
 
     @InputFiles
