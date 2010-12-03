@@ -17,12 +17,9 @@ package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.IConventionAware
-import org.gradle.api.plugins.Convention
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.WarPluginConvention
-import org.gradle.api.tasks.ConventionValue
 
 /**
  * <p>A {@link Plugin} which extends the {@link WarPlugin} to add tasks which run the web application using an embedded
@@ -63,8 +60,8 @@ class TomcatPlugin implements Plugin<Project> {
 
     private void configureTomcatRun(final Project project) {
         project.tasks.withType(TomcatRun.class).whenTaskAdded { TomcatRun tomcatRun ->
-            tomcatRun.conventionMapping.map("classpath", new ClasspathConventionValue(project))
-            tomcatRun.conventionMapping.map("webAppSourceDirectory", new WebAppSourceDirectoryConventionValue(project))
+            tomcatRun.conventionMapping.map("classpath") { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
+            tomcatRun.conventionMapping.map("webAppSourceDirectory") { getWarConvention(project).webAppDir }
         }
 
         TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN, TomcatRun.class)
@@ -75,7 +72,7 @@ class TomcatPlugin implements Plugin<Project> {
     private void configureTomcatRunWar(final Project project) {
         project.tasks.withType(TomcatRunWar.class).whenTaskAdded { TomcatRunWar tomcatRunWar ->
             tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME)
-            tomcatRunWar.conventionMapping.map("webApp", new WebAppConventionValue(project))        
+            tomcatRunWar.conventionMapping.map("webApp") { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
         }
 
         TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR, TomcatRunWar.class)
@@ -88,46 +85,7 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatStop.description = "Stops Tomcat."
         tomcatStop.group = WarPlugin.WEB_APP_GROUP
         tomcatStop.conventionMapping.map("stopPort") { tomcatConvention.stopPort }
-        tomcatStop.conventionMapping.map("stopKey") {tomcatConvention.stopKey }
-    }
-
-    private class ClasspathConventionValue implements ConventionValue {
-        private Project project
-
-        public ClasspathConventionValue(Project project) {
-            this.project = project
-        }
-
-        @Override
-        public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-            project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
-        }
-    }
-
-    private class WebAppSourceDirectoryConventionValue implements ConventionValue {
-        private Project project
-
-        public WebAppSourceDirectoryConventionValue(Project project) {
-            this.project = project
-        }
-
-        @Override
-        public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-            getWarConvention(project).webAppDir
-        }
-    }
-
-    private class WebAppConventionValue implements ConventionValue {
-        private Project project
-
-        public WebAppConventionValue(Project project) {
-            this.project = project
-        }
-
-        @Override
-        public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-            project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath
-        }
+        tomcatStop.conventionMapping.map("stopKey") { tomcatConvention.stopKey }
     }
 
     JavaPluginConvention getJavaConvention(Project project) {
