@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 class TomcatRun extends AbstractTomcatRunTask {
-    static Logger logger = LoggerFactory.getLogger(TomcatRun.class)
+    static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
     private FileCollection classpath
     private File webAppSourceDirectory
 
