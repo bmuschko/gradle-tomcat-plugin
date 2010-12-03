@@ -1,4 +1,4 @@
-# Gradle plugin supporting deployment of your web application to an embedded Tomcat web container
+# Gradle Tomcat plugin
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
 Gradle build. It extends the War plugin. At the moment only Tomcat version 6.x is supported.
@@ -51,7 +51,7 @@ The Tomcat plugin defines the following convention properties:
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
 
-* `contextPath`: The URL context path your web application will be registered under.
+* `contextPath`: The URL context path your web application will be registered under (defaults to WAR name).
 * `webDefaultXml`: The default web.xml. If it doesn't get defined an instance of `org.apache.catalina.servlets.DefaultServlet`
 and `org.apache.jasper.servlet.JspServlet` will be set up.
 
