@@ -50,7 +50,7 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureMappingRules(final Project project, final TomcatPluginConvention tomcatConvention) {
-        project.getTasks().withType(AbstractTomcatRunTask.class).whenTaskAdded(new Action<AbstractTomcatRunTask>() {
+        project.tasks.withType(AbstractTomcatRunTask.class).whenTaskAdded(new Action<AbstractTomcatRunTask>() {
             @Override
             public void execute(AbstractTomcatRunTask abstractTomcatRunTask) {
                 configureAbstractTomcatTask(project, tomcatConvention, abstractTomcatRunTask);
@@ -60,25 +60,29 @@ class TomcatPlugin implements Plugin<Project> {
 
     private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
         tomcatTask.reloadable = true
-        tomcatTask.getConventionMapping().map("contextPath", new ConventionValue() {
+
+        tomcatTask.conventionMapping.map("contextPath", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-                ((War)project.getTasks().getByName(WarPlugin.WAR_TASK_NAME)).getBaseName()
+                ((War)project.tasks.getByName(WarPlugin.WAR_TASK_NAME)).getBaseName()
             }
         })
-        tomcatTask.getConventionMapping().map("httpPort", new ConventionValue() {
+
+        tomcatTask.conventionMapping.map("httpPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 tomcatConvention.httpPort
             }
         })
-        tomcatTask.getConventionMapping().map("stopPort", new ConventionValue() {
+
+        tomcatTask.conventionMapping.map("stopPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 tomcatConvention.stopPort
             }
         })
-        tomcatTask.getConventionMapping().map("stopKey", new ConventionValue() {
+      
+        tomcatTask.conventionMapping.map("stopKey", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 tomcatConvention.stopKey
@@ -87,44 +91,46 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureTomcatRun(final Project project) {
-        project.getTasks().withType(TomcatRun.class).whenTaskAdded(new Action<TomcatRun>() {
+        project.tasks.withType(TomcatRun.class).whenTaskAdded(new Action<TomcatRun>() {
             @Override
             public void execute(TomcatRun tomcatRun) {
-                tomcatRun.getConventionMapping().map("classpath", new ClasspathConventionValue(project))
-                tomcatRun.getConventionMapping().map("webAppSourceDirectory", new WebAppSourceDirectoryConventionValue(project))
+                tomcatRun.conventionMapping.map("classpath", new ClasspathConventionValue(project))
+                tomcatRun.conventionMapping.map("webAppSourceDirectory", new WebAppSourceDirectoryConventionValue(project))
             }
         })
 
         TomcatRun tomcatRun = project.getTasks().add(TOMCAT_RUN, TomcatRun.class)
-        tomcatRun.setDescription("Uses your files as and where they are and deploys them to Tomcat.")
-        tomcatRun.setGroup(WarPlugin.WEB_APP_GROUP)
+        tomcatRun.description = "Uses your files as and where they are and deploys them to Tomcat."
+        tomcatRun.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatRunWar(final Project project) {
-        project.getTasks().withType(TomcatRunWar.class).whenTaskAdded(new Action<TomcatRunWar>() {
+        project.tasks.withType(TomcatRunWar.class).whenTaskAdded(new Action<TomcatRunWar>() {
             @Override
             public void execute(TomcatRunWar tomcatRunWar) {
                 tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME);
-                tomcatRunWar.getConventionMapping().map("webApp", new WebAppConventionValue(project))
+                tomcatRunWar.conventionMapping.map("webApp", new WebAppConventionValue(project))
             }
         })
 
-        TomcatRunWar tomcatRunWar = project.getTasks().add(TOMCAT_RUN_WAR, TomcatRunWar.class);
-        tomcatRunWar.setDescription("Assembles the webapp into a war and deploys it to Tomcat.");
-        tomcatRunWar.setGroup(WarPlugin.WEB_APP_GROUP);
+        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR, TomcatRunWar.class)
+        tomcatRunWar.description = "Assembles the webapp into a war and deploys it to Tomcat."
+        tomcatRunWar.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatStop(final Project project, final TomcatPluginConvention tomcatConvention) {
         TomcatStop tomcatStop = project.getTasks().add(TOMCAT_STOP, TomcatStop.class)
-        tomcatStop.setDescription("Stops Tomcat.");
-        tomcatStop.setGroup(WarPlugin.WEB_APP_GROUP);
-        tomcatStop.getConventionMapping().map("stopPort", new ConventionValue() {
+        tomcatStop.description = "Stops Tomcat."
+        tomcatStop.group = WarPlugin.WEB_APP_GROUP
+
+        tomcatStop.conventionMapping.map("stopPort", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 tomcatConvention.stopPort
             }
         })
-        tomcatStop.getConventionMapping().map("stopKey", new ConventionValue() {
+
+        tomcatStop.conventionMapping.map("stopKey", new ConventionValue() {
             @Override
             public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
                 tomcatConvention.stopKey
@@ -141,7 +147,7 @@ class TomcatPlugin implements Plugin<Project> {
 
         @Override
         public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-            ((War) project.getTasks().getByName(WarPlugin.WAR_TASK_NAME)).getClasspath()
+            ((War)project.tasks.getByName(WarPlugin.WAR_TASK_NAME)).getClasspath()
         }
     }
 
@@ -167,7 +173,7 @@ class TomcatPlugin implements Plugin<Project> {
 
         @Override
         public Object getValue(Convention convention, IConventionAware conventionAwareObject) {
-            ((War)project.getTasks().getByName(WarPlugin.WAR_TASK_NAME)).getArchivePath()
+            ((War)project.tasks.getByName(WarPlugin.WAR_TASK_NAME)).getArchivePath()
         }
     }
 
