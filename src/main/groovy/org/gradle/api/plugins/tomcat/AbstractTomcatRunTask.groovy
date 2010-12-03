@@ -49,13 +49,9 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     @TaskAction
     protected void start() {
-        startTomcat()
-    }
-
-    public void startTomcat() {
         logger.info "Configuring Tomcat for ${getProject()}"
         validateConfiguration()
-        startTomcatInternal()
+        startTomcat()
     }
 
     void validateConfiguration() {
@@ -70,7 +66,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         }
     }
 
-    void startTomcatInternal() {
+    void startTomcat() {
         try {
             logger.debug "Starting Tomcat Server ..."
 
@@ -85,15 +81,10 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             localHost.addChild(context)
 
             // Create engine
-            Engine engine = getServer().createEngine();
-            engine.setName("localEngine");
-            engine.addChild(localHost);
-            engine.setDefaultHost(localHost.getName());
-            getServer().addEngine(engine);
+            addEngineToServer(localHost)
 
             // Create HTTP connector
-            Connector httpConnector = server.createConnector((InetAddress) null, getHttpPort(), false)
-            getServer().addConnector(httpConnector)
+            addConnectorToServer()
 
             // Start server
             getServer().start()
@@ -108,6 +99,32 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         finally {
             logger.info "Tomcat server exiting."
         }
+    }
+
+    /**
+     * Adds engine to server
+     *
+     * @param localHost host
+     */
+    void addEngineToServer(Host localHost) {
+        Engine engine = getServer().createEngine()
+
+        engine.with {
+            setName "localEngine"
+            addChild localHost
+            setDefaultHost localHost.getName()
+        }
+
+        getServer().addEngine(engine)
+    }
+
+
+    /**
+     * Adds connector to server 
+     */
+    void addConnectorToServer() {
+        Connector httpConnector = getServer().createConnector((InetAddress) null, getHttpPort(), false)
+        getServer().addConnector(httpConnector)
     }
 
     /**
