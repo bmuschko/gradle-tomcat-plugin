@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.IConventionAware
@@ -49,12 +48,9 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureMappingRules(final Project project, final TomcatPluginConvention tomcatConvention) {
-        project.tasks.withType(AbstractTomcatRunTask.class).whenTaskAdded(new Action<AbstractTomcatRunTask>() {
-            @Override
-            public void execute(AbstractTomcatRunTask abstractTomcatRunTask) {
-                configureAbstractTomcatTask(project, tomcatConvention, abstractTomcatRunTask);
-            }
-        })
+        project.tasks.withType(AbstractTomcatRunTask.class).whenTaskAdded { AbstractTomcatRunTask abstractTomcatRunTask ->
+            configureAbstractTomcatTask(project, tomcatConvention, abstractTomcatRunTask)        
+        }
     }
 
     private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
@@ -66,13 +62,10 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureTomcatRun(final Project project) {
-        project.tasks.withType(TomcatRun.class).whenTaskAdded(new Action<TomcatRun>() {
-            @Override
-            public void execute(TomcatRun tomcatRun) {
-                tomcatRun.conventionMapping.map("classpath", new ClasspathConventionValue(project))
-                tomcatRun.conventionMapping.map("webAppSourceDirectory", new WebAppSourceDirectoryConventionValue(project))
-            }
-        })
+        project.tasks.withType(TomcatRun.class).whenTaskAdded { TomcatRun tomcatRun ->
+            tomcatRun.conventionMapping.map("classpath", new ClasspathConventionValue(project))
+            tomcatRun.conventionMapping.map("webAppSourceDirectory", new WebAppSourceDirectoryConventionValue(project))
+        }
 
         TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN, TomcatRun.class)
         tomcatRun.description = "Uses your files as and where they are and deploys them to Tomcat."
@@ -80,13 +73,10 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureTomcatRunWar(final Project project) {
-        project.tasks.withType(TomcatRunWar.class).whenTaskAdded(new Action<TomcatRunWar>() {
-            @Override
-            public void execute(TomcatRunWar tomcatRunWar) {
-                tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME)
-                tomcatRunWar.conventionMapping.map("webApp", new WebAppConventionValue(project))
-            }
-        })
+        project.tasks.withType(TomcatRunWar.class).whenTaskAdded { TomcatRunWar tomcatRunWar ->
+            tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME)
+            tomcatRunWar.conventionMapping.map("webApp", new WebAppConventionValue(project))        
+        }
 
         TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR, TomcatRunWar.class)
         tomcatRunWar.description = "Assembles the webapp into a war and deploys it to Tomcat."
