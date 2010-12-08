@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.apache.catalina.loader.WebappLoader
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.InputFile
 import org.slf4j.Logger
@@ -45,13 +44,8 @@ class TomcatRunWar extends AbstractTomcatRunTask {
     }
 
     @Override
-    void configureWebApplication() {
-        WebappLoader loader = new WebappLoader(getClass().getClassLoader())
-
+    void setWebApplicationContext() {
         setContext(getServer().createContext("/" + getContextPath(), getWebApp().getCanonicalPath()))
-        getContext().setLoader(loader)
-        getContext().setReloadable(reloadable)
-        configureDefaultWebXml()
     }
 
     @InputFile

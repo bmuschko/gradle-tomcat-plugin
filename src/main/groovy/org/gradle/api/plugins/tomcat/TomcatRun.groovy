@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.apache.catalina.loader.WebappLoader
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
@@ -55,17 +54,17 @@ class TomcatRun extends AbstractTomcatRunTask {
     }
 
     @Override
-    void configureWebApplication() {
-        WebappLoader loader = new WebappLoader(getClass().getClassLoader())
+    void setWebApplicationContext() {
+        setContext(getServer().createContext("/" + getContextPath(), getWebAppSourceDirectory().getCanonicalPath())) 
+    }
 
-        getClasspath().each { file ->
-            loader.addRepository(file.toURI().toURL().toString())
-        }
+    @Override
+    void configureWebApplication() {
+        super.configureWebApplication()
       
-        setContext(getServer().createContext("/" + getContextPath(), getWebAppSourceDirectory().getCanonicalPath()))
-        getContext().setLoader(loader)
-        getContext().setReloadable(reloadable)
-        configureDefaultWebXml()
+        getClasspath().each { file ->
+            getLoader().addRepository(file.toURI().toURL().toString())
+        }
     }
 
     @InputFiles
