@@ -16,12 +16,14 @@
 package org.gradle.api.plugins.tomcat
 
 import org.apache.catalina.connector.Connector
+import org.apache.catalina.loader.WebappLoader
 import org.apache.catalina.startup.Embedded
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
@@ -44,8 +46,10 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     private Embedded server
     private Context context
     private Realm realm
+    private Loader loader
+    private Iterable<File> additionalRuntimeJars = new ArrayList<File>()
 
-    abstract void configureWebApplication()
+    abstract void setWebApplicationContext()
 
     @TaskAction
     protected void start() {
@@ -54,6 +58,9 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         startTomcat()
     }
 
+    /**
+     * Validates configuration and throws an exception if
+     */
     void validateConfiguration() {
         // Check existence of default web.xml if provided
         if(getWebDefaultXml()) {
@@ -64,6 +71,22 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
                 logger.info "Default web.xml = ${getWebDefaultXml().getCanonicalPath()}"
             }
         }
+    }
+
+    /**
+     * Configures web application
+     */
+    void configureWebApplication() {
+        setWebApplicationContext()
+        setLoader(createLoader())
+
+        for(File additionalRuntimeJar : getAdditionalRuntimeJars()) {
+            loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
+        }
+
+        getContext().setLoader(loader)
+        getContext().setReloadable(reloadable)
+        configureDefaultWebXml()
     }
 
     void startTomcat() {
@@ -210,6 +233,18 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         this.realm = realm
     }
 
+    Loader createLoader() {
+        new WebappLoader(getClass().getClassLoader())
+    }
+
+    public Loader getLoader() {
+        loader
+    }
+
+    public void setLoader(Loader loader) {
+        this.loader = loader
+    }
+
     public String getContextPath() {
         contextPath
     }
@@ -253,5 +288,14 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setWebDefaultXml(File webDefaultXml) {
         this.webDefaultXml = webDefaultXml
+    }
+
+    @InputFiles
+    public Iterable<File> getAdditionalRuntimeJars() {
+        additionalRuntimeJars
+    }
+
+    public void setAdditionalRuntimeJars(Iterable<File> additionalRuntimeJars) {
+        this.additionalRuntimeJars = additionalRuntimeJars
     }
 }
