@@ -10,12 +10,15 @@ To use the Tomcat plugin, include in your build script:
     apply plugin: 'tomcat'
 
 The plugin JAR and depending Tomcat runtime libraries need to be defined in the classpath of your build script. You can
-either put the plugin library in your local file system or upload it to your local repository. At the moment the plugin
-hasn't been added to a public repository. The following code snippet shows an example:
+either get the plugin from the GitHub download section or upload it to your local repository. The following code snippet
+shows an example:
 
     buildscript {
 	    repositories {
-		    flatDir(dirs: "~/local/gradle/libs")
+		    add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+    		    name = "GitHub"
+    		    addArtifactPattern 'http://cloud.github.com/downloads/bmuschko/gradle-tomcat-plugin/[module]-[revision].[ext]'
+  		    }
             mavenCentral()
         }
 
