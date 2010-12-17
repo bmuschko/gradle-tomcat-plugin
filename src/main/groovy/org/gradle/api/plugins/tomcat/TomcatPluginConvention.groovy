@@ -24,4 +24,5 @@ class TomcatPluginConvention {
     Integer httpPort = 8080
     Integer stopPort = 8081
     String stopKey
+    String URIEncoding = 'UTF-8'
 }

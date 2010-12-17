@@ -42,6 +42,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     private Integer httpPort
     private Integer stopPort
     private String stopKey
+    private String URIEncoding
     private File webDefaultXml
     private Embedded server
     private Context context
@@ -148,6 +149,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
      */
     void addConnectorToServer() {
         Connector httpConnector = getServer().createConnector((InetAddress) null, getHttpPort(), false)
+        httpConnector.setURIEncoding(getURIEncoding())
         getServer().addConnector(httpConnector)
     }
 
@@ -278,6 +280,14 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setStopKey(String stopKey) {
         this.stopKey = stopKey
+    }
+
+    public String getURIEncoding() {
+        this.URIEncoding
+    }
+
+    public void setURIEncoding(String enc) {
+        this.URIEncoding = enc
     }
 
     @InputFile

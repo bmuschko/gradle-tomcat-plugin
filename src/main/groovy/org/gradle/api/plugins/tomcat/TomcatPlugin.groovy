@@ -56,6 +56,7 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatTask.conventionMapping.map("httpPort") { tomcatConvention.httpPort }
         tomcatTask.conventionMapping.map("stopPort") { tomcatConvention.stopPort }
         tomcatTask.conventionMapping.map("stopKey") { tomcatConvention.stopKey }
+        tomcatTask.conventionMapping.map("URIEncoding") { tomcatConvention.URIEncoding }
     }
 
     private void configureTomcatRun(final Project project) {
