@@ -50,6 +50,7 @@ The Tomcat plugin defines the following convention properties:
 * `httpPort`: The TCP port which Tomcat should listen for HTTP requests on (defaults to 8080).
 * `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to 8081).
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to null).
+* `URIEncoding`: The URI encoding for Tomcat HTTP Connector (defaults to 'UTF-8')
 
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
