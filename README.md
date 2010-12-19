@@ -27,7 +27,7 @@ shows an example:
             classpath "org.apache.tomcat:catalina:${tomcatVersion}",
                       "org.apache.tomcat:coyote:${tomcatVersion}",
                       "org.apache.tomcat:jasper:${tomcatVersion}"
-            classpath ':gradle-tomcat-plugin:0.2'
+            classpath ':gradle-tomcat-plugin:0.3'
         }
     }
 
