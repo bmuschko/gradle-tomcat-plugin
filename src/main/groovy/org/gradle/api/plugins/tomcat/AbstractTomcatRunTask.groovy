@@ -48,6 +48,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     private Realm realm
     private Loader loader
     private Iterable<File> additionalRuntimeJars = new ArrayList<File>()
+    private String URIEncoding
 
     abstract void setWebApplicationContext()
 
@@ -148,6 +149,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
      */
     void addConnectorToServer() {
         Connector httpConnector = getServer().createConnector((InetAddress) null, getHttpPort(), false)
+        httpConnector.setURIEncoding getURIEncoding() ? getURIEncoding() : 'UTF-8'
         getServer().addConnector(httpConnector)
     }
 
@@ -297,5 +299,14 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setAdditionalRuntimeJars(Iterable<File> additionalRuntimeJars) {
         this.additionalRuntimeJars = additionalRuntimeJars
+    }
+
+    @Optional
+    public String getURIEncoding() {
+        URIEncoding
+    }
+
+    public void setURIEncoding(String URIEncoding) {
+        this.URIEncoding = URIEncoding
     }
 }

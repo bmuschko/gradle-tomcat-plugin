@@ -1,3 +1,8 @@
+### Version 0.3 (December 19, 2010)
+
+* Added optional configuration property `URIEncoding`.
+* Set default VCS to Git for Gradle IDEA plugin.
+
 ### Version 0.2 (December 8, 2010)
 
 * Added optional configuration property `additionalRuntimeJars`.

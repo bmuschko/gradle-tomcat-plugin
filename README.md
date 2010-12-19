@@ -58,6 +58,7 @@ optional properties:
 * `webDefaultXml`: The default web.xml. If it doesn't get defined an instance of `org.apache.catalina.servlets.DefaultServlet`
 and `org.apache.jasper.servlet.JspServlet` will be set up.
 * `additionalRuntimeJars`: Defines additional runtime JARs that are not provided by the web application.
+* `URIEncoding`: Specifies the character encoding used to decode the URI bytes by the HTTP Connector (defaults to 'UTF-8').
 
 ## System properties
 

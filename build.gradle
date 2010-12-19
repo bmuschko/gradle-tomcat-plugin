@@ -3,7 +3,7 @@ apply plugin: 'idea'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
-version = '0.2'
+version = '0.3'
 ant.property(environment: 'env')
 
 if(!ant.properties['env.GRADLE_HOME']) {
@@ -42,6 +42,10 @@ ideaProject {
   
     withXml { provider ->
         def node = provider.asNode()
+
+        // Use GIT
+        def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
+        vcsConfig.mapping[0].'@vcs' = 'Git'
 
         // Set Gradle home
         def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
