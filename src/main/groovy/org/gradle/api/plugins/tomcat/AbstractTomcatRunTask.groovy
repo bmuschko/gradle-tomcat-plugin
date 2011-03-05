@@ -114,7 +114,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             getServer().start()
 
             logger.info "Started Tomcat Server"
-            logger.info "The Server is running at http://localhost:${getHttpPort()}/${getContextPath()}/"
+            logger.info "The Server is running at http://localhost:${getHttpPort()}${getContext().path}"
 
             new ShutdownMonitor(getStopPort(), getStopKey()).start()
         }
