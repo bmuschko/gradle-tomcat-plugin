@@ -3,7 +3,7 @@ apply plugin: 'idea'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
-version = '0.3'
+version = '0.4'
 ant.property(environment: 'env')
 
 if(!ant.properties['env.GRADLE_HOME']) {

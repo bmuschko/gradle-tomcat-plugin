@@ -1,3 +1,8 @@
+### Version 0.4 (March 5, 2011)
+
+* Support configurable root context path - [Issue 4](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/4).
+* Added license file.
+
 ### Version 0.3 (December 19, 2010)
 
 * Added optional configuration property `URIEncoding`.
