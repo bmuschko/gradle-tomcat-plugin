@@ -62,7 +62,7 @@ and `org.apache.jasper.servlet.JspServlet` will be set up.
 * `daemon`: Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
 server has started. When false, this task blocks until the Tomcat server is stopped (defaults to false).
 
- ## System properties
+## System properties
 
 The convention properties can be overridden by system properties:
 
