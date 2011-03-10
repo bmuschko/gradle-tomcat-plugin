@@ -18,30 +18,43 @@ package org.gradle.api.plugins.tomcat.internal
 import org.gradle.api.plugins.tomcat.TomcatRun
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.apache.catalina.startup.Embedded
+import org.apache.catalina.LifecycleException
 
 /**
  * Monitor that keeps thread running until stop command got issued.
  *
  * @author Benjamin Muschko
  */
-class ShutdownMonitor {
+class ShutdownMonitor extends Thread {
     static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
     final int port
     final String key
-    final ServerSocket serverSocket
+    final Embedded server
+    final boolean daemon
+    ServerSocket serverSocket
 
-    public ShutdownMonitor(int port, String key) {
+    public ShutdownMonitor(int port, String key, Embedded server, boolean daemon) {
         if(port <= 0) {
             throw new IllegalStateException("Bad stop port")
         }
 
         this.port = port
         this.key = key
+        this.server = server
+        this.daemon = daemon
+
+        if(daemon) {
+            setDaemon(true);
+        }
+
+        setName("TomcatPluginShutdownMonitor");
         serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"))
     }
 
-    void start() {
-        while(true) {
+    @Override
+    void run() {
+        while(serverSocket != null) {
             Socket socket = null;
 
             try {
@@ -73,7 +86,20 @@ class ShutdownMonitor {
                         logger.debug "Exception when stopping server", e
                     }
 
-                    break
+                    serverSocket = null
+
+                    if(!daemon) {
+                        logger.info "Killing Tomcat"
+                        System.exit(0);
+                    } else {
+                        try {
+                            logger.info "Stopping server"
+                            server.stop()
+                        }
+                        catch(LifecycleException e) {
+                            logger.error "Exception when stopping server", e
+                        }
+                    }
                 }
             }
             catch(Exception e) {
@@ -90,7 +116,7 @@ class ShutdownMonitor {
                     }
                 }
 
-                socket = null;
+                socket = null
             }
         }
     }

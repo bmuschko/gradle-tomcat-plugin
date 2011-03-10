@@ -49,6 +49,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     private Loader loader
     private Iterable<File> additionalRuntimeJars = new ArrayList<File>()
     private String URIEncoding
+    private boolean daemon
 
     abstract void setWebApplicationContext()
 
@@ -116,13 +117,20 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             logger.info "Started Tomcat Server"
             logger.info "The Server is running at http://localhost:${getHttpPort()}${getContext().path}"
 
-            new ShutdownMonitor(getStopPort(), getStopKey()).start()
+            Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
+            shutdownMonitor.start()
+
+            if(!daemon) {
+                shutdownMonitor.join()
+            }
         }
         catch(Exception e) {
             throw new GradleException("An error occurred starting the Tomcat server.", e)
         }
         finally {
-            logger.info "Tomcat server exiting."
+            if(!daemon) {
+                logger.info "Tomcat server exiting."
+            }
         }
     }
 
@@ -308,5 +316,13 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setURIEncoding(String URIEncoding) {
         this.URIEncoding = URIEncoding
+    }
+
+    public boolean isDaemon() {
+        return daemon;
+    }
+
+    public void setDaemon(boolean daemon) {
+        this.daemon = daemon;
     }
 }

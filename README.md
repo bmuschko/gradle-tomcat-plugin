@@ -27,7 +27,7 @@ shows an example:
             classpath "org.apache.tomcat:catalina:${tomcatVersion}",
                       "org.apache.tomcat:coyote:${tomcatVersion}",
                       "org.apache.tomcat:jasper:${tomcatVersion}"
-            classpath ':gradle-tomcat-plugin:0.4'
+            classpath ':gradle-tomcat-plugin:0.5'
         }
     }
 
@@ -59,8 +59,10 @@ optional properties:
 and `org.apache.jasper.servlet.JspServlet` will be set up.
 * `additionalRuntimeJars`: Defines additional runtime JARs that are not provided by the web application.
 * `URIEncoding`: Specifies the character encoding used to decode the URI bytes by the HTTP Connector (defaults to 'UTF-8').
+* `daemon`: Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
+server has started. When false, this task blocks until the Tomcat server is stopped (defaults to false).
 
-## System properties
+ ## System properties
 
 The convention properties can be overridden by system properties:
 

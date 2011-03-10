@@ -1,3 +1,7 @@
+### Version 0.5 (March 10, 2011)
+
+* Support for running Tomcat as daemon - [Issue 5](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/5).
+
 ### Version 0.4 (March 5, 2011)
 
 * Support configurable root context path - [Issue 4](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/4).
