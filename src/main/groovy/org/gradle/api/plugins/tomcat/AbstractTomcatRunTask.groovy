@@ -319,10 +319,10 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     public boolean isDaemon() {
-        return daemon;
+        daemon
     }
 
     public void setDaemon(boolean daemon) {
-        this.daemon = daemon;
+        this.daemon = daemon
     }
 }
