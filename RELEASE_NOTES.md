@@ -1,3 +1,7 @@
+### Version 0.6 (March 30, 2011)
+
+* Support configurable context.xml - [Issue 6](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/6).
+
 ### Version 0.5 (March 10, 2011)
 
 * Support for running Tomcat as daemon - [Issue 5](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/5).
