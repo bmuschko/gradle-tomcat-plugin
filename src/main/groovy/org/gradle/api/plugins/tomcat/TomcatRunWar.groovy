@@ -45,8 +45,8 @@ class TomcatRunWar extends AbstractTomcatRunTask {
 
     @Override
     void setWebApplicationContext() {
-        String fullContextPath = getContextPath().startsWith("/") ? getContextPath() : "/" + getContextPath()
-        setContext(getServer().createContext(fullContextPath, getWebApp().getCanonicalPath()))
+        getServer().createContext(getFullContextPath(), getWebApp().getCanonicalPath())
+        getServer().setConfigFile(getConfigFile())
     }
 
     @InputFile

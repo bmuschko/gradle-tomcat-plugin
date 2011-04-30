@@ -53,6 +53,7 @@ class TomcatPlugin implements Plugin<Project> {
     private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
         tomcatTask.daemon = false
         tomcatTask.reloadable = true
+        tomcatTask.conventionMapping.map("serverClasspath") { project.buildscript.getConfigurations().getByName("classpath").asFileTree }
         tomcatTask.conventionMapping.map("contextPath") { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
         tomcatTask.conventionMapping.map("httpPort") { tomcatConvention.httpPort }
         tomcatTask.conventionMapping.map("stopPort") { tomcatConvention.stopPort }

@@ -3,7 +3,7 @@ apply plugin: 'idea'
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
-version = '0.6'
+version = '0.7'
 ant.property(environment: 'env')
 
 if(!ant.properties['env.GRADLE_HOME']) {
@@ -17,13 +17,23 @@ repositories {
 }
 
 dependencies {
-    def tomcatVersion = '6.0.29'
-
     groovy 'org.codehaus.groovy:groovy:1.7.5'
     compile gradleApi()
-    compile "org.apache.tomcat:catalina:${tomcatVersion}",
-            "org.apache.tomcat:coyote:${tomcatVersion}",
-            "org.apache.tomcat:jasper:${tomcatVersion}"
+
+    // Tomcat 6x
+    def tomcat6xVersion = '6.0.29'
+    compile "org.apache.tomcat:catalina:${tomcat6xVersion}",
+            "org.apache.tomcat:coyote:${tomcat6xVersion}",
+            "org.apache.tomcat:jasper:${tomcat6xVersion}"
+
+    // Tomcat 7x
+    def tomcat7xVersion = '7.0.11'
+    compile "org.apache.tomcat:tomcat-catalina:${tomcat7xVersion}",
+            "org.apache.tomcat:tomcat-coyote:${tomcat7xVersion}",
+    compile("org.apache.tomcat:tomcat-jasper:${tomcat7xVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+
     testCompile "junit:junit:4.+"
 }
 

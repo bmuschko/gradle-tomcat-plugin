@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.apache.catalina.Context
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
@@ -35,7 +34,6 @@ class TomcatRun extends AbstractTomcatRunTask {
     static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
     private FileCollection classpath
     private File webAppSourceDirectory
-    private File configFile
 
     @Override
     void validateConfiguration() {
@@ -56,20 +54,10 @@ class TomcatRun extends AbstractTomcatRunTask {
             throw new InvalidUserDataException("Webapp source directory does not exist", e)
         }
 
-
         File defaultConfigFile = new File(getWebAppSourceDirectory(), "/META-INF/context.xml")
 
-        // Check the location of context.xml if it was provided.
-        if(getConfigFile()) {
-            if(!getConfigFile().exists()) {
-                throw new InvalidUserDataException("context.xml file does not exist at location ${getConfigFile().getCanonicalPath()}")
-            }
-            else {
-                logger.info "context.xml = ${getConfigFile().getCanonicalPath()}"
-            }
-        }
         // If context.xml wasn't provided check the default location
-        else if(defaultConfigFile.exists()){
+        if(!getConfigFile() && defaultConfigFile.exists()){
             setConfigFile(defaultConfigFile)
             logger.info "context.xml = ${getConfigFile().getCanonicalPath()}"
         }
@@ -77,24 +65,17 @@ class TomcatRun extends AbstractTomcatRunTask {
 
     @Override
     void setWebApplicationContext() {
-        String fullContextPath = getContextPath().startsWith("/") ? getContextPath() : "/" + getContextPath()
-        Context context = getServer().createContext(fullContextPath, getWebAppSourceDirectory().getCanonicalPath())
-
-        if(getConfigFile()) {
-            context.setConfigFile(getConfigFile().getCanonicalPath())
-        }
-
-        setContext(context)
+        getServer().createContext(getFullContextPath(), getWebAppSourceDirectory().getCanonicalPath())
     }
 
     @Override
     void configureWebApplication() {
         super.configureWebApplication()
 
-        logger.info "classpath = " + getClasspath().asPath
+        logger.info "web app loader classpath = " + getClasspath().asPath
       
         getClasspath().each { file ->
-            getLoader().addRepository(file.toURI().toURL().toString())
+            getServer().getLoader().addRepository(file.toURI().toURL().toString())
         }
     }
 
@@ -114,15 +95,5 @@ class TomcatRun extends AbstractTomcatRunTask {
 
     public void setWebAppSourceDirectory(File webAppSourceDirectory) {
         this.webAppSourceDirectory = webAppSourceDirectory
-    }
-
-    @InputFile
-    @Optional
-    public File getConfigFile() {
-        configFile
-    }
-
-    public void setConfigFile(File configFile) {
-        this.configFile = configFile
     }
 }

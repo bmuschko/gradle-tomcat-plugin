@@ -15,20 +15,22 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.apache.catalina.connector.Connector
-import org.apache.catalina.loader.WebappLoader
-import org.apache.catalina.startup.Embedded
+import org.apache.catalina.Realm
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.UncheckedIOException
+import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.ClassPathRegistry
 import org.gradle.api.internal.ConventionTask
+import org.gradle.api.internal.DefaultClassPathRegistry
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
+import org.gradle.api.plugins.tomcat.internal.TomcatServerFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.apache.catalina.*
 
 /**
  * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
@@ -36,26 +38,68 @@ import org.apache.catalina.*
  * @author Benjamin Muschko
  */
 abstract class AbstractTomcatRunTask extends ConventionTask {
-    static final Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class);
+    static final Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class)
     protected boolean reloadable
     private String contextPath
     private Integer httpPort
     private Integer stopPort
     private String stopKey
     private File webDefaultXml
-    private Embedded server
-    private Context context
+    def server
     private Realm realm
-    private Loader loader
     private Iterable<File> additionalRuntimeJars = new ArrayList<File>()
     private String URIEncoding
     private boolean daemon
+    private FileCollection serverClasspath
+    private File configFile
 
     abstract void setWebApplicationContext()
 
     @TaskAction
     protected void start() {
         logger.info "Configuring Tomcat for ${getProject()}"
+
+        ClassLoader originalClassLoader = getClass().getClassLoader()
+        URLClassLoader tomcatClassloader = createTomcatClassLoader()
+
+        try {
+            Thread.currentThread().setContextClassLoader(tomcatClassloader)
+            validateConfigurationAndStartTomcat()
+        }
+        finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader)
+        }
+    }
+
+    /**
+     * Creates Tomcat classloader which consists of the Gradle runtime and Tomcat server classpath.
+     *
+     * @return Tomcat classloader
+     */
+    private URLClassLoader createTomcatClassLoader() {
+        ClassPathRegistry classPathRegistry = new DefaultClassPathRegistry()
+        URL[] runtimeClasspath = classPathRegistry.getClassPathUrls("GRADLE_RUNTIME")
+        ClassLoader rootClassLoader = ClassLoader.getSystemClassLoader().getParent()
+        URLClassLoader gradleClassloader = new URLClassLoader(runtimeClasspath, rootClassLoader)
+        new URLClassLoader(toURLArray(getServerClasspath().files), gradleClassloader)
+    }
+
+    URL[] toURLArray(Collection<File> files) {
+        List<URL> urls = new ArrayList<URL>(files.size())
+
+        for(File file : files) {
+            try {
+                urls.add(file.toURI().toURL())
+            }
+            catch(MalformedURLException e) {
+                throw new UncheckedIOException(e)
+            }
+        }
+
+        urls.toArray(new URL[urls.size()]);
+    }
+
+    private void validateConfigurationAndStartTomcat() {
         validateConfiguration()
         startTomcat()
     }
@@ -73,6 +117,16 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
                 logger.info "Default web.xml = ${getWebDefaultXml().getCanonicalPath()}"
             }
         }
+
+        // Check the location of context.xml if it was provided.
+        if(getConfigFile()) {
+            if(!getConfigFile().exists()) {
+                throw new InvalidUserDataException("context.xml file does not exist at location ${getConfigFile().getCanonicalPath()}")
+            }
+            else {
+                logger.info "context.xml = ${getConfigFile().getCanonicalPath()}"
+            }
+        }
     }
 
     /**
@@ -80,15 +134,16 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
      */
     void configureWebApplication() {
         setWebApplicationContext()
-        setLoader(createLoader())
+        getServer().createLoader(Thread.currentThread().getContextClassLoader())
 
         for(File additionalRuntimeJar : getAdditionalRuntimeJars()) {
-            loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
+            getServer().getLoader().addRepository(additionalRuntimeJar.toURI().toURL().toString())
         }
 
-        getContext().setLoader(loader)
-        getContext().setReloadable(reloadable)
-        configureDefaultWebXml()
+        getServer().getContext().setLoader(getServer().getLoader())
+        getServer().getContext().setReloadable(reloadable)
+        getServer().configureDefaultWebXml(getWebDefaultXml())
+        getServer().setConfigFile(getConfigFile())
     }
 
     void startTomcat() {
@@ -96,26 +151,18 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             logger.debug "Starting Tomcat Server ..."
 
             setServer(createServer())
-            getServer().setCatalinaHome(getTemporaryDir().getAbsolutePath())
+            getServer().setHome(getTemporaryDir().getAbsolutePath())
             getServer().setRealm(realm)
 
             configureWebApplication()
-          
-            // Create host
-            Host localHost = getServer().createHost("localHost", new File(".").getAbsolutePath())
-            localHost.addChild(context)
 
-            // Create engine
-            addEngineToServer(localHost)
-
-            // Create HTTP connector
-            addConnectorToServer()
+            getServer().configureContainer(getHttpPort(), getURIEncoding())
 
             // Start server
             getServer().start()
 
             logger.info "Started Tomcat Server"
-            logger.info "The Server is running at http://localhost:${getHttpPort()}${getContext().path}"
+            logger.info "The Server is running at http://localhost:${getHttpPort()}${getServer().getContext().path}"
 
             Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
             shutdownMonitor.start()
@@ -134,105 +181,20 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         }
     }
 
-    /**
-     * Adds engine to server
-     *
-     * @param localHost host
-     */
-    void addEngineToServer(Host localHost) {
-        Engine engine = getServer().createEngine()
-
-        engine.with {
-            setName "localEngine"
-            addChild localHost
-            setDefaultHost localHost.getName()
-        }
-
-        getServer().addEngine(engine)
+    String getFullContextPath() {
+        getContextPath().startsWith("/") ? getContextPath() : "/" + getContextPath()
     }
 
-
-    /**
-     * Adds connector to server 
-     */
-    void addConnectorToServer() {
-        Connector httpConnector = getServer().createConnector((InetAddress) null, getHttpPort(), false)
-        httpConnector.setURIEncoding getURIEncoding() ? getURIEncoding() : 'UTF-8'
-        getServer().addConnector(httpConnector)
+    def createServer() {
+        TomcatServerFactory.instance.tomcatServer
     }
 
-    /**
-     * Configures default web XML if provided. Otherwise, set it up programmatically.
-     */
-    void configureDefaultWebXml() {
-        if(getWebDefaultXml()) {
-            getContext().setDefaultWebXml(getWebDefaultXml().getAbsolutePath()) 
-        }
-        else {
-            configureDefaultServlet()
-            configureJspServlet()
-        }
-    }
-
-    /**
-     * Configures default servlet and adds it to the context.
-     */
-    void configureDefaultServlet() {
-        Wrapper defaultServlet = getContext().createWrapper()
-
-        defaultServlet.with {
-            setName "default"
-            setServletClass "org.apache.catalina.servlets.DefaultServlet"
-            addInitParameter "debug", "0"
-            addInitParameter "listings", "false"
-            setLoadOnStartup 1
-        }
-
-		getContext().with {
-            addChild defaultServlet
-            addServletMapping "/", "default"
-        }
-    }
-
-    /**
-     * Configures JSP servlet and adds it to the context.
-     */
-    void configureJspServlet() {
-        Wrapper jspServlet = getContext().createWrapper()
-
-        jspServlet.with {
-            setName "jsp"
-            setServletClass "org.apache.jasper.servlet.JspServlet"
-            addInitParameter "fork", "false"
-            addInitParameter "xpoweredBy", "false"
-            setLoadOnStartup 3
-        }
-
-		getContext().with {
-            addChild jspServlet
-            addServletMapping "*.jsp", "jsp"
-            addServletMapping "*.jspx", "jsp"
-        }
-    }
-
-    Embedded createServer() {
-        new Embedded()
-    }
-
-    public Embedded getServer() {
+    def getServer() {
         server
     }
 
-    public void setServer(Embedded server) {
+    def setServer(server) {
         this.server = server
-    }
-
-    public Context getContext() {
-        context
-    }
-
-    public void setContext(Context context) {
-        this.context = context
     }
 
     public Realm getRealm() {
@@ -241,18 +203,6 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setRealm(Realm realm) {
         this.realm = realm
-    }
-
-    Loader createLoader() {
-        new WebappLoader(getClass().getClassLoader())
-    }
-
-    public Loader getLoader() {
-        loader
-    }
-
-    public void setLoader(Loader loader) {
-        this.loader = loader
     }
 
     public String getContextPath() {
@@ -324,5 +274,23 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     public void setDaemon(boolean daemon) {
         this.daemon = daemon
+    }
+
+    public FileCollection getServerClasspath() {
+        serverClasspath
+    }
+
+    public void setServerClasspath(FileCollection serverClasspath) {
+        this.serverClasspath = serverClasspath
+    }
+
+    @InputFile
+    @Optional
+    public File getConfigFile() {
+        configFile
+    }
+
+    public void setConfigFile(File configFile) {
+        this.configFile = configFile
     }
 }

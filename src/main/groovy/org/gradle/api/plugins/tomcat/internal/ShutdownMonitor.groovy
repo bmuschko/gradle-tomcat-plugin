@@ -15,11 +15,10 @@
  */
 package org.gradle.api.plugins.tomcat.internal
 
+import org.apache.catalina.LifecycleException
 import org.gradle.api.plugins.tomcat.TomcatRun
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.apache.catalina.startup.Embedded
-import org.apache.catalina.LifecycleException
 
 /**
  * Monitor that keeps thread running until stop command got issued.
@@ -30,11 +29,11 @@ class ShutdownMonitor extends Thread {
     static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
     final int port
     final String key
-    final Embedded server
+    final server
     final boolean daemon
     ServerSocket serverSocket
 
-    public ShutdownMonitor(int port, String key, Embedded server, boolean daemon) {
+    public ShutdownMonitor(int port, String key, server, boolean daemon) {
         if(port <= 0) {
             throw new IllegalStateException("Bad stop port")
         }
