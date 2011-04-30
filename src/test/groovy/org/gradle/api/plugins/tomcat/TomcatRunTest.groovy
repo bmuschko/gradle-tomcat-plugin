@@ -108,6 +108,17 @@ class TomcatRunTest {
     }
 
     @Test
+    public void testValidateConfigurationForExistentDefaultConfigFile() {
+        File webAppSourceDir = createWebAppSourceDirectory()
+        File defaultConfigFile = createDefaultConfigFile(webAppSourceDir)
+        tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.validateConfiguration()
+        assert tomcatRun.getWebDefaultXml() == null
+        assert tomcatRun.getConfigFile() == defaultConfigFile
+        assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
+    }
+
+    @Test
     public void testSetWebApplicationContextForFullContextPath() {
         File webAppSourceDir = createWebAppSourceDirectory()
         String contextPath = "/app"
@@ -133,6 +144,25 @@ class TomcatRunTest {
         assert tomcatRun.getServer() == server
         assert tomcatRun.getServer().getContext().getDocBase() == webAppSourceDir.getCanonicalPath()
         assert tomcatRun.getServer().getContext().getPath() == "/" + contextPath
+    }
+
+    @Test
+    public void testConfigureWebApplication() {
+        File webAppSourceDir = createWebAppSourceDirectory()
+        String contextPath = "app"
+        TomcatServer server = new Tomcat6xServer()
+        tomcatRun.setServer server
+        tomcatRun.setContextPath contextPath
+        tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setClasspath project.files("jars")
+        tomcatRun.reloadable = true
+        tomcatRun.configureWebApplication()
+        assert tomcatRun.getServer() == server
+        assert tomcatRun.getServer().getContext().getDocBase() == webAppSourceDir.getCanonicalPath()
+        assert tomcatRun.getServer().getContext().getPath() == "/" + contextPath
+        assert tomcatRun.getServer().getContext().getReloadable() == true
+        assert tomcatRun.getServer().getLoader().getRepositories().size() == 1
+        assert tomcatRun.getServer().getLoader().getRepositories()[0] == new File(testDir, "jars").toURI().toURL().toString()
     }
 
     private File createWebAppSourceDirectory() {
@@ -166,5 +196,18 @@ class TomcatRunTest {
         }
 
         configFile
+    }
+
+    private File createDefaultConfigFile(File webAppSourceDir) {
+        File metaInfDir = new File(webAppSourceDir, "META-INF")
+        metaInfDir.mkdir()
+        File defaultConfigFile = new File(metaInfDir, "context.xml")
+        boolean success = defaultConfigFile.createNewFile()
+
+        if(!success) {
+            fail "Unable to create default config file"
+        }
+
+        defaultConfigFile
     }
 }
