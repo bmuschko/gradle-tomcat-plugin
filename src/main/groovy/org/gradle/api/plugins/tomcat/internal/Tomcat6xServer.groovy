@@ -45,7 +45,7 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    void setRealm(Realm realm) {
+    void setRealm(realm) {
         server.setRealm(realm)
     }
 

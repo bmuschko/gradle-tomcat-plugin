@@ -15,10 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat.internal
 
-import org.apache.catalina.Context
-import org.apache.catalina.Loader
-import org.apache.catalina.Realm
-
 /**
  * Tomcat server interface.
  *
@@ -27,10 +23,10 @@ import org.apache.catalina.Realm
 interface TomcatServer {
     def getEmbedded()
     void setHome(String home)
-    void setRealm(Realm realm)
-    Context getContext()
-    Loader createLoader(ClassLoader classLoader)
-    Loader getLoader()
+    void setRealm(realm)
+    def getContext()
+    def createLoader(ClassLoader classLoader)
+    def getLoader()
     void createContext(String fullContextPath, String webAppPath)
     void configureContainer(int port, String uriEncoding)
     void configureDefaultWebXml(File webDefaultXml)

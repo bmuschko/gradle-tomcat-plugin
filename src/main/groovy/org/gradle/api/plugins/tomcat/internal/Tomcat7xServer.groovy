@@ -17,7 +17,6 @@ package org.gradle.api.plugins.tomcat.internal
 
 import org.apache.catalina.Context
 import org.apache.catalina.Loader
-import org.apache.catalina.Realm
 import org.apache.catalina.loader.WebappLoader
 import org.apache.catalina.startup.Tomcat
 
@@ -46,7 +45,7 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
-    void setRealm(Realm realm) {
+    void setRealm(realm) {
         tomcat.setDefaultRealm(realm)
     }
 
