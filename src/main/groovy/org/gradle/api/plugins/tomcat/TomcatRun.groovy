@@ -40,12 +40,12 @@ class TomcatRun extends AbstractTomcatRunTask {
         // Check the location of the static content/JSPs etc.
         try {
             if(!getWebAppSourceDirectory() || !getWebAppSourceDirectory().exists()) {
-                throw new InvalidUserDataException("Webapp source directory "
-                        + (getWebAppSourceDirectory() == null ? "null" : getWebAppSourceDirectory().getCanonicalPath())
-                        + " does not exist")
+                throw new InvalidUserDataException('Webapp source directory '
+                        + (!getWebAppSourceDirectory() ? 'null' : getWebAppSourceDirectory().canonicalPath)
+                        + ' does not exist')
             }
             else {
-                LOGGER.info "Webapp source directory = ${getWebAppSourceDirectory().getCanonicalPath()}"
+                LOGGER.info "Webapp source directory = ${getWebAppSourceDirectory().canonicalPath}"
             }
         }
         catch(IOException e) {
