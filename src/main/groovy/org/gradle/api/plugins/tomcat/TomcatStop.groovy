@@ -27,33 +27,33 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko 
  */
 class TomcatStop extends ConventionTask {
-    static Logger logger = LoggerFactory.getLogger(TomcatStop.class)
+    static final Logger LOGGER = LoggerFactory.getLogger(TomcatStop.class)
     private Integer stopPort
     private String stopKey
 
     @TaskAction
-    public void stop() {
+    void stop() {
         if(!getStopPort()) {
-            throw new InvalidUserDataException("Please specify a valid port")
+            throw new InvalidUserDataException('Please specify a valid port')
         }
         if(!getStopKey()) {
-            throw new InvalidUserDataException("Please specify a valid stopKey")
+            throw new InvalidUserDataException('Please specify a valid stopKey')
         }
 
         try {
-            Socket s = new Socket(InetAddress.getByName("127.0.0.1"), getStopPort())
+            Socket s = new Socket(InetAddress.getByName('127.0.0.1'), getStopPort())
             s.setSoLinger(false, 0)
 
-            OutputStream out = s.getOutputStream()
-            out.write((getStopKey() + "\r\nstop\r\n").getBytes())
+            OutputStream out = s.outputStream
+            out.write((getStopKey() + '\r\nstop\r\n').bytes)
             out.flush()
             s.close()
         }
         catch(ConnectException e) {
-            logger.info "Tomcat not running!"
+            LOGGER.info 'Tomcat not running!'
         }
         catch(Exception e) {
-            logger.error "Exception during stopping", e
+            LOGGER.error 'Exception during stopping', e
         }
     }
 

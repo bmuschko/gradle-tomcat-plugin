@@ -23,9 +23,9 @@ import org.gradle.api.InvalidUserDataException
  * @author Benjamin Muschko
  */
 class TomcatSystemProperty {
-    static final String HTTP_PORT_SYSPROPERTY = "tomcat.http.port"
-    static final String STOP_PORT_SYSPROPERTY = "tomcat.stop.port"
-    static final String STOP_KEY_SYSPROPERTY = "tomcat.stop.key"
+    static final String HTTP_PORT_SYSPROPERTY = 'tomcat.http.port'
+    static final String STOP_PORT_SYSPROPERTY = 'tomcat.stop.port'
+    static final String STOP_KEY_SYSPROPERTY = 'tomcat.stop.key'
 
     static Integer getHttpPort() {
         String httpPortSystemProperty = System.getProperty(HTTP_PORT_SYSPROPERTY)

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 class TomcatRunWar extends AbstractTomcatRunTask {
-    static Logger logger = LoggerFactory.getLogger(TomcatRunWar.class)
+    static final Logger LOGGER = LoggerFactory.getLogger(TomcatRunWar.class)
     private File webApp
 
     @Override
@@ -34,18 +34,18 @@ class TomcatRunWar extends AbstractTomcatRunTask {
         super.validateConfiguration()
 
         if(!getWebApp() || !getWebApp().exists()) {
-            throw new InvalidUserDataException("Web application WAR "
-                    + (getWebApp() == null ? "null" : getWebApp().getCanonicalPath())
-                    + " does not exist")
+            throw new InvalidUserDataException('Web application WAR '
+                    + (getWebApp() == null ? 'null' : getWebApp().canonicalPath)
+                    + ' does not exist')
         }
         else {
-            logger.info "Web application WAR = ${getWebApp().getCanonicalPath()}"
+            LOGGER.info "Web application WAR = ${getWebApp().canonicalPath}"
         }
     }
 
     @Override
     void setWebApplicationContext() {
-        getServer().createContext(getFullContextPath(), getWebApp().getCanonicalPath())
+        getServer().createContext(getFullContextPath(), getWebApp().canonicalPath)
         getServer().setConfigFile(getConfigFile())
     }
 

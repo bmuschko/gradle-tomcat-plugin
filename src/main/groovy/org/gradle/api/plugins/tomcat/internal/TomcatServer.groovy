@@ -24,7 +24,7 @@ import org.apache.catalina.Realm
  *
  * @author Benjamin Muschko
  */
-public interface TomcatServer {
+interface TomcatServer {
     def getEmbedded()
     void setHome(String home)
     void setRealm(Realm realm)

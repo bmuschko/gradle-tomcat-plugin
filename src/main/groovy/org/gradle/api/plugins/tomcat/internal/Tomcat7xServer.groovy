@@ -74,7 +74,7 @@ class Tomcat7xServer implements TomcatServer {
     @Override
     void configureContainer(int port, String uriEncoding) {
         tomcat.setPort(port)
-        tomcat.getConnector().setURIEncoding(uriEncoding)
+        tomcat.connector.setURIEncoding(uriEncoding)
 
         // Enable JNDI naming by default
         tomcat.enableNaming()
@@ -83,7 +83,7 @@ class Tomcat7xServer implements TomcatServer {
     @Override
     void configureDefaultWebXml(File webDefaultXml) {
         if(webDefaultXml) {
-            context.setDefaultWebXml(webDefaultXml.getAbsolutePath())
+            context.setDefaultWebXml(webDefaultXml.absolutePath)
         }
     }
 

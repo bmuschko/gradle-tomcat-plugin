@@ -16,7 +16,6 @@
 package org.gradle.api.plugins.tomcat.internal
 
 import org.apache.catalina.LifecycleException
-import org.gradle.api.plugins.tomcat.TomcatRun
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -26,7 +25,7 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 class ShutdownMonitor extends Thread {
-    static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
+    static final Logger LOGGER = LoggerFactory.getLogger(ShutdownMonitor.class)
     final int port
     final String key
     final server
@@ -35,7 +34,7 @@ class ShutdownMonitor extends Thread {
 
     public ShutdownMonitor(int port, String key, server, boolean daemon) {
         if(port <= 0) {
-            throw new IllegalStateException("Bad stop port")
+            throw new IllegalStateException('Bad stop port')
         }
 
         this.port = port
@@ -47,8 +46,8 @@ class ShutdownMonitor extends Thread {
             setDaemon(true);
         }
 
-        setName("TomcatPluginShutdownMonitor");
-        serverSocket = new ServerSocket(port, 1, InetAddress.getByName("127.0.0.1"))
+        setName('TomcatPluginShutdownMonitor')
+        serverSocket = new ServerSocket(port, 1, InetAddress.getByName('127.0.0.1'))
     }
 
     @Override
@@ -59,7 +58,7 @@ class ShutdownMonitor extends Thread {
             try {
                 socket = serverSocket.accept()
                 socket.setSoLinger(false, 0)
-                LineNumberReader lin = new LineNumberReader(new InputStreamReader(socket.getInputStream()))
+                LineNumberReader lin = new LineNumberReader(new InputStreamReader(socket.inputStream))
 
                 String keyCmd = lin.readLine()
 
@@ -69,40 +68,40 @@ class ShutdownMonitor extends Thread {
 
                 String cmd = lin.readLine()
 
-                if("stop".equals(cmd)) {
-                    logger.info "Shutting down server"
+                if('stop' == cmd) {
+                    LOGGER.info 'Shutting down server'
                   
                     try {
                         socket.close()
                     }
                     catch(Exception e) {
-                        logger.debug "Exception when stopping server", e
+                        LOGGER.debug 'Exception when stopping server', e
                     }
                     try {
                         serverSocket.close()
                     }
                     catch(IOException e) {
-                        logger.debug "Exception when stopping server", e
+                        LOGGER.debug 'Exception when stopping server', e
                     }
 
                     serverSocket = null
 
                     if(!daemon) {
-                        logger.info "Killing Tomcat"
-                        System.exit(0);
+                        LOGGER.info 'Killing Tomcat'
+                        System.exit(0)
                     } else {
                         try {
-                            logger.info "Stopping server"
+                            LOGGER.info 'Stopping server'
                             server.stop()
                         }
                         catch(LifecycleException e) {
-                            logger.error "Exception when stopping server", e
+                            LOGGER.error 'Exception when stopping server', e
                         }
                     }
                 }
             }
             catch(Exception e) {
-                logger.error "Exception in monitoring monitor", e
+                LOGGER.error 'Exception in monitoring monitor', e
                 System.exit(1)
             }
             finally {
@@ -111,7 +110,7 @@ class ShutdownMonitor extends Thread {
                         socket.close()
                     }
                     catch(Exception e) {
-                        logger.debug "Exception when stopping server", e
+                        LOGGER.debug 'Exception when stopping server', e
                     }
                 }
 

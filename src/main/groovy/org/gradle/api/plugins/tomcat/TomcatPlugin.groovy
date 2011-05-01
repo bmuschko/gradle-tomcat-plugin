@@ -27,12 +27,16 @@ import org.gradle.api.plugins.WarPluginConvention
  * @author Benjamin Muschko
  */
 class TomcatPlugin implements Plugin<Project> {
-    static final String TOMCAT_RUN = "tomcatRun"
-    static final String TOMCAT_RUN_WAR = "tomcatRunWar"
-    static final String TOMCAT_STOP = "tomcatStop"
+    static final String TOMCAT_RUN_TASK_NAME = 'tomcatRun'
+    static final String TOMCAT_RUN_WAR_TASK_NAME = 'tomcatRunWar'
+    static final String TOMCAT_STOP_TASK_NAME = 'tomcatStop'
+    static final String CLASSPATH = 'classpath'
+    static final String HTTP_PORT_CONVENTION = 'httpPort'
+    static final String STOP_PORT_CONVENTION = 'stopPort'
+    static final String STOP_KEY_CONVENTION = 'stopKey'
 
     @Override
-    public void apply(Project project) {
+    void apply(Project project) {
         project.plugins.apply(WarPlugin.class)
         TomcatPluginConvention tomcatConvention = new TomcatPluginConvention()
         project.convention.plugins.tomcat = tomcatConvention
@@ -52,41 +56,41 @@ class TomcatPlugin implements Plugin<Project> {
     private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
         tomcatTask.daemon = false
         tomcatTask.reloadable = true
-        tomcatTask.conventionMapping.map("serverClasspath") { project.buildscript.getConfigurations().getByName("classpath").asFileTree }
-        tomcatTask.conventionMapping.map("contextPath") { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
-        tomcatTask.conventionMapping.map("httpPort") { tomcatConvention.httpPort }
-        tomcatTask.conventionMapping.map("stopPort") { tomcatConvention.stopPort }
-        tomcatTask.conventionMapping.map("stopKey") { tomcatConvention.stopKey }
+        tomcatTask.conventionMapping.map('serverClasspath') { project.buildscript.configurations.getByName(CLASSPATH).asFileTree }
+        tomcatTask.conventionMapping.map('contextPath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
+        tomcatTask.conventionMapping.map(HTTP_PORT_CONVENTION) { tomcatConvention.httpPort }
+        tomcatTask.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
+        tomcatTask.conventionMapping.map(STOP_KEY_CONVENTION) { tomcatConvention.stopKey }
     }
 
     private void configureTomcatRun(final Project project) {
         project.tasks.withType(TomcatRun.class).whenTaskAdded { TomcatRun tomcatRun ->
-            tomcatRun.conventionMapping.map("classpath") { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
-            tomcatRun.conventionMapping.map("webAppSourceDirectory") { getWarConvention(project).webAppDir }
+            tomcatRun.conventionMapping.map(CLASSPATH) { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
+            tomcatRun.conventionMapping.map('webAppSourceDirectory') { getWarConvention(project).webAppDir }
         }
 
-        TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN, TomcatRun.class)
-        tomcatRun.description = "Uses your files as and where they are and deploys them to Tomcat."
+        TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN_TASK_NAME, TomcatRun.class)
+        tomcatRun.description = 'Uses your files as and where they are and deploys them to Tomcat.'
         tomcatRun.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatRunWar(final Project project) {
         project.tasks.withType(TomcatRunWar.class).whenTaskAdded { TomcatRunWar tomcatRunWar ->
             tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME)
-            tomcatRunWar.conventionMapping.map("webApp") { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
+            tomcatRunWar.conventionMapping.map('webApp') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
         }
 
-        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR, TomcatRunWar.class)
-        tomcatRunWar.description = "Assembles the webapp into a war and deploys it to Tomcat."
+        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar.class)
+        tomcatRunWar.description = 'Assembles the webapp into a war and deploys it to Tomcat.'
         tomcatRunWar.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatStop(final Project project, final TomcatPluginConvention tomcatConvention) {
-        TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP, TomcatStop.class)
-        tomcatStop.description = "Stops Tomcat."
+        TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP_TASK_NAME, TomcatStop.class)
+        tomcatStop.description = 'Stops Tomcat.'
         tomcatStop.group = WarPlugin.WEB_APP_GROUP
-        tomcatStop.conventionMapping.map("stopPort") { tomcatConvention.stopPort }
-        tomcatStop.conventionMapping.map("stopKey") { tomcatConvention.stopKey }
+        tomcatStop.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
+        tomcatStop.conventionMapping.map(STOP_KEY_CONVENTION) { tomcatConvention.stopKey }
     }
 
     WarPluginConvention getWarConvention(Project project) {

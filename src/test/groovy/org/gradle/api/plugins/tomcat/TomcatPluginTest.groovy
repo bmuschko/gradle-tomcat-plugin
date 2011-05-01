@@ -21,7 +21,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.gradle.api.plugins.JavaPlugin
+
 import org.gradle.api.Task
 import org.gradle.api.plugins.WarPluginConvention
 
@@ -58,7 +58,7 @@ class TomcatPluginTest {
 
     @Test
     public void testApplyTomcatRunTask() {
-        Task task = project.tasks[TomcatPlugin.TOMCAT_RUN]
+        Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_TASK_NAME]
         assert task instanceof TomcatRun == true
         assert task.description == "Uses your files as and where they are and deploys them to Tomcat."
         assert task.group == WarPlugin.WEB_APP_GROUP
@@ -74,7 +74,7 @@ class TomcatPluginTest {
 
     @Test
     public void testApplyTomcatRunWarTask() {
-        Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_WAR]
+        Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME]
         assert task instanceof TomcatRunWar == true
         assert task.description == "Assembles the webapp into a war and deploys it to Tomcat."
         assert task.group == WarPlugin.WEB_APP_GROUP
@@ -89,7 +89,7 @@ class TomcatPluginTest {
 
     @Test
     public void testApplyTomcatStopTask() {
-        Task task = project.tasks[TomcatPlugin.TOMCAT_STOP]
+        Task task = project.tasks[TomcatPlugin.TOMCAT_STOP_TASK_NAME]
         assert task instanceof TomcatStop == true
         assert task.description == "Stops Tomcat."
         assert task.group == WarPlugin.WEB_APP_GROUP

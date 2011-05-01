@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 class TomcatRun extends AbstractTomcatRunTask {
-    static final Logger logger = LoggerFactory.getLogger(TomcatRun.class)
+    static final Logger LOGGER = LoggerFactory.getLogger(TomcatRun.class)
     private FileCollection classpath
     private File webAppSourceDirectory
 
@@ -47,32 +47,32 @@ class TomcatRun extends AbstractTomcatRunTask {
                         + " does not exist")
             }
             else {
-                logger.info "Webapp source directory = ${getWebAppSourceDirectory().getCanonicalPath()}"
+                LOGGER.info "Webapp source directory = ${getWebAppSourceDirectory().getCanonicalPath()}"
             }
         }
         catch(IOException e) {
-            throw new InvalidUserDataException("Webapp source directory does not exist", e)
+            throw new InvalidUserDataException('Webapp source directory does not exist', e)
         }
 
-        File defaultConfigFile = new File(getWebAppSourceDirectory(), "/META-INF/context.xml")
+        File defaultConfigFile = new File(getWebAppSourceDirectory(), '/META-INF/context.xml')
 
         // If context.xml wasn't provided check the default location
         if(!getConfigFile() && defaultConfigFile.exists()){
             setConfigFile(defaultConfigFile)
-            logger.info "context.xml = ${getConfigFile().getCanonicalPath()}"
+            LOGGER.info "context.xml = ${getConfigFile().canonicalPath}"
         }
     }
 
     @Override
     void setWebApplicationContext() {
-        getServer().createContext(getFullContextPath(), getWebAppSourceDirectory().getCanonicalPath())
+        getServer().createContext(getFullContextPath(), getWebAppSourceDirectory().canonicalPath)
     }
 
     @Override
     void configureWebApplication() {
         super.configureWebApplication()
 
-        logger.info "web app loader classpath = " + getClasspath().asPath
+        LOGGER.info "web app loader classpath = ${getClasspath().asPath}"
       
         getClasspath().each { file ->
             getServer().getLoader().addRepository(file.toURI().toURL().toString())

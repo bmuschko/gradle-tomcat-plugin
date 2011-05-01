@@ -23,14 +23,14 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ClassPathRegistry
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.internal.DefaultClassPathRegistry
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.TomcatServerFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 abstract class AbstractTomcatRunTask extends ConventionTask {
-    static final Logger logger = LoggerFactory.getLogger(AbstractTomcatRunTask.class)
+    static final Logger LOGGER = Logging.getLogger(AbstractTomcatRunTask.class)
     protected boolean reloadable
     private String contextPath
     private Integer httpPort
@@ -57,9 +57,9 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     @TaskAction
     protected void start() {
-        logger.info "Configuring Tomcat for ${getProject()}"
+        LOGGER.info "Configuring Tomcat for ${getProject()}"
 
-        ClassLoader originalClassLoader = getClass().getClassLoader()
+        ClassLoader originalClassLoader = getClass().classLoader
         URLClassLoader tomcatClassloader = createTomcatClassLoader()
 
         try {
@@ -78,8 +78,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
      */
     private URLClassLoader createTomcatClassLoader() {
         ClassPathRegistry classPathRegistry = new DefaultClassPathRegistry()
-        URL[] runtimeClasspath = classPathRegistry.getClassPathUrls("GRADLE_RUNTIME")
-        ClassLoader rootClassLoader = ClassLoader.getSystemClassLoader().getParent()
+        URL[] runtimeClasspath = classPathRegistry.getClassPathUrls('GRADLE_RUNTIME')
+        ClassLoader rootClassLoader = ClassLoader.systemClassLoader.parent
         URLClassLoader gradleClassloader = new URLClassLoader(runtimeClasspath, rootClassLoader)
         new URLClassLoader(toURLArray(getServerClasspath().files), gradleClassloader)
     }
@@ -111,20 +111,20 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         // Check existence of default web.xml if provided
         if(getWebDefaultXml()) {
             if(!getWebDefaultXml().exists()) {
-                throw new InvalidUserDataException("The provided default web.xml file does not exist")
+                throw new InvalidUserDataException('The provided default web.xml file does not exist')
             }
             else {
-                logger.info "Default web.xml = ${getWebDefaultXml().getCanonicalPath()}"
+                LOGGER.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
             }
         }
 
         // Check the location of context.xml if it was provided.
         if(getConfigFile()) {
             if(!getConfigFile().exists()) {
-                throw new InvalidUserDataException("context.xml file does not exist at location ${getConfigFile().getCanonicalPath()}")
+                throw new InvalidUserDataException("context.xml file does not exist at location ${getConfigFile().canonicalPath}")
             }
             else {
-                logger.info "context.xml = ${getConfigFile().getCanonicalPath()}"
+                LOGGER.info "context.xml = ${getConfigFile().canonicalPath}"
             }
         }
     }
@@ -148,7 +148,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
     void startTomcat() {
         try {
-            logger.debug "Starting Tomcat Server ..."
+            LOGGER.debug 'Starting Tomcat Server ...'
 
             setServer(createServer())
             getServer().setHome(getTemporaryDir().getAbsolutePath())
@@ -161,8 +161,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             // Start server
             getServer().start()
 
-            logger.info "Started Tomcat Server"
-            logger.info "The Server is running at http://localhost:${getHttpPort()}${getServer().getContext().path}"
+            LOGGER.lifecycle 'Started Tomcat Server'
+            LOGGER.lifecycle "The Server is running at http://localhost:${getHttpPort()}${getServer().getContext().path}"
 
             Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
             shutdownMonitor.start()
@@ -172,11 +172,11 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             }
         }
         catch(Exception e) {
-            throw new GradleException("An error occurred starting the Tomcat server.", e)
+            throw new GradleException('An error occurred starting the Tomcat server.', e)
         }
         finally {
             if(!daemon) {
-                logger.info "Tomcat server exiting."
+                LOGGER.info 'Tomcat server exiting.'
             }
         }
     }

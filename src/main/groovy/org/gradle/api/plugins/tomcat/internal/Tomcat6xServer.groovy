@@ -72,7 +72,7 @@ class Tomcat6xServer implements TomcatServer {
 
     @Override
     void configureContainer(int port, String uriEncoding) {
-        Host localHost = server.createHost("localHost", new File(".").getAbsolutePath())
+        Host localHost = server.createHost('localHost', new File('.').absolutePath)
         localHost.addChild(context)
 
         // Create engine
@@ -91,9 +91,9 @@ class Tomcat6xServer implements TomcatServer {
         Engine engine = server.createEngine()
 
         engine.with {
-            setName "localEngine"
+            setName 'localEngine'
             addChild localHost
-            setDefaultHost localHost.getName()
+            setDefaultHost localHost.name
         }
 
         server.addEngine(engine)
@@ -114,7 +114,7 @@ class Tomcat6xServer implements TomcatServer {
     @Override
     void configureDefaultWebXml(File webDefaultXml) {
         if(webDefaultXml) {
-            context.setDefaultWebXml(webDefaultXml.getAbsolutePath())
+            context.setDefaultWebXml(webDefaultXml.absolutePath)
         }
         else {
             configureDefaultServlet()
@@ -129,16 +129,16 @@ class Tomcat6xServer implements TomcatServer {
         Wrapper defaultServlet = context.createWrapper()
 
         defaultServlet.with {
-            setName "default"
-            setServletClass "org.apache.catalina.servlets.DefaultServlet"
-            addInitParameter "debug", "0"
-            addInitParameter "listings", "false"
+            setName 'default'
+            setServletClass 'org.apache.catalina.servlets.DefaultServlet'
+            addInitParameter 'debug', '0'
+            addInitParameter 'listings', 'false'
             setLoadOnStartup 1
         }
 
 		context.with {
             addChild defaultServlet
-            addServletMapping "/", "default"
+            addServletMapping '/', 'default'
         }
     }
 
@@ -149,24 +149,24 @@ class Tomcat6xServer implements TomcatServer {
         Wrapper jspServlet = context.createWrapper()
 
         jspServlet.with {
-            setName "jsp"
-            setServletClass "org.apache.jasper.servlet.JspServlet"
-            addInitParameter "fork", "false"
-            addInitParameter "xpoweredBy", "false"
+            setName 'jsp'
+            setServletClass 'org.apache.jasper.servlet.JspServlet'
+            addInitParameter 'fork', 'false'
+            addInitParameter 'xpoweredBy', 'false'
             setLoadOnStartup 3
         }
 
 		context.with {
             addChild jspServlet
-            addServletMapping "*.jsp", "jsp"
-            addServletMapping "*.jspx", "jsp"
+            addServletMapping '*.jsp', 'jsp'
+            addServletMapping '*.jspx', 'jsp'
         }
     }
 
     @Override
     void setConfigFile(File configFile) {
         if(configFile) {
-            context.setConfigFile(configFile.getCanonicalPath())
+            context.setConfigFile(configFile.canonicalPath)
         }
     }
 
