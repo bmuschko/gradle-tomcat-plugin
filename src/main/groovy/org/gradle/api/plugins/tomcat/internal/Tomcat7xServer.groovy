@@ -67,6 +67,7 @@ class Tomcat7xServer implements TomcatServer {
     @Override
     void createContext(String fullContextPath, String webAppPath) {
         Context context = tomcat.addWebapp(null, fullContextPath, webAppPath)
+        context.setUnpackWAR(false)
         this.context = context
     }
 
