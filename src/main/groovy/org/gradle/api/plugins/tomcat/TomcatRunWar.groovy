@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory
  */
 class TomcatRunWar extends AbstractTomcatRunTask {
     static final Logger LOGGER = LoggerFactory.getLogger(TomcatRunWar.class)
-    private File webApp
+    File webApp
 
     @Override
     void validateConfiguration() {
@@ -50,11 +50,7 @@ class TomcatRunWar extends AbstractTomcatRunTask {
     }
 
     @InputFile
-    public File getWebApp() {
+    File getWebApp() {
         webApp
-    }
-
-    public void setWebApp(File webApp) {
-        this.webApp = webApp
     }
 }

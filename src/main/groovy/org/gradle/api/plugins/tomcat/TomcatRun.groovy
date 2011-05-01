@@ -18,9 +18,7 @@ package org.gradle.api.plugins.tomcat
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Optional
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -32,8 +30,8 @@ import org.slf4j.LoggerFactory
  */
 class TomcatRun extends AbstractTomcatRunTask {
     static final Logger LOGGER = LoggerFactory.getLogger(TomcatRun.class)
-    private FileCollection classpath
-    private File webAppSourceDirectory
+    FileCollection classpath
+    File webAppSourceDirectory
 
     @Override
     void validateConfiguration() {
@@ -80,20 +78,12 @@ class TomcatRun extends AbstractTomcatRunTask {
     }
 
     @InputFiles
-    public FileCollection getClasspath() {
+    FileCollection getClasspath() {
         classpath
     }
 
-    public void setClasspath(FileCollection classpath) {
-        this.classpath = classpath
-    }
-
     @InputDirectory
-    public File getWebAppSourceDirectory() {
+    File getWebAppSourceDirectory() {
         webAppSourceDirectory
-    }
-
-    public void setWebAppSourceDirectory(File webAppSourceDirectory) {
-        this.webAppSourceDirectory = webAppSourceDirectory
     }
 }

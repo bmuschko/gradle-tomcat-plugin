@@ -39,19 +39,19 @@ import org.gradle.api.tasks.TaskAction
  */
 abstract class AbstractTomcatRunTask extends ConventionTask {
     static final Logger LOGGER = Logging.getLogger(AbstractTomcatRunTask.class)
-    protected boolean reloadable
-    private String contextPath
-    private Integer httpPort
-    private Integer stopPort
-    private String stopKey
-    private File webDefaultXml
+    boolean reloadable
+    String contextPath
+    Integer httpPort
+    Integer stopPort
+    String stopKey
+    File webDefaultXml
     def server
-    private Realm realm
-    private Iterable<File> additionalRuntimeJars = new ArrayList<File>()
-    private String URIEncoding
-    private boolean daemon
-    private FileCollection serverClasspath
-    private File configFile
+    Realm realm
+    Iterable<File> additionalRuntimeJars = new ArrayList<File>()
+    String URIEncoding
+    boolean daemon
+    FileCollection serverClasspath
+    File configFile
 
     abstract void setWebApplicationContext()
 
@@ -188,108 +188,40 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         TomcatServerFactory.instance.tomcatServer
     }
 
-    def getServer() {
-        server
-    }
-
-    def setServer(server) {
-        this.server = server
-    }
-
-    public Realm getRealm() {
-        realm
-    }
-
-    public void setRealm(Realm realm) {
-        this.realm = realm
-    }
-
-    public String getContextPath() {
-        contextPath
-    }
-
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    public Integer getHttpPort() {
-        Integer httpPortSystemProperty = TomcatSystemProperty.getHttpPort()
+    Integer getHttpPort() {
+        Integer httpPortSystemProperty = TomcatSystemProperty.httpPort
         httpPortSystemProperty ? httpPortSystemProperty : httpPort
     }
 
-    public void setHttpPort(Integer httpPort) {
-        this.httpPort = httpPort
-    }
-
-    public Integer getStopPort() {
-        Integer stopPortSystemProperty = TomcatSystemProperty.getStopPort()
+    Integer getStopPort() {
+        Integer stopPortSystemProperty = TomcatSystemProperty.stopPort
         stopPortSystemProperty ? stopPortSystemProperty : stopPort
     }
 
-    public void setStopPort(Integer stopPort) {
-        this.stopPort = stopPort
-    }
-
-    public String getStopKey() {
-        String stopKeySystemProperty = TomcatSystemProperty.getStopKey()
+    String getStopKey() {
+        String stopKeySystemProperty = TomcatSystemProperty.stopKey
         stopKeySystemProperty ? stopKeySystemProperty : stopKey
     }
 
-    public void setStopKey(String stopKey) {
-        this.stopKey = stopKey
-    }
-
     @InputFile
     @Optional
-    public File getWebDefaultXml() {
+    File getWebDefaultXml() {
         webDefaultXml
     }
 
-    public void setWebDefaultXml(File webDefaultXml) {
-        this.webDefaultXml = webDefaultXml
-    }
-
     @InputFiles
-    public Iterable<File> getAdditionalRuntimeJars() {
+    Iterable<File> getAdditionalRuntimeJars() {
         additionalRuntimeJars
     }
 
-    public void setAdditionalRuntimeJars(Iterable<File> additionalRuntimeJars) {
-        this.additionalRuntimeJars = additionalRuntimeJars
-    }
-
     @Optional
-    public String getURIEncoding() {
+    String getURIEncoding() {
         URIEncoding
-    }
-
-    public void setURIEncoding(String URIEncoding) {
-        this.URIEncoding = URIEncoding
-    }
-
-    public boolean isDaemon() {
-        daemon
-    }
-
-    public void setDaemon(boolean daemon) {
-        this.daemon = daemon
-    }
-
-    public FileCollection getServerClasspath() {
-        serverClasspath
-    }
-
-    public void setServerClasspath(FileCollection serverClasspath) {
-        this.serverClasspath = serverClasspath
     }
 
     @InputFile
     @Optional
-    public File getConfigFile() {
+    File getConfigFile() {
         configFile
-    }
-
-    public void setConfigFile(File configFile) {
-        this.configFile = configFile
     }
 }
