@@ -17,7 +17,6 @@ package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.WarPluginConvention
 
@@ -88,10 +87,6 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatStop.group = WarPlugin.WEB_APP_GROUP
         tomcatStop.conventionMapping.map("stopPort") { tomcatConvention.stopPort }
         tomcatStop.conventionMapping.map("stopKey") { tomcatConvention.stopKey }
-    }
-
-    JavaPluginConvention getJavaConvention(Project project) {
-        project.convention.getPlugin(JavaPluginConvention.class)
     }
 
     WarPluginConvention getWarConvention(Project project) {
