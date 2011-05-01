@@ -16,7 +16,6 @@
 package org.gradle.api.plugins.tomcat.internal
 
 import org.apache.catalina.Context
-import org.apache.catalina.Loader
 import org.apache.catalina.loader.WebappLoader
 import org.apache.catalina.startup.Tomcat
 
@@ -28,7 +27,6 @@ import org.apache.catalina.startup.Tomcat
 class Tomcat7xServer implements TomcatServer {
     Tomcat tomcat
     Context context
-    Loader loader
 
     public Tomcat7xServer() {
         this.tomcat = new Tomcat()
@@ -55,13 +53,8 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
-    Loader createLoader(ClassLoader classLoader) {
-        loader = new WebappLoader(classLoader)
-    }
-
-    @Override
-    Loader getLoader() {
-        loader
+    void createLoader(ClassLoader classLoader) {
+        context.setLoader(new WebappLoader(classLoader))
     }
 
     @Override

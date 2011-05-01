@@ -15,10 +15,13 @@
  */
 package org.gradle.api.plugins.tomcat.internal
 
+import org.apache.catalina.Context
+import org.apache.catalina.Engine
+import org.apache.catalina.Host
+import org.apache.catalina.Wrapper
 import org.apache.catalina.connector.Connector
 import org.apache.catalina.loader.WebappLoader
 import org.apache.catalina.startup.Embedded
-import org.apache.catalina.*
 
 /**
  * Tomcat 6x server implementation.
@@ -28,7 +31,6 @@ import org.apache.catalina.*
 class Tomcat6xServer implements TomcatServer {
     Embedded server
     Context context
-    Loader loader
 
     public Tomcat6xServer() {
         this.server = new Embedded()
@@ -61,13 +63,8 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    Loader createLoader(ClassLoader classLoader) {
-        loader = new WebappLoader(classLoader)
-    }
-
-    @Override
-    Loader getLoader() {
-        loader
+    void createLoader(ClassLoader classLoader) {
+        context.setLoader(new WebappLoader(classLoader))
     }
 
     @Override

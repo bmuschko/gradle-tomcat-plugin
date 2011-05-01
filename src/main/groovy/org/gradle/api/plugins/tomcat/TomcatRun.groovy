@@ -75,7 +75,7 @@ class TomcatRun extends AbstractTomcatRunTask {
         LOGGER.info "web app loader classpath = ${getClasspath().asPath}"
       
         getClasspath().each { file ->
-            getServer().getLoader().addRepository(file.toURI().toURL().toString())
+            getServer().getContext().getLoader().addRepository(file.toURI().toURL().toString())
         }
     }
 
