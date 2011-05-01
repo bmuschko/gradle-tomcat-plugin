@@ -136,7 +136,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         setWebApplicationContext()
         getServer().createLoader(Thread.currentThread().getContextClassLoader())
 
-        for(File additionalRuntimeJar : getAdditionalRuntimeJars()) {
+        getAdditionalRuntimeJars().each { additionalRuntimeJar ->
             getServer().getContext().getLoader().addRepository(additionalRuntimeJar.toURI().toURL().toString())
         }
 
