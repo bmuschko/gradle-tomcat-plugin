@@ -1,0 +1,5 @@
+project(':embedded') {
+    dependencies {
+        compile gradleApi()
+    }
+}

@@ -1,64 +1,58 @@
-apply plugin: 'groovy'
-apply plugin: 'idea'
+dependsOnChildren()
 
-sourceCompatibility = 1.5
-targetCompatibility = 1.5
-version = '0.7'
-ant.property(environment: 'env')
-
-if(!ant.properties['env.GRADLE_HOME']) {
-    throw new Exception('Please set $GRADLE_HOME')
+allprojects {
+    apply plugin: 'groovy'
+    apply plugin: 'idea'
+    version = '0.7'
+    defaultTasks 'clean', 'build', 'uberjar'
 }
 
-def gradleHomeDir = System.getenv().get('GRADLE_HOME')
+subprojects {
+    def compatibilityVersion = 1.5
+    sourceCompatibility = compatibilityVersion
+    targetCompatibility = compatibilityVersion
+    configurations.compile.transitive = true
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    groovy 'org.codehaus.groovy:groovy:1.7.5'
-    compile gradleApi()
-
-    // Tomcat 6x
-    def tomcat6xVersion = '6.0.29'
-    compile "org.apache.tomcat:catalina:${tomcat6xVersion}",
-            "org.apache.tomcat:coyote:${tomcat6xVersion}",
-            "org.apache.tomcat:jasper:${tomcat6xVersion}"
-
-    // Tomcat 7x
-    def tomcat7xVersion = '7.0.11'
-    compile "org.apache.tomcat:tomcat-catalina:${tomcat7xVersion}",
-            "org.apache.tomcat:tomcat-coyote:${tomcat7xVersion}",
-    compile("org.apache.tomcat:tomcat-jasper:${tomcat7xVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    repositories {
+        mavenCentral()
     }
 
-    testCompile "junit:junit:4.+"
+    dependencies {
+        groovy 'org.codehaus.groovy:groovy:1.7.10'
+        testCompile 'junit:junit:4.+'
+    }
+
+    ideaProject {
+        javaVersion = '1.6'
+
+        withXml { provider ->
+            def node = provider.asNode()
+
+            // Use GIT
+            def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
+            vcsConfig.mapping[0].'@vcs' = 'Git'
+
+            // Set Gradle home
+            def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
+            gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
+        }
+    }
 }
 
-jar {
+task uberjar(type: Jar, dependsOn: subprojects.assemble) {
+    description = 'Creates Tomcat plugin uberjar'
+
+    subprojects.each { project ->
+        from({
+            project.configurations.archives.allArtifactFiles.collect { zipTree(it) }
+        })
+    }
+
     manifest {
         attributes 'Implementation-Title': 'Gradle Tomcat plugin',
                    'Implementation-Version': version,
-                   'Built-By': System.getProperty("user.name"),
+                   'Built-By': System.getProperty('user.name'),
                    'Built-Date': new Date(),
-                   'Built-JDK': System.getProperty("java.version")
-    }
-}
-
-ideaProject {
-    javaVersion = '1.6'
-  
-    withXml { provider ->
-        def node = provider.asNode()
-
-        // Use GIT
-        def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
-        vcsConfig.mapping[0].'@vcs' = 'Git'
-
-        // Set Gradle home
-        def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
-        gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradleHomeDir])
+                   'Built-JDK': System.getProperty('java.version')
     }
 }

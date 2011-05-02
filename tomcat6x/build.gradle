@@ -1,0 +1,10 @@
+project(':tomcat6x') {
+    dependencies {
+        def tomcatVersion = '6.0.29'
+
+        compile project(':embedded'),
+                "org.apache.tomcat:catalina:${tomcatVersion}",
+                "org.apache.tomcat:coyote:${tomcatVersion}",
+                "org.apache.tomcat:jasper:${tomcatVersion}"
+    }
+}
