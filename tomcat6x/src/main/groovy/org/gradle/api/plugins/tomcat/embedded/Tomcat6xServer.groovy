@@ -29,26 +29,26 @@ import org.apache.catalina.startup.Embedded
  * @author Benjamin Muschko
  */
 class Tomcat6xServer implements TomcatServer {
-    Embedded server
+    Embedded embedded
     Context context
 
     public Tomcat6xServer() {
-        this.server = new Embedded()
+        this.embedded = new Embedded()
     }
 
     @Override
     def getEmbedded() {
-        server
+        embedded
     }
 
     @Override
     void setHome(String home) {
-        server.setCatalinaHome(home)
+        embedded.setCatalinaHome(home)
     }
 
     @Override
     void setRealm(realm) {
-        server.setRealm(realm)
+        embedded.setRealm(realm)
     }
 
     @Override
@@ -58,7 +58,7 @@ class Tomcat6xServer implements TomcatServer {
 
     @Override
     void createContext(String fullContextPath, String webAppPath) {
-        Context context = server.createContext(fullContextPath, webAppPath)
+        Context context = embedded.createContext(fullContextPath, webAppPath)
         this.context = context
     }
 
@@ -69,7 +69,7 @@ class Tomcat6xServer implements TomcatServer {
 
     @Override
     void configureContainer(int port, String uriEncoding) {
-        Host localHost = server.createHost('localHost', new File('.').absolutePath)
+        Host localHost = embedded.createHost('localHost', new File('.').absolutePath)
         localHost.addChild(context)
 
         // Create engine
@@ -85,7 +85,7 @@ class Tomcat6xServer implements TomcatServer {
      * @param localHost host
      */
     void addEngineToServer(Host localHost) {
-        Engine engine = server.createEngine()
+        Engine engine = embedded.createEngine()
 
         engine.with {
             setName 'localEngine'
@@ -93,16 +93,16 @@ class Tomcat6xServer implements TomcatServer {
             setDefaultHost localHost.name
         }
 
-        server.addEngine(engine)
+        embedded.addEngine(engine)
     }
 
     /**
      * Adds connector to server
      */
     void addConnectorToServer(int port, String uriEncoding) {
-        Connector httpConnector = server.createConnector((InetAddress) null, port, false)
+        Connector httpConnector = embedded.createConnector((InetAddress) null, port, false)
         httpConnector.setURIEncoding uriEncoding ? uriEncoding : 'UTF-8'
-        server.addConnector(httpConnector)
+        embedded.addConnector(httpConnector)
     }
 
     /**
@@ -161,19 +161,19 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    void setConfigFile(File configFile) {
+    void setConfigFile(URL configFile) {
         if(configFile) {
-            context.setConfigFile(configFile.canonicalPath)
+            context.setConfigFile(configFile.path)
         }
     }
 
     @Override
     void start() {
-        server.start()
+        embedded.start()
     }
 
     @Override
     void stop() {
-        server.stop()
+        embedded.stop()
     }
 }

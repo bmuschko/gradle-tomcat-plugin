@@ -25,8 +25,6 @@ import org.gradle.api.internal.ConventionTask
 import org.gradle.api.internal.DefaultClassPathRegistry
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
-import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
@@ -39,6 +37,7 @@ import org.gradle.api.tasks.TaskAction
  */
 abstract class AbstractTomcatRunTask extends ConventionTask {
     static final Logger LOGGER = Logging.getLogger(AbstractTomcatRunTask.class)
+    static final CONFIG_FILE = 'META-INF/context.xml'
     boolean reloadable
     String contextPath
     Integer httpPort
@@ -52,6 +51,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     boolean daemon
     FileCollection serverClasspath
     File configFile
+    URL resolvedConfigFile
 
     abstract void setWebApplicationContext()
 
@@ -124,7 +124,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
                 throw new InvalidUserDataException("context.xml file does not exist at location ${getConfigFile().canonicalPath}")
             }
             else {
-                LOGGER.info "context.xml = ${getConfigFile().canonicalPath}"
+                setResolvedConfigFile(getConfigFile().toURI().toURL())
+                LOGGER.info "context.xml = ${getResolvedConfigFile().toString()}"
             }
         }
     }
@@ -142,7 +143,10 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
         getServer().getContext().setReloadable(reloadable)
         getServer().configureDefaultWebXml(getWebDefaultXml())
-        getServer().setConfigFile(getConfigFile())
+
+        if(getResolvedConfigFile()) {
+            getServer().setConfigFile(getResolvedConfigFile())
+        }
     }
 
     void startTomcat() {

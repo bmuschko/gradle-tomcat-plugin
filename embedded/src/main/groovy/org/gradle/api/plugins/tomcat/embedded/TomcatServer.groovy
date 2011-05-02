@@ -29,7 +29,7 @@ interface TomcatServer {
     void createContext(String fullContextPath, String webAppPath)
     void configureContainer(int port, String uriEncoding)
     void configureDefaultWebXml(File webDefaultXml)
-    void setConfigFile(File configFile)
+    void setConfigFile(URL configFile)
     void start()
     void stop()
 }

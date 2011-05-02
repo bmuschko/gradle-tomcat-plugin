@@ -15,6 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
@@ -57,18 +59,19 @@ class TomcatRunWarTest {
 
     @Test(expected = InvalidUserDataException.class)
     public void testValidateConfigurationForNonExistentWebApp() {
-        tomcatRunWar.setWebApp new File(testDir, "webApp")
+        tomcatRunWar.setWebApp new File(testDir, "webApp.war")
         tomcatRunWar.validateConfiguration()
     }
 
     @Test
     public void testValidateConfigurationForExistentWebApp() {
         File webAppDir = createWebAppDir()
-        tomcatRunWar.setWebApp webAppDir
+        File war = createWar(webAppDir)
+        tomcatRunWar.setWebApp war
         tomcatRunWar.validateConfiguration()
         assert tomcatRunWar.getWebDefaultXml() == null
         assert tomcatRunWar.getConfigFile() == null
-        assert tomcatRunWar.getWebApp() == webAppDir
+        assert tomcatRunWar.getWebApp() == war
     }
 
     @Test(expected = InvalidUserDataException.class)
@@ -80,13 +83,14 @@ class TomcatRunWarTest {
     @Test
     public void testValidateConfigurationForExistentWebDefaultXml() {
         File webAppDir = createWebAppDir()
+        File war = createWar(webAppDir)
         File webDefaultXml = createWebDefaultXml()
-        tomcatRunWar.setWebApp webAppDir
+        tomcatRunWar.setWebApp war
         tomcatRunWar.setWebDefaultXml webDefaultXml
         tomcatRunWar.validateConfiguration()
         assert tomcatRunWar.getWebDefaultXml() == webDefaultXml
         assert tomcatRunWar.getConfigFile() == null
-        assert tomcatRunWar.getWebApp() == webAppDir
+        assert tomcatRunWar.getWebApp() == war
     }
 
     @Test(expected = InvalidUserDataException.class)
@@ -98,13 +102,14 @@ class TomcatRunWarTest {
     @Test
     public void testValidateConfigurationForExistentConfigFile() {
         File webAppDir = createWebAppDir()
+        File war = createWar(webAppDir)
         File configFile = createConfigFile()
-        tomcatRunWar.setWebApp webAppDir
+        tomcatRunWar.setWebApp war
         tomcatRunWar.setConfigFile configFile
         tomcatRunWar.validateConfiguration()
         assert tomcatRunWar.getWebDefaultXml() == null
         assert tomcatRunWar.getConfigFile() == configFile
-        assert tomcatRunWar.getWebApp() == webAppDir
+        assert tomcatRunWar.getWebApp() == war
     }
 
     @Test
@@ -112,7 +117,7 @@ class TomcatRunWarTest {
         File webAppDir = createWebAppDir()
         File configFile = createConfigFile()
         String contextPath = "/app"
-        TomcatServer server = new org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer()
+        TomcatServer server = new Tomcat6xServer()
         tomcatRunWar.setServer server
         tomcatRunWar.setContextPath contextPath
         tomcatRunWar.setWebApp webAppDir
@@ -121,7 +126,6 @@ class TomcatRunWarTest {
         assert tomcatRunWar.getServer() == server
         assert tomcatRunWar.getServer().getContext().getDocBase() == webAppDir.getCanonicalPath()
         assert tomcatRunWar.getServer().getContext().getPath() == contextPath
-        assert tomcatRunWar.getServer().getContext().getConfigFile() == configFile.getCanonicalPath()
     }
 
     @Test
@@ -129,7 +133,7 @@ class TomcatRunWarTest {
         File webAppDir = createWebAppDir()
         File configFile = createConfigFile()
         String contextPath = "app"
-        TomcatServer server = new org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer()
+        TomcatServer server = new Tomcat6xServer()
         tomcatRunWar.setServer server
         tomcatRunWar.setContextPath contextPath
         tomcatRunWar.setWebApp webAppDir
@@ -138,7 +142,6 @@ class TomcatRunWarTest {
         assert tomcatRunWar.getServer() == server
         assert tomcatRunWar.getServer().getContext().getDocBase() == webAppDir.getCanonicalPath()
         assert tomcatRunWar.getServer().getContext().getPath() == "/" + contextPath
-        assert tomcatRunWar.getServer().getContext().getConfigFile() == configFile.getCanonicalPath()
     }
 
     private File createWebAppDir() {
@@ -150,6 +153,33 @@ class TomcatRunWarTest {
         }
 
         webAppDir
+    }
+
+    private File createWar(File webAppDir) {
+        File war = new File(webAppDir, "test.war")
+        File zippedFile = new File(webAppDir, "entry.txt")
+        boolean success = zippedFile.createNewFile()
+
+        if(!success) {
+            fail "Unable to create test file for WAR"
+        }
+
+        ZipOutputStream out = null
+
+        try {
+            out = new ZipOutputStream(new FileOutputStream(war))
+            out.putNextEntry(new ZipEntry(zippedFile.canonicalPath))
+        }
+        catch(IOException e) {
+            fail "Unable to create WAR"
+        }
+        finally {
+            if(out) {
+                out.close()
+            }
+        }
+
+        war
     }
 
     private File createWebDefaultXml() {

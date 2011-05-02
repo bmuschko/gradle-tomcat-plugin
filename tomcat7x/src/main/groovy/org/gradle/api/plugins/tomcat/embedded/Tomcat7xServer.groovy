@@ -81,9 +81,9 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
-    void setConfigFile(File configFile) {
+    void setConfigFile(URL configFile) {
         if(configFile) {
-            context.setConfigFile(configFile.toURI().toURL())
+            context.setConfigFile(configFile)
         }
     }
 

@@ -17,13 +17,13 @@ package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
+import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
+import org.gradle.api.plugins.tomcat.embedded.TomcatServer
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import static org.junit.Assert.fail
-import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
-import org.gradle.api.plugins.tomcat.embedded.TomcatServer
 
 /**
  * Test case for TomcatRun task.
@@ -114,7 +114,7 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
-        assert tomcatRun.getConfigFile() == defaultConfigFile
+        assert tomcatRun.getResolvedConfigFile().path == defaultConfigFile.toURI().toURL().path
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
     }
 
@@ -122,7 +122,7 @@ class TomcatRunTest {
     public void testSetWebApplicationContextForFullContextPath() {
         File webAppSourceDir = createWebAppSourceDirectory()
         String contextPath = "/app"
-        TomcatServer server = new org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer()
+        TomcatServer server = new Tomcat6xServer()
         tomcatRun.setServer server
         tomcatRun.setContextPath contextPath
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
@@ -136,7 +136,7 @@ class TomcatRunTest {
     public void testSetWebApplicationContextForContextPathWithoutLeadingSlash() {
         File webAppSourceDir = createWebAppSourceDirectory()
         String contextPath = "app"
-        TomcatServer server = new org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer()
+        TomcatServer server = new Tomcat6xServer()
         tomcatRun.setServer server
         tomcatRun.setContextPath contextPath
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
@@ -150,7 +150,7 @@ class TomcatRunTest {
     public void testConfigureWebApplication() {
         File webAppSourceDir = createWebAppSourceDirectory()
         String contextPath = "app"
-        TomcatServer server = new org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer()
+        TomcatServer server = new Tomcat6xServer()
         tomcatRun.setServer server
         tomcatRun.setContextPath contextPath
         tomcatRun.setWebAppSourceDirectory webAppSourceDir

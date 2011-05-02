@@ -52,12 +52,12 @@ class TomcatRun extends AbstractTomcatRunTask {
             throw new InvalidUserDataException('Webapp source directory does not exist', e)
         }
 
-        File defaultConfigFile = new File(getWebAppSourceDirectory(), '/META-INF/context.xml')
+        File defaultConfigFile = new File(getWebAppSourceDirectory(), "/${CONFIG_FILE}")
 
         // If context.xml wasn't provided check the default location
         if(!getConfigFile() && defaultConfigFile.exists()){
-            setConfigFile(defaultConfigFile)
-            LOGGER.info "context.xml = ${getConfigFile().canonicalPath}"
+            setResolvedConfigFile(defaultConfigFile.toURI().toURL())
+            LOGGER.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
     }
 
