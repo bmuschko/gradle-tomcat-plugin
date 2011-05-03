@@ -1,7 +1,8 @@
 # Gradle Tomcat plugin
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
-Gradle build. It extends the War plugin. At the moment only Tomcat version 6.x is supported.
+Gradle build. It extends the [War plugin|http://www.gradle.org/war_plugin.html]. At the moment the Tomcat versions 6.x
+and 7.x are supported.
 
 ## Usage
 
@@ -10,8 +11,10 @@ To use the Tomcat plugin, include in your build script:
     apply plugin: 'tomcat'
 
 The plugin JAR and depending Tomcat runtime libraries need to be defined in the classpath of your build script. You can
-either get the plugin from the GitHub download section or upload it to your local repository. The following code snippet
-shows an example:
+either get the plugin from the GitHub download section or upload it to your local repository. The Tomcat version is
+automatically being resolved by the plugin. Make sure you don't mix up Tomcat libraries of different versions.
+
+**Tomcat 6.x:**
 
     buildscript {
 	    repositories {
@@ -27,7 +30,29 @@ shows an example:
             classpath "org.apache.tomcat:catalina:${tomcatVersion}",
                       "org.apache.tomcat:coyote:${tomcatVersion}",
                       "org.apache.tomcat:jasper:${tomcatVersion}"
-            classpath ':gradle-tomcat-plugin:0.6'
+            classpath ':gradle-tomcat-plugin:0.7'
+        }
+    }
+
+**Tomcat 7.x:**
+
+    buildscript {
+	    repositories {
+		    add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+    		    name = "GitHub"
+    		    addArtifactPattern 'http://cloud.github.com/downloads/bmuschko/gradle-tomcat-plugin/[module]-[revision].[ext]'
+  		    }
+            mavenCentral()
+        }
+
+	    dependencies {
+		    def tomcatVersion = '7.0.11'
+            classpath "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+                      "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+            classpath("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+                exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+            }
+            classpath ':gradle-tomcat-plugin:0.7'
         }
     }
 
@@ -61,7 +86,8 @@ and `org.apache.jasper.servlet.JspServlet` will be set up.
 * `URIEncoding`: Specifies the character encoding used to decode the URI bytes by the HTTP Connector (defaults to 'UTF-8').
 * `daemon`: Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
 server has started. When false, this task blocks until the Tomcat server is stopped (defaults to false).
-* `configFile`: The path of the Tomcat context XML file (defaults to `src/main/webapp/META-INF/context.xml`).
+* `configFile`: The path to the Tomcat context XML file (defaults to `src/main/webapp/META-INF/context.xml` for `tomcatRun`,
+defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
 
 ## System properties
 
