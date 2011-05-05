@@ -5,7 +5,7 @@
 * Embedded Tomcat runs in its own classloader to avoid library conflicts with provided Gradle plugins.
 * Added unit tests.
 
- ### Version 0.6 (March 30, 2011)
+### Version 0.6 (March 30, 2011)
 
 * Support configurable context.xml - [Issue 6](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/6).
 
