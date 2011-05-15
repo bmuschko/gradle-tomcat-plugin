@@ -25,6 +25,8 @@ import org.gradle.api.internal.ConventionTask
 import org.gradle.api.internal.DefaultClassPathRegistry
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
+import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
@@ -167,7 +169,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             LOGGER.lifecycle 'Started Tomcat Server'
             LOGGER.lifecycle "The Server is running at http://localhost:${getHttpPort()}${getServer().getContext().path}"
 
-            Thread shutdownMonitor = new org.gradle.api.plugins.tomcat.internal.ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
+            Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
             shutdownMonitor.start()
 
             if(!daemon) {
@@ -189,21 +191,21 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     def createServer() {
-        org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory.instance.tomcatServer
+        TomcatServerFactory.instance.tomcatServer
     }
 
     Integer getHttpPort() {
-        Integer httpPortSystemProperty = org.gradle.api.plugins.tomcat.TomcatSystemProperty.httpPort
+        Integer httpPortSystemProperty = TomcatSystemProperty.httpPort
         httpPortSystemProperty ? httpPortSystemProperty : httpPort
     }
 
     Integer getStopPort() {
-        Integer stopPortSystemProperty = org.gradle.api.plugins.tomcat.TomcatSystemProperty.stopPort
+        Integer stopPortSystemProperty = TomcatSystemProperty.stopPort
         stopPortSystemProperty ? stopPortSystemProperty : stopPort
     }
 
     String getStopKey() {
-        String stopKeySystemProperty = org.gradle.api.plugins.tomcat.TomcatSystemProperty.stopKey
+        String stopKeySystemProperty = TomcatSystemProperty.stopKey
         stopKeySystemProperty ? stopKeySystemProperty : stopKey
     }
 

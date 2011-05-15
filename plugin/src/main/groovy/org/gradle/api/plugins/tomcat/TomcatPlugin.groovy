@@ -38,7 +38,7 @@ class TomcatPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         project.plugins.apply(WarPlugin.class)
-        org.gradle.api.plugins.tomcat.TomcatPluginConvention tomcatConvention = new org.gradle.api.plugins.tomcat.TomcatPluginConvention()
+        TomcatPluginConvention tomcatConvention = new TomcatPluginConvention()
         project.convention.plugins.tomcat = tomcatConvention
 
         configureMappingRules(project, tomcatConvention)
@@ -47,13 +47,13 @@ class TomcatPlugin implements Plugin<Project> {
         configureTomcatStop(project, tomcatConvention)
     }
 
-    private void configureMappingRules(final Project project, final org.gradle.api.plugins.tomcat.TomcatPluginConvention tomcatConvention) {
+    private void configureMappingRules(final Project project, final TomcatPluginConvention tomcatConvention) {
         project.tasks.withType(AbstractTomcatRunTask.class).whenTaskAdded { AbstractTomcatRunTask abstractTomcatRunTask ->
             configureAbstractTomcatTask(project, tomcatConvention, abstractTomcatRunTask)        
         }
     }
 
-    private void configureAbstractTomcatTask(final Project project, final org.gradle.api.plugins.tomcat.TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
+    private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
         tomcatTask.daemon = false
         tomcatTask.reloadable = true
         tomcatTask.conventionMapping.map('serverClasspath') { project.buildscript.configurations.getByName(CLASSPATH).asFileTree }
@@ -64,29 +64,29 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureTomcatRun(final Project project) {
-        project.tasks.withType(org.gradle.api.plugins.tomcat.TomcatRun.class).whenTaskAdded { org.gradle.api.plugins.tomcat.TomcatRun tomcatRun ->
+        project.tasks.withType(TomcatRun.class).whenTaskAdded { TomcatRun tomcatRun ->
             tomcatRun.conventionMapping.map(CLASSPATH) { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
             tomcatRun.conventionMapping.map('webAppSourceDirectory') { getWarConvention(project).webAppDir }
         }
 
-        org.gradle.api.plugins.tomcat.TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN_TASK_NAME, org.gradle.api.plugins.tomcat.TomcatRun.class)
+        TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN_TASK_NAME, TomcatRun.class)
         tomcatRun.description = 'Uses your files as and where they are and deploys them to Tomcat.'
         tomcatRun.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatRunWar(final Project project) {
-        project.tasks.withType(org.gradle.api.plugins.tomcat.TomcatRunWar.class).whenTaskAdded { org.gradle.api.plugins.tomcat.TomcatRunWar tomcatRunWar ->
+        project.tasks.withType(TomcatRunWar.class).whenTaskAdded { TomcatRunWar tomcatRunWar ->
             tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME)
             tomcatRunWar.conventionMapping.map('webApp') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
         }
 
-        org.gradle.api.plugins.tomcat.TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR_TASK_NAME, org.gradle.api.plugins.tomcat.TomcatRunWar.class)
+        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar.class)
         tomcatRunWar.description = 'Assembles the webapp into a war and deploys it to Tomcat.'
         tomcatRunWar.group = WarPlugin.WEB_APP_GROUP
     }
 
-    private void configureTomcatStop(final Project project, final org.gradle.api.plugins.tomcat.TomcatPluginConvention tomcatConvention) {
-        org.gradle.api.plugins.tomcat.TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP_TASK_NAME, org.gradle.api.plugins.tomcat.TomcatStop.class)
+    private void configureTomcatStop(final Project project, final TomcatPluginConvention tomcatConvention) {
+        TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP_TASK_NAME, TomcatStop.class)
         tomcatStop.description = 'Stops Tomcat.'
         tomcatStop.group = WarPlugin.WEB_APP_GROUP
         tomcatStop.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
