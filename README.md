@@ -96,3 +96,39 @@ The convention properties can be overridden by system properties:
 * `tomcat.http.port`: Overrides the convention property `httpPort`.
 * `tomcat.stop.port`: Overrides the convention property `stopPort`.
 * `tomcat.stop.key`: Overrides the convention property `stopKey`.
+
+## FAQ
+
+**I get a compile exception when calling a JSP. Is there something I am missing?**
+
+The exception you might see is probably similar to this one: `org.apache.jasper.JasperException: Unable to compile class for JSP`.
+Tomcat 7.x requires you to have [Eclipse ECJ 3.6.x](http://www.eclipse.org/jdt/core/) in your the classpath. However, this
+version of the dependency does not exist in Maven Central. You'll have to download that dependency and put it in your own
+repository or define a repository on your local disk where you can drop it in. Here's an example:
+
+    repositories {
+         flatDir name: 'localRepository', dirs: 'lib'
+    }
+
+**Why do I get a `java.lang.ClassCastException` on `javax.servlet.Servlet`?**
+
+Tomcat is very sensitive to having multiple versions of the dependencies `javax.servlet:servlet-api` and `javax.servlet:jsp-api`
+in its classpath. By default they already get pulled in as transitive dependencies of the embedded Tomcat libraries. The
+exception you might see looks similar to this one:
+
+    java.lang.ClassCastException: org.springframework.web.servlet.DispatcherServlet cannot be cast to javax.servlet.Servlet
+            at org.apache.catalina.core.StandardWrapper.loadServlet(StandardWrapper.java:1062)
+            at org.apache.catalina.core.StandardWrapper.load(StandardWrapper.java:1010)
+            at org.apache.catalina.core.StandardContext.loadOnStartup(StandardContext.java:4935)
+            at org.apache.catalina.core.StandardContext$3.call(StandardContext.java:5262)
+            at org.apache.catalina.core.StandardContext$3.call(StandardContext.java:5257)
+            at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+            at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+            at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+            at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+            at java.lang.Thread.run(Thread.java:662)
+
+To fix this make sure you define your JSP and Servlet module dependencies with the scope `providedCompile` like this:
+
+    providedCompile 'javax.servlet:servlet-api:2.5',
+                    'javax.servlet:jsp-api:2.0'
