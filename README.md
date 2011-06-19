@@ -17,42 +17,42 @@ automatically being resolved by the plugin. Make sure you don't mix up Tomcat li
 **Tomcat 6.x:**
 
     buildscript {
-	    repositories {
-		    add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-    		    name = "GitHub"
-    		    addArtifactPattern 'http://cloud.github.com/downloads/bmuschko/gradle-tomcat-plugin/[module]-[revision].[ext]'
-  		    }
+        repositories {
+            add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+                name = 'GitHub'
+                addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
+            }
             mavenCentral()
         }
 
-	    dependencies {
-		    def tomcatVersion = '6.0.29'
+        dependencies {
+            def tomcatVersion = '6.0.29'
             classpath "org.apache.tomcat:catalina:${tomcatVersion}",
                       "org.apache.tomcat:coyote:${tomcatVersion}",
                       "org.apache.tomcat:jasper:${tomcatVersion}"
-            classpath ':gradle-tomcat-plugin:0.7'
+            classpath 'bmuschko:gradle-tomcat-plugin:0.7'
         }
     }
 
 **Tomcat 7.x:**
 
     buildscript {
-	    repositories {
-		    add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-    		    name = "GitHub"
-    		    addArtifactPattern 'http://cloud.github.com/downloads/bmuschko/gradle-tomcat-plugin/[module]-[revision].[ext]'
-  		    }
+        repositories {
+            add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+                name = 'GitHub'
+                addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
+            }
             mavenCentral()
         }
 
-	    dependencies {
-		    def tomcatVersion = '7.0.11'
+        dependencies {
+            def tomcatVersion = '7.0.11'
             classpath "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
                       "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
             classpath("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
                 exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
             }
-            classpath ':gradle-tomcat-plugin:0.7'
+            classpath 'bmuschko:gradle-tomcat-plugin:0.7'
         }
     }
 
