@@ -15,25 +15,19 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import org.apache.catalina.Context
-import org.apache.catalina.Engine
-import org.apache.catalina.Host
-import org.apache.catalina.Wrapper
-import org.apache.catalina.connector.Connector
-import org.apache.catalina.loader.WebappLoader
-import org.apache.catalina.startup.Embedded
-
 /**
  * Tomcat 6x server implementation.
  *
  * @author Benjamin Muschko
  */
 class Tomcat6xServer implements TomcatServer {
-    Embedded embedded
-    Context context
+    final embedded
+    def context
 
     public Tomcat6xServer() {
-        this.embedded = new Embedded()
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        Class serverClass = classLoader.loadClass('org.apache.catalina.startup.Embedded')
+        this.embedded = serverClass.newInstance()
     }
 
     @Override
@@ -43,33 +37,32 @@ class Tomcat6xServer implements TomcatServer {
 
     @Override
     void setHome(String home) {
-        embedded.setCatalinaHome(home)
+        embedded.catalinaHome = home
     }
 
     @Override
     void setRealm(realm) {
-        embedded.setRealm(realm)
+        embedded.realm = realm
     }
 
     @Override
-    Context getContext() {
+    def getContext() {
         context
     }
 
     @Override
     void createContext(String fullContextPath, String webAppPath) {
-        Context context = embedded.createContext(fullContextPath, webAppPath)
-        this.context = context
+        context = embedded.createContext(fullContextPath, webAppPath)
     }
 
     @Override
     void createLoader(ClassLoader classLoader) {
-        context.setLoader(new WebappLoader(classLoader))
+        context.loader = embedded.createLoader(classLoader)
     }
 
     @Override
     void configureContainer(int port, String uriEncoding) {
-        Host localHost = embedded.createHost('localHost', new File('.').absolutePath)
+        def localHost = embedded.createHost('localHost', new File('.').absolutePath)
         localHost.addChild(context)
 
         // Create engine
@@ -84,8 +77,8 @@ class Tomcat6xServer implements TomcatServer {
      *
      * @param localHost host
      */
-    void addEngineToServer(Host localHost) {
-        Engine engine = embedded.createEngine()
+    void addEngineToServer(localHost) {
+        def engine = embedded.createEngine()
 
         engine.with {
             setName 'localEngine'
@@ -100,8 +93,8 @@ class Tomcat6xServer implements TomcatServer {
      * Adds connector to server
      */
     void addConnectorToServer(int port, String uriEncoding) {
-        Connector httpConnector = embedded.createConnector((InetAddress) null, port, false)
-        httpConnector.setURIEncoding uriEncoding ? uriEncoding : 'UTF-8'
+        def httpConnector = embedded.createConnector((InetAddress) null, port, false)
+        httpConnector.URIEncoding =  uriEncoding ? uriEncoding : 'UTF-8'
         embedded.addConnector(httpConnector)
     }
 
@@ -111,7 +104,7 @@ class Tomcat6xServer implements TomcatServer {
     @Override
     void configureDefaultWebXml(File webDefaultXml) {
         if(webDefaultXml) {
-            context.setDefaultWebXml(webDefaultXml.absolutePath)
+            context.defaultWebXml = webDefaultXml.absolutePath
         }
         else {
             configureDefaultServlet()
@@ -123,7 +116,7 @@ class Tomcat6xServer implements TomcatServer {
      * Configures default servlet and adds it to the context.
      */
     void configureDefaultServlet() {
-        Wrapper defaultServlet = context.createWrapper()
+        def defaultServlet = context.createWrapper()
 
         defaultServlet.with {
             setName 'default'
@@ -133,7 +126,7 @@ class Tomcat6xServer implements TomcatServer {
             setLoadOnStartup 1
         }
 
-		context.with {
+        context.with {
             addChild defaultServlet
             addServletMapping '/', 'default'
         }
@@ -143,7 +136,7 @@ class Tomcat6xServer implements TomcatServer {
      * Configures JSP servlet and adds it to the context.
      */
     void configureJspServlet() {
-        Wrapper jspServlet = context.createWrapper()
+        def jspServlet = context.createWrapper()
 
         jspServlet.with {
             setName 'jsp'
@@ -153,7 +146,7 @@ class Tomcat6xServer implements TomcatServer {
             setLoadOnStartup 3
         }
 
-		context.with {
+        context.with {
             addChild jspServlet
             addServletMapping '*.jsp', 'jsp'
             addServletMapping '*.jspx', 'jsp'
@@ -163,7 +156,7 @@ class Tomcat6xServer implements TomcatServer {
     @Override
     void setConfigFile(URL configFile) {
         if(configFile) {
-            context.setConfigFile(configFile.path)
+            context.configFile = configFile.path
         }
     }
 

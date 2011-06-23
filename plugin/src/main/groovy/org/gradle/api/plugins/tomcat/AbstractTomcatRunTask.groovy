@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.apache.catalina.Realm
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
@@ -47,11 +46,12 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     String stopKey
     File webDefaultXml
     def server
-    Realm realm
+    def realm
     Iterable<File> additionalRuntimeJars = new ArrayList<File>()
     String URIEncoding
     boolean daemon
-    FileCollection serverClasspath
+    FileCollection buildscriptClasspath
+    FileCollection tomcatClasspath
     File configFile
     URL resolvedConfigFile
 
@@ -82,8 +82,9 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         ClassPathRegistry classPathRegistry = new DefaultClassPathRegistry()
         URL[] runtimeClasspath = classPathRegistry.getClassPathUrls('GRADLE_RUNTIME')
         ClassLoader rootClassLoader = ClassLoader.systemClassLoader.parent
-        URLClassLoader gradleClassloader = new URLClassLoader(runtimeClasspath, rootClassLoader)
-        new URLClassLoader(toURLArray(getServerClasspath().files), gradleClassloader)
+        URLClassLoader groovyClassloader = new URLClassLoader(filterGroovyAllLibrary(runtimeClasspath), rootClassLoader)
+        URLClassLoader pluginClassloader = new URLClassLoader(toURLArray(getBuildscriptClasspath().files), groovyClassloader)
+        new URLClassLoader(toURLArray(getTomcatClasspath().files), pluginClassloader)
     }
 
     URL[] toURLArray(Collection<File> files) {
@@ -99,6 +100,17 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         }
 
         urls.toArray(new URL[urls.size()]);
+    }
+
+    URL[] filterGroovyAllLibrary(URL[] runtimeClasspath) {
+        for(URL url : runtimeClasspath) {
+            String filenameWithoutPath = url.file.substring(url.file.lastIndexOf('/') + 1, url.file.length())
+            if(filenameWithoutPath.startsWith('groovy-all-')) {
+                return [url] as URL[]
+            }
+        }
+
+        throw new GradleException("Groovy libraries could not be found in the Gradle runtime classpath!")
     }
 
     private void validateConfigurationAndStartTomcat() {
@@ -137,7 +149,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
      */
     void configureWebApplication() {
         setWebApplicationContext()
-        getServer().createLoader(Thread.currentThread().getContextClassLoader())
+        getServer().createLoader(Thread.currentThread().contextClassLoader)
 
         getAdditionalRuntimeJars().each { additionalRuntimeJar ->
             getServer().getContext().getLoader().addRepository(additionalRuntimeJar.toURI().toURL().toString())

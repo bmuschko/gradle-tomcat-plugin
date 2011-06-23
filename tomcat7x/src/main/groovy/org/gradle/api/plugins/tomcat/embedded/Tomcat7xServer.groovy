@@ -15,21 +15,19 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import org.apache.catalina.Context
-import org.apache.catalina.loader.WebappLoader
-import org.apache.catalina.startup.Tomcat
-
 /**
  * Tomcat 7x server implementation.
  *
  * @author Benjamin Muschko
  */
 class Tomcat7xServer implements TomcatServer {
-    Tomcat tomcat
-    Context context
+    final tomcat
+    def context
 
     public Tomcat7xServer() {
-        this.tomcat = new Tomcat()
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        Class serverClass = classLoader.loadClass('org.apache.catalina.startup.Tomcat')
+        this.tomcat = serverClass.newInstance()
     }
 
     @Override
@@ -39,35 +37,36 @@ class Tomcat7xServer implements TomcatServer {
 
     @Override
     void setHome(String home) {
-        tomcat.setBaseDir(home)
+        tomcat.baseDir = home
     }
 
     @Override
     void setRealm(realm) {
-        tomcat.setDefaultRealm(realm)
+        tomcat.defaultRealm = realm
     }
 
     @Override
-    Context getContext() {
+    def getContext() {
         context
     }
 
     @Override
     void createLoader(ClassLoader classLoader) {
-        context.setLoader(new WebappLoader(classLoader))
+        Class webappLoader = classLoader.loadClass('org.apache.catalina.loader.WebappLoader')
+        context.loader = webappLoader.newInstance(classLoader)
     }
 
     @Override
     void createContext(String fullContextPath, String webAppPath) {
-        Context context = tomcat.addWebapp(null, fullContextPath, webAppPath)
-        context.setUnpackWAR(false)
+        def context = tomcat.addWebapp(null, fullContextPath, webAppPath)
+        context.unpackWAR = false
         this.context = context
     }
 
     @Override
     void configureContainer(int port, String uriEncoding) {
-        tomcat.setPort(port)
-        tomcat.connector.setURIEncoding(uriEncoding)
+        tomcat.port = port
+        tomcat.connector.URIEncoding = uriEncoding
 
         // Enable JNDI naming by default
         tomcat.enableNaming()
@@ -76,14 +75,14 @@ class Tomcat7xServer implements TomcatServer {
     @Override
     void configureDefaultWebXml(File webDefaultXml) {
         if(webDefaultXml) {
-            context.setDefaultWebXml(webDefaultXml.absolutePath)
+            context.defaultWebXml = webDefaultXml.absolutePath
         }
     }
 
     @Override
     void setConfigFile(URL configFile) {
         if(configFile) {
-            context.setConfigFile(configFile)
+            context.configFile = configFile
         }
     }
 

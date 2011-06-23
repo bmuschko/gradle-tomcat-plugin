@@ -34,10 +34,15 @@ class TomcatPlugin implements Plugin<Project> {
     static final String HTTP_PORT_CONVENTION = 'httpPort'
     static final String STOP_PORT_CONVENTION = 'stopPort'
     static final String STOP_KEY_CONVENTION = 'stopKey'
+    static final String TOMCAT_CONFIGURATION_NAME = 'tomcat'
 
     @Override
     void apply(Project project) {
         project.plugins.apply(WarPlugin.class)
+
+        project.configurations.add(TOMCAT_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
+               .setDescription('The Tomcat libraries to be used for this project.')
+
         TomcatPluginConvention tomcatConvention = new TomcatPluginConvention()
         project.convention.plugins.tomcat = tomcatConvention
 
@@ -56,7 +61,8 @@ class TomcatPlugin implements Plugin<Project> {
     private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention, AbstractTomcatRunTask tomcatTask) {
         tomcatTask.daemon = false
         tomcatTask.reloadable = true
-        tomcatTask.conventionMapping.map('serverClasspath') { project.buildscript.configurations.getByName(CLASSPATH).asFileTree }
+        tomcatTask.conventionMapping.map('buildscriptClasspath') { project.buildscript.configurations.getByName(CLASSPATH).asFileTree }
+        tomcatTask.conventionMapping.map('tomcatClasspath') { project.configurations.getByName(TOMCAT_CONFIGURATION_NAME).asFileTree }
         tomcatTask.conventionMapping.map('contextPath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
         tomcatTask.conventionMapping.map(HTTP_PORT_CONVENTION) { tomcatConvention.httpPort }
         tomcatTask.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }

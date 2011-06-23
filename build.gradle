@@ -3,7 +3,7 @@ dependsOnChildren()
 allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
-    version = '0.7'
+    version = '0.8'
     defaultTasks 'clean', 'build', 'uberjar'
 }
 

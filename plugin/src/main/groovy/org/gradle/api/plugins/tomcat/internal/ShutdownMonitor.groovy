@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat.internal
 
-import org.apache.catalina.LifecycleException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -94,7 +93,7 @@ class ShutdownMonitor extends Thread {
                             LOGGER.info 'Stopping server'
                             server.stop()
                         }
-                        catch(LifecycleException e) {
+                        catch(Exception e) {
                             LOGGER.error 'Exception when stopping server', e
                         }
                     }

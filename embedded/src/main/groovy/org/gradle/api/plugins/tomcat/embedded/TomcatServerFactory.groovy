@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory
  */
 @Singleton
 class TomcatServerFactory {
-    static final Logger LOGGER = LoggerFactory.getLogger(TomcatServerFactory.class)
+    static final Logger LOGGER = LoggerFactory.getLogger(TomcatServerFactory)
 
     def getTomcatServer() {
         ClassLoader classLoader = Thread.currentThread().contextClassLoader
@@ -47,12 +47,13 @@ class TomcatServerFactory {
             tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer')
         }
         catch(ClassNotFoundException e) {
-            LOGGER.info 'Resolved Tomcat 6x server implementation in classpath'
-            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer')
-        }
-
-        if(!tomcatServerImpl) {
-            throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
+            try {
+                tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer')
+                LOGGER.info 'Resolved Tomcat 6x server implementation in classpath'
+            }
+            catch(ClassNotFoundException cnfe) {
+                throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
+            }
         }
 
         tomcatServerImpl
