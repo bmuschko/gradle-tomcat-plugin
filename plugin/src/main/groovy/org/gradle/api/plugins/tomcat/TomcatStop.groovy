@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory
  */
 class TomcatStop extends ConventionTask {
     static final Logger LOGGER = LoggerFactory.getLogger(TomcatStop.class)
-    private Integer stopPort
-    private String stopKey
+    Integer stopPort
+    String stopKey
 
     @TaskAction
     void stop() {
@@ -59,33 +59,21 @@ class TomcatStop extends ConventionTask {
 
     /**
      * Returns port to listen to stop Tomcat on sending stop command.
+     *
+     * @return Stop port
      */
-    public Integer getStopPort() {
+    Integer getStopPort() {
         Integer stopPortSystemProperty = TomcatSystemProperty.getStopPort()
-        stopPortSystemProperty ? stopPortSystemProperty : stopPort
-    }
-
-    /**
-     * Sets port to listen to stop Tomcat on sending stop command.
-     */
-    public void setStopPort(Integer stopPort) {
-        this.stopPort = stopPort
+        stopPortSystemProperty ?: stopPort
     }
 
     /**
      * Returns stop key.
      *
-     * @see #setStopKey(String)
+     * @return Stop key
      */
-    public String getStopKey() {
+    String getStopKey() {
         String stopKeySystemProperty = TomcatSystemProperty.getStopKey()
-        stopKeySystemProperty ? stopKeySystemProperty : stopKey
-    }
-
-    /**
-     * Sets key to provide when stopping Tomcat.
-     */
-    public void setStopKey(String stopKey) {
-        this.stopKey = stopKey
+        stopKeySystemProperty ?: stopKey
     }
 }

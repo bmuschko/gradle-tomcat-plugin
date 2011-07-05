@@ -44,15 +44,15 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     Integer httpPort
     Integer stopPort
     String stopKey
-    File webDefaultXml
+    @InputFile @Optional File webDefaultXml
     def server
     def realm
-    Iterable<File> additionalRuntimeJars = new ArrayList<File>()
-    String URIEncoding
+    @InputFiles Iterable<File> additionalRuntimeJars = []
+    @Optional String URIEncoding
     boolean daemon
     FileCollection buildscriptClasspath
     FileCollection tomcatClasspath
-    File configFile
+    @InputFile @Optional File configFile
     URL resolvedConfigFile
 
     abstract void setWebApplicationContext()
@@ -65,16 +65,16 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         URLClassLoader tomcatClassloader = createTomcatClassLoader()
 
         try {
-            Thread.currentThread().setContextClassLoader(tomcatClassloader)
+            Thread.currentThread().contextClassLoader = tomcatClassloader
             validateConfigurationAndStartTomcat()
         }
         finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader)
+            Thread.currentThread().contextClassLoader = originalClassLoader
         }
     }
 
     /**
-     * Creates Tomcat classloader which consists of the Gradle runtime and Tomcat server classpath.
+     * Creates Tomcat classloader which consists of the Groovy runtime, Tomcat serverand plugin classpath.
      *
      * @return Tomcat classloader
      */
@@ -110,7 +110,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             }
         }
 
-        throw new GradleException("Groovy libraries could not be found in the Gradle runtime classpath!")
+        throw new GradleException('Groovy libraries could not be found in the Gradle runtime classpath!')
     }
 
     private void validateConfigurationAndStartTomcat() {
@@ -152,14 +152,14 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
         getAdditionalRuntimeJars().each { additionalRuntimeJar ->
-            getServer().getContext().getLoader().addRepository(additionalRuntimeJar.toURI().toURL().toString())
+            getServer().context.loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
         }
 
-        getServer().getContext().setReloadable(reloadable)
+        getServer().context.reloadable = reloadable
         getServer().configureDefaultWebXml(getWebDefaultXml())
 
         if(getResolvedConfigFile()) {
-            getServer().setConfigFile(getResolvedConfigFile())
+            getServer().configFile = getResolvedConfigFile()
         }
     }
 
@@ -168,8 +168,8 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             LOGGER.debug 'Starting Tomcat Server ...'
 
             setServer(createServer())
-            getServer().setHome(getTemporaryDir().getAbsolutePath())
-            getServer().setRealm(realm)
+            getServer().home = getTemporaryDir().absolutePath
+            getServer().realm = realm
 
             configureWebApplication()
 
@@ -179,7 +179,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
             getServer().start()
 
             LOGGER.lifecycle 'Started Tomcat Server'
-            LOGGER.lifecycle "The Server is running at http://localhost:${getHttpPort()}${getServer().getContext().path}"
+            LOGGER.lifecycle "The Server is running at http://localhost:${getHttpPort()}${getServer().context.path}"
 
             Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
             shutdownMonitor.start()
@@ -199,7 +199,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     }
 
     String getFullContextPath() {
-        getContextPath().startsWith("/") ? getContextPath() : "/" + getContextPath()
+        getContextPath().startsWith('/') ? getContextPath() : '/' + getContextPath()
     }
 
     def createServer() {
@@ -219,27 +219,5 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     String getStopKey() {
         String stopKeySystemProperty = TomcatSystemProperty.stopKey
         stopKeySystemProperty ? stopKeySystemProperty : stopKey
-    }
-
-    @InputFile
-    @Optional
-    File getWebDefaultXml() {
-        webDefaultXml
-    }
-
-    @InputFiles
-    Iterable<File> getAdditionalRuntimeJars() {
-        additionalRuntimeJars
-    }
-
-    @Optional
-    String getURIEncoding() {
-        URIEncoding
-    }
-
-    @InputFile
-    @Optional
-    File getConfigFile() {
-        configFile
     }
 }
