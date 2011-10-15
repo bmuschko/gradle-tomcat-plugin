@@ -16,14 +16,11 @@
 package org.gradle.api.plugins.tomcat
 
 /**
- * Defines Tomcat plugin convention.
+ * SSL keystore parameters.
  *
  * @author Benjamin Muschko
  */
-class TomcatPluginConvention {
-    Integer httpPort = 8080
-    Integer httpsPort = 8443
-    Integer stopPort = 8081
-    String stopKey
-    Boolean enableSSL = false
+class SSLKeystore {
+    String keystore
+    String keyPassword
 }

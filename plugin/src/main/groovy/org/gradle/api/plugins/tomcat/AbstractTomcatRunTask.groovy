@@ -42,6 +42,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     boolean reloadable
     String contextPath
     Integer httpPort
+    Integer httpsPort
     Integer stopPort
     String stopKey
     @InputFile @Optional File webDefaultXml
@@ -54,6 +55,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
     FileCollection tomcatClasspath
     @InputFile @Optional File configFile
     URL resolvedConfigFile
+    Boolean enableSSL
 
     abstract void setWebApplicationContext()
 
@@ -173,7 +175,14 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
 
             configureWebApplication()
 
-            getServer().configureContainer(getHttpPort(), getURIEncoding())
+            getServer().configureContainer()
+            getServer().configureHttpConnector(getHttpPort(), getURIEncoding())
+
+            if(getEnableSSL()) {
+                SSLKeystore sslKeystore = initSSLKeystore()
+                createSSLCertificate(sslKeystore)
+                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), sslKeystore.keystore, sslKeystore.keyPassword)
+            }
 
             // Start server
             getServer().start()
@@ -196,6 +205,53 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
                 LOGGER.info 'Tomcat server exiting.'
             }
         }
+    }
+
+    /**
+     * Initializes SSL keystore parameters.
+     *
+     * @return SSL keystore parameters
+     */
+    private SSLKeystore initSSLKeystore() {
+        final String keystore = "$project.buildDir/tmp/ssl/keystore"
+        final String keyPassword = 'gradleTomcat'
+        new SSLKeystore(keystore: keystore, keyPassword: keyPassword)
+    }
+
+    /**
+     * Creates SSL certifacte.
+     *
+     * @param sslKeystore SSL keystore parameters
+     */
+    private void createSSLCertificate(SSLKeystore sslKeystore) {
+        LOGGER.info 'Creating SSL certificate'
+
+        final File keystoreFile = new File(sslKeystore.keystore)
+
+        if(!keystoreFile.parentFile.exists() && !keystoreFile.parentFile.mkdirs()) {
+            throw new GradleException("Unable to create keystore folder: $keystoreFile.parentFile.canonicalPath")
+        }
+
+        if(keystoreFile.exists()) {
+            keystoreFile.delete()
+        }
+
+        String[] keytoolArgs = ["-genkey", "-alias", "localhost", "-dname",
+                "CN=localhost,OU=Test,O=Test,C=US", "-keyalg", "RSA",
+                "-validity", "365", "-storepass", "key", "-keystore",
+                sslKeystore.keystore, "-storepass", sslKeystore.keyPassword,
+                "-keypass", sslKeystore.keyPassword]
+        Class<?> keyToolClass
+
+        try {
+            keyToolClass = Class.forName('sun.security.tools.KeyTool')
+        }
+        catch(ClassNotFoundException e) {
+            keyToolClass = Class.forName('com.ibm.crypto.tools.KeyTool')
+        }
+
+        keyToolClass.main(keytoolArgs)
+        LOGGER.info 'Created SSL certificate'
     }
 
     String getFullContextPath() {

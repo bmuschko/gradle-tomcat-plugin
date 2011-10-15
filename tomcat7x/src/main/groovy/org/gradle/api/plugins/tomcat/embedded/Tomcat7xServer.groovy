@@ -25,9 +25,13 @@ class Tomcat7xServer implements TomcatServer {
     def context
 
     public Tomcat7xServer() {
-        ClassLoader classLoader = Thread.currentThread().contextClassLoader
-        Class serverClass = classLoader.loadClass('org.apache.catalina.startup.Tomcat')
+        Class serverClass = loadClass('org.apache.catalina.startup.Tomcat')
         this.tomcat = serverClass.newInstance()
+    }
+
+    private Class loadClass(String className) {
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        classLoader.loadClass(className)
     }
 
     @Override
@@ -64,12 +68,28 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
-    void configureContainer(int port, String uriEncoding) {
-        tomcat.port = port
-        tomcat.connector.URIEncoding = uriEncoding
-
+    void configureContainer() {
         // Enable JNDI naming by default
         tomcat.enableNaming()
+    }
+
+    @Override
+    void configureHttpConnector(int port, String uriEncoding) {
+        tomcat.port = port
+        tomcat.connector.URIEncoding = uriEncoding
+     }
+
+    @Override
+    void configureHttpsConnector(int port, String uriEncoding, String keystore, String keyPassword) {
+        def httpsConnector = loadClass('org.apache.catalina.connector.Connector').newInstance()
+        httpsConnector.scheme = 'https'
+        httpsConnector.secure = true
+        httpsConnector.port = port
+        httpsConnector.setAttribute('SSLEnabled', 'true')
+        httpsConnector.setAttribute('keystoreFile', keystore)
+        httpsConnector.setAttribute('keystorePass', keyPassword)
+        httpsConnector.URIEncoding = uriEncoding
+        tomcat.service.addConnector httpsConnector
     }
 
     @Override

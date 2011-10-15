@@ -25,9 +25,13 @@ class Tomcat6xServer implements TomcatServer {
     def context
 
     public Tomcat6xServer() {
-        ClassLoader classLoader = Thread.currentThread().contextClassLoader
-        Class serverClass = classLoader.loadClass('org.apache.catalina.startup.Embedded')
+        Class serverClass = loadClass('org.apache.catalina.startup.Embedded')
         this.embedded = serverClass.newInstance()
+    }
+
+    private Class loadClass(String className) {
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        classLoader.loadClass(className)
     }
 
     @Override
@@ -61,15 +65,32 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    void configureContainer(int port, String uriEncoding) {
+    void configureContainer() {
         def localHost = embedded.createHost('localHost', new File('.').absolutePath)
         localHost.addChild(context)
 
         // Create engine
         addEngineToServer(localHost)
+    }
 
-        // Create HTTP connector
-        addConnectorToServer(port, uriEncoding)
+    @Override
+    void configureHttpConnector(int port, String uriEncoding) {
+        def httpConnector = embedded.createConnector((InetAddress) null, port, false)
+        httpConnector.URIEncoding =  uriEncoding ? uriEncoding : 'UTF-8'
+        embedded.addConnector(httpConnector)
+    }
+
+    @Override
+    void configureHttpsConnector(int port, String uriEncoding, String keystore, String keyPassword) {
+        def httpsConnector = loadClass('org.apache.catalina.connector.Connector').newInstance()
+        httpsConnector.scheme = 'https'
+        httpsConnector.secure = true
+        httpsConnector.port = port
+        httpsConnector.setProperty('SSLEnabled', 'true')
+        httpsConnector.setAttribute('keystore', keystore)
+        httpsConnector.setAttribute('keystorePass', keyPassword)
+        httpsConnector.URIEncoding = uriEncoding
+        embedded.addConnector httpsConnector
     }
 
     /**
@@ -87,15 +108,6 @@ class Tomcat6xServer implements TomcatServer {
         }
 
         embedded.addEngine(engine)
-    }
-
-    /**
-     * Adds connector to server
-     */
-    void addConnectorToServer(int port, String uriEncoding) {
-        def httpConnector = embedded.createConnector((InetAddress) null, port, false)
-        httpConnector.URIEncoding =  uriEncoding ? uriEncoding : 'UTF-8'
-        embedded.addConnector(httpConnector)
     }
 
     /**
