@@ -56,3 +56,7 @@ task uberjar(type: Jar, dependsOn: subprojects.assemble) {
                    'Built-JDK': System.getProperty('java.version')
     }
 }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.0-milestone-3'
+}
