@@ -134,3 +134,21 @@ To fix this make sure you define your JSP and Servlet module dependencies with t
 
     providedCompile 'javax.servlet:servlet-api:2.5',
                     'javax.servlet:jsp-api:2.0'
+
+**How do I remote debug my Tomcat started up by the plugin?**
+
+If you want to be able to debug your application remotely you have to set the following JVM options in your `GRADLE_OPTS`
+environment variable before starting up the container. The port number you choose is up to you.
+
+    -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
+
+Tomcat will then listen on the specified port for incoming remote debugging connections. When starting up the container
+you should see the following message:
+
+    Listening for transport dt_socket at address: 5005
+
+Check your IDE documentation on how to configure connecting to the remote debugging port.
+
+* [IntelliJ Remote Run/Debug Configuration](http://www.jetbrains.com/idea/webhelp/run-debug-configuration-remote.html)
+* [Eclipse Remote Debugging](http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Fconcepts%2Fcremdbug.htm)
+
