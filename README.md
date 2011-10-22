@@ -12,11 +12,10 @@ To use the Tomcat plugin, include in your build script:
 
     apply plugin: 'tomcat'
 
-The plugin JAR and depending Tomcat runtime libraries need to be defined in the classpath of your build script. You can
-either get the plugin from the GitHub download section or upload it to your local repository. The Tomcat version is
-automatically being resolved by the plugin. Make sure you don't mix up Tomcat libraries of different versions.
-
-**Tomcat 6.x:**
+The plugin JAR needs to be defined in the classpath of your build script. You can either get the plugin from the GitHub
+download section or upload it to your local repository. Additionally, the Tomcat runtime libraries need to be added to the configuration
+`tomcat`. At the moment the Tomcat versions 6.x and 7.x are supported by the plugin. Make sure you don't mix up Tomcat libraries
+of different versions.
 
     buildscript {
         repositories {
@@ -24,37 +23,38 @@ automatically being resolved by the plugin. Make sure you don't mix up Tomcat li
                 name = 'GitHub'
                 addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
             }
-            mavenCentral()
         }
 
         dependencies {
-            def tomcatVersion = '6.0.29'
-            classpath "org.apache.tomcat:catalina:${tomcatVersion}",
-                      "org.apache.tomcat:coyote:${tomcatVersion}",
-                      "org.apache.tomcat:jasper:${tomcatVersion}"
-            classpath 'bmuschko:gradle-tomcat-plugin:0.7'
+            classpath 'bmuschko:gradle-tomcat-plugin:0.8'
         }
+    }
+
+**Tomcat 6.x:**
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        def tomcatVersion = '6.0.29'
+        tomcat "org.apache.tomcat:catalina:${tomcatVersion}",
+               "org.apache.tomcat:coyote:${tomcatVersion}",
+               "org.apache.tomcat:jasper:${tomcatVersion}"
     }
 
 **Tomcat 7.x:**
 
-    buildscript {
-        repositories {
-            add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-                name = 'GitHub'
-                addArtifactPattern 'http://cloud.github.com/downloads/[organisation]/[module]/[module]-[revision].[ext]'
-            }
-            mavenCentral()
-        }
+    repositories {
+        mavenCentral()
+    }
 
-        dependencies {
-            def tomcatVersion = '7.0.11'
-            classpath "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-                      "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-            classpath("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
-                exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-            }
-            classpath 'bmuschko:gradle-tomcat-plugin:0.7'
+    dependencies {
+        def tomcatVersion = '7.0.11'
+        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+               "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+        tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+            exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
         }
     }
 
@@ -75,8 +75,10 @@ The Tomcat plugin uses the same layout as the War plugin.
 The Tomcat plugin defines the following convention properties:
 
 * `httpPort`: The TCP port which Tomcat should listen for HTTP requests on (defaults to 8080).
+* `httpsPort`: The TCP port which Tomcat should listen for HTTPS requests on (defaults to 8443).
 * `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to 8081).
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to null).
+* `enableSSL`: Determines whether the HTTPS connector should be created (defaults to false).
 
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
@@ -96,8 +98,10 @@ defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
 The convention properties can be overridden by system properties:
 
 * `tomcat.http.port`: Overrides the convention property `httpPort`.
+* `tomcat.https.port`: Overrides the convention property `httpsPort`.
 * `tomcat.stop.port`: Overrides the convention property `stopPort`.
 * `tomcat.stop.key`: Overrides the convention property `stopKey`.
+* `tomcat.enable.ssl`: Overrides the convention property `enableSSL`.
 
 ## FAQ
 

@@ -1,3 +1,9 @@
+### Version 0.8 (October 22, 2011)
+
+* Introduced configuration for Tomcat libraries. **Note: Do not configure them in the `buildscript` closure anymore!**
+* All tasks now extend `org.gradle.api.DefaultTask`.
+* Support for exposing a HTTPS connector - [Issue 10](https://github.com/bmuschko/gradle-tomcat-plugin/issues/10).
+
 ### Version 0.7 (May 3, 2011)
 
 * Support Tomcat 7 - [Issue 7](https://github.com/bmuschko/gradle-tomcat-plugin/issues#issue/7).
