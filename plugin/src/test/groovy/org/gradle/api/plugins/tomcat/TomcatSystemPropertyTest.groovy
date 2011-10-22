@@ -50,6 +50,23 @@ class TomcatSystemPropertyTest {
     }
 
     @Test
+    void testGetHttpsPortForNonExistingProperty() {
+        assert TomcatSystemProperty.getHttpsPort() == null
+    }
+
+    @Test(expected = InvalidUserDataException.class)
+    void testGetHttpsPortForInvalidExistingProperty() {
+        System.setProperty(TomcatSystemProperty.HTTPS_PORT_SYSPROPERTY, "xxx")
+        TomcatSystemProperty.getHttpsPort()
+    }
+
+    @Test
+    void testGetHttpsPortForValidExistingProperty() {
+        System.setProperty(TomcatSystemProperty.HTTPS_PORT_SYSPROPERTY, "1234")
+        assert TomcatSystemProperty.getHttpsPort() == 1234
+    }
+
+    @Test
     void testGetStopPortForNonExistingProperty() {
         assert TomcatSystemProperty.getStopPort() == null
     }
@@ -75,5 +92,22 @@ class TomcatSystemPropertyTest {
     void testGetStopKeyForValidExistingProperty() {
         System.setProperty(TomcatSystemProperty.STOP_KEY_SYSPROPERTY, "X")
         assert TomcatSystemProperty.getStopKey() == "X"
+    }
+
+    @Test
+    void testGetEnableSSLForNonExistingProperty() {
+        assert TomcatSystemProperty.getEnableSSL() == null
+    }
+
+    @Test
+    void testGetEnableSSLForValidExistingPropertyTrue() {
+        System.setProperty(TomcatSystemProperty.ENABLE_SSL_SYSPROPERTY, "true")
+        assert TomcatSystemProperty.getEnableSSL() == Boolean.TRUE
+    }
+
+    @Test
+    void testGetEnableSSLForValidExistingPropertyFalse() {
+        System.setProperty(TomcatSystemProperty.ENABLE_SSL_SYSPROPERTY, "false")
+        assert TomcatSystemProperty.getEnableSSL() == Boolean.FALSE
     }
 }

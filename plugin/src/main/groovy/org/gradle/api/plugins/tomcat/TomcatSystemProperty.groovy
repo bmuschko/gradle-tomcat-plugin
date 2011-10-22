@@ -24,8 +24,10 @@ import org.gradle.api.InvalidUserDataException
  */
 final class TomcatSystemProperty {
     static final String HTTP_PORT_SYSPROPERTY = 'tomcat.http.port'
+    static final String HTTPS_PORT_SYSPROPERTY = 'tomcat.https.port'
     static final String STOP_PORT_SYSPROPERTY = 'tomcat.stop.port'
     static final String STOP_KEY_SYSPROPERTY = 'tomcat.stop.key'
+    static final String ENABLE_SSL_SYSPROPERTY = 'tomcat.enable.ssl'
 
     private TomcatSystemProperty() {}
 
@@ -38,6 +40,21 @@ final class TomcatSystemProperty {
             }
             catch(NumberFormatException e) {
                 throw new InvalidUserDataException("Bad HTTP port provided as system property: ${httpPortSystemProperty}", e)
+            }
+        }
+
+        null
+    }
+
+    static Integer getHttpsPort() {
+        String httpsPortSystemProperty = System.getProperty(HTTPS_PORT_SYSPROPERTY)
+
+        if(httpsPortSystemProperty) {
+            try {
+                return httpsPortSystemProperty.toInteger()
+            }
+            catch(NumberFormatException e) {
+                throw new InvalidUserDataException("Bad HTTPS port provided as system property: ${httpsPortSystemProperty}", e)
             }
         }
 
@@ -64,6 +81,16 @@ final class TomcatSystemProperty {
 
         if(stopKeySystemProperty) {
             return stopKeySystemProperty
+        }
+
+        null
+    }
+
+    static Boolean getEnableSSL() {
+        String enableSSLSystemProperty = System.getProperty(ENABLE_SSL_SYSPROPERTY)
+
+        if(enableSSLSystemProperty) {
+            return new Boolean(enableSSLSystemProperty)
         }
 
         null

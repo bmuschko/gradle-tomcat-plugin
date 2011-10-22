@@ -267,6 +267,11 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         httpPortSystemProperty ? httpPortSystemProperty : httpPort
     }
 
+    Integer getHttpsPort() {
+        Integer httpsPortSystemProperty = TomcatSystemProperty.httpsPort
+        httpsPortSystemProperty ? httpsPortSystemProperty : httpsPort
+    }
+
     Integer getStopPort() {
         Integer stopPortSystemProperty = TomcatSystemProperty.stopPort
         stopPortSystemProperty ? stopPortSystemProperty : stopPort
@@ -275,5 +280,10 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     String getStopKey() {
         String stopKeySystemProperty = TomcatSystemProperty.stopKey
         stopKeySystemProperty ? stopKeySystemProperty : stopKey
+    }
+
+    Boolean getEnableSSL() {
+        Boolean enableSSLSystemProperty = TomcatSystemProperty.enableSSL
+        enableSSLSystemProperty ? enableSSLSystemProperty : enableSSL
     }
 }
