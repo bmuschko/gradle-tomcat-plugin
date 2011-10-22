@@ -154,7 +154,7 @@ class TomcatRunTest {
         tomcatRun.setServer server
         tomcatRun.setContextPath contextPath
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
-        tomcatRun.setClasspath project.files("jars")
+        tomcatRun.setWebAppClasspath project.files("jars")
         tomcatRun.reloadable = true
         tomcatRun.configureWebApplication()
         assert tomcatRun.getServer() == server

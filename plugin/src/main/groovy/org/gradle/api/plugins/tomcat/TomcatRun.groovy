@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory
  */
 class TomcatRun extends AbstractTomcatRunTask {
     static final Logger LOGGER = LoggerFactory.getLogger(TomcatRun.class)
-    @InputFiles FileCollection classpath
+    @InputFiles FileCollection webAppClasspath
     @InputDirectory File webAppSourceDirectory
 
     @Override
@@ -70,9 +70,9 @@ class TomcatRun extends AbstractTomcatRunTask {
     void configureWebApplication() {
         super.configureWebApplication()
 
-        LOGGER.info "web app loader classpath = ${getClasspath().asPath}"
+        LOGGER.info "web app loader classpath = ${getWebAppClasspath().asPath}"
       
-        getClasspath().each { file ->
+        getWebAppClasspath().each { file ->
             getServer().context.loader.addRepository(file.toURI().toURL().toString())
         }
     }

@@ -15,12 +15,12 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ClassPathRegistry
-import org.gradle.api.internal.ConventionTask
 import org.gradle.api.internal.DefaultClassPathRegistry
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -36,7 +36,7 @@ import org.gradle.api.tasks.TaskAction
  *
  * @author Benjamin Muschko
  */
-abstract class AbstractTomcatRunTask extends ConventionTask {
+abstract class AbstractTomcatRunTask extends DefaultTask {
     static final Logger LOGGER = Logging.getLogger(AbstractTomcatRunTask.class)
     static final CONFIG_FILE = 'META-INF/context.xml'
     boolean reloadable
@@ -89,7 +89,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         new URLClassLoader(toURLArray(getTomcatClasspath().files), pluginClassloader)
     }
 
-    URL[] toURLArray(Collection<File> files) {
+    private URL[] toURLArray(Collection<File> files) {
         List<URL> urls = new ArrayList<URL>(files.size())
 
         for(File file : files) {
@@ -104,7 +104,7 @@ abstract class AbstractTomcatRunTask extends ConventionTask {
         urls.toArray(new URL[urls.size()]);
     }
 
-    URL[] filterGroovyAllLibrary(URL[] runtimeClasspath) {
+    private URL[] filterGroovyAllLibrary(URL[] runtimeClasspath) {
         for(URL url : runtimeClasspath) {
             String filenameWithoutPath = url.file.substring(url.file.lastIndexOf('/') + 1, url.file.length())
             if(filenameWithoutPath.startsWith('groovy-all-')) {

@@ -68,7 +68,7 @@ class TomcatPluginTest {
         assert task.stopKey == project.stopKey
         assert task.daemon == false
         assert task.reloadable == true
-        assert task.classpath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
+        assert task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
         assert task.webAppSourceDirectory == project.convention.getPlugin(WarPluginConvention.class).webAppDir
     }
 

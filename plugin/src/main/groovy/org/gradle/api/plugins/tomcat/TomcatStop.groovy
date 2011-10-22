@@ -15,8 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.TaskAction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory
  *
  * @author Benjamin Muschko 
  */
-class TomcatStop extends ConventionTask {
+class TomcatStop extends DefaultTask {
     static final Logger LOGGER = LoggerFactory.getLogger(TomcatStop.class)
     Integer stopPort
     String stopKey
