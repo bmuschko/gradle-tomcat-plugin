@@ -15,13 +15,12 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.apache.tools.ant.AntClassLoader
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.ClassPathRegistry
-import org.gradle.api.internal.DefaultClassPathRegistry
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
@@ -76,16 +75,15 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     }
 
     /**
-     * Creates Tomcat classloader which consists of the Groovy runtime, Tomcat serverand plugin classpath.
+     * Creates Tomcat ClassLoader which consists of the Gradle runtime, Tomcat server and plugin classpath. The ClassLoader
+     * is using a parent last strategy to make sure that the provided Gradle libraries get loaded only if they can't be
+     * found in the application classpath.
      *
-     * @return Tomcat classloader
+     * @return Tomcat ClassLoader
      */
     private URLClassLoader createTomcatClassLoader() {
-        ClassPathRegistry classPathRegistry = new DefaultClassPathRegistry()
-        URL[] runtimeClasspath = classPathRegistry.getClassPathUrls('GRADLE_RUNTIME')
-        ClassLoader rootClassLoader = ClassLoader.systemClassLoader.parent
-        URLClassLoader groovyClassloader = new URLClassLoader(filterGroovyAllLibrary(runtimeClasspath), rootClassLoader)
-        URLClassLoader pluginClassloader = new URLClassLoader(toURLArray(getBuildscriptClasspath().files), groovyClassloader)
+        ClassLoader rootClassLoader = new AntClassLoader(getClass().classLoader, false)
+        URLClassLoader pluginClassloader = new URLClassLoader(toURLArray(getBuildscriptClasspath().files), rootClassLoader)
         new URLClassLoader(toURLArray(getTomcatClasspath().files), pluginClassloader)
     }
 
@@ -102,17 +100,6 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
 
         urls.toArray(new URL[urls.size()]);
-    }
-
-    private URL[] filterGroovyAllLibrary(URL[] runtimeClasspath) {
-        for(URL url : runtimeClasspath) {
-            String filenameWithoutPath = url.file.substring(url.file.lastIndexOf('/') + 1, url.file.length())
-            if(filenameWithoutPath.startsWith('groovy-all-')) {
-                return [url] as URL[]
-            }
-        }
-
-        throw new GradleException('Groovy libraries could not be found in the Gradle runtime classpath!')
     }
 
     private void validateConfigurationAndStartTomcat() {

@@ -3,7 +3,7 @@ dependsOnChildren()
 allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
-    version = '0.8'
+    version = '0.8.1'
     defaultTasks 'clean', 'build', 'uberjar'
 }
 
@@ -18,24 +18,8 @@ subprojects {
     }
 
     dependencies {
-        groovy 'org.codehaus.groovy:groovy:1.7.10'
+        groovy 'org.codehaus.groovy:groovy:1.8.4'
         testCompile 'junit:junit:4.+'
-    }
-
-    ideaProject {
-        javaVersion = '1.6'
-
-        withXml { provider ->
-            def node = provider.asNode()
-
-            // Use GIT
-            def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
-            vcsConfig.mapping[0].'@vcs' = 'Git'
-
-            // Set Gradle home
-            def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
-            gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
-        }
     }
 }
 
@@ -44,7 +28,7 @@ task uberjar(type: Jar, dependsOn: subprojects.assemble) {
 
     subprojects.each { project ->
         from({
-            project.configurations.archives.allArtifactFiles.collect { zipTree(it) }
+            project.configurations.archives.allArtifacts.files.collect { zipTree(it) }
         })
     }
 
@@ -58,5 +42,21 @@ task uberjar(type: Jar, dependsOn: subprojects.assemble) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-3'
+    gradleVersion = '1.0-milestone-6'
+}
+
+idea.project {
+    jdkName = '1.6'
+
+    ipr.withXml { provider ->
+        def node = provider.asNode()
+
+        // Use GIT
+        def vcsConfig = node.component.find { it.'@name' == 'VcsDirectoryMappings' }
+        vcsConfig.mapping[0].'@vcs' = 'Git'
+
+        // Set Gradle home
+        def gradleSettings = node.appendNode('component', [name: 'GradleSettings'])
+        gradleSettings.appendNode('option', [name: 'SDK_HOME', value: gradle.gradleHomeDir])
+    }
 }
