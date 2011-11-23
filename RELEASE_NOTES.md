@@ -1,3 +1,9 @@
+### Version 0.8.1 (November 22, 2011)
+
+* Removed reference to Gradle classpath variable - [Issue 12](https://github.com/bmuschko/gradle-tomcat-plugin/issues/12).
+Instead used parent last ClassLoader strategy.
+* Upgrade to Gradle Wrapper 1.0-m6.
+
 ### Version 0.8 (October 22, 2011)
 
 * Introduced configuration for Tomcat libraries. **Note: Do not configure them in the `buildscript` closure anymore!**
