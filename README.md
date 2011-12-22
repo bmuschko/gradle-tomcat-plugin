@@ -181,7 +181,7 @@ set a custom location you can use the convention property `configFile`. Here's a
 
     [tomcatRun, tomcatRunWar]*.configFile = file('context.xml')
 
-Please refer to the [Tomcat documentation|http://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context] for a list
+Please refer to the [Tomcat documentation](http://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context) for a list
 of context attributes. The following example shows how to set up a MySQL JNDI datasource.
 
     <?xml version="1.0" encoding="UTF-8"?>
