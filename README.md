@@ -93,6 +93,18 @@ server has started. When false, this task blocks until the Tomcat server is stop
 * `configFile`: The path to the Tomcat context XML file (defaults to `src/main/webapp/META-INF/context.xml` for `tomcatRun`,
 defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
 
+The following example shows how to change the default HTTP/HTTPS ports for the task `tomcatRun`. To enable SSL we set the
+convention property `enableSSL` to `true`. Furthermore, we declare a custom context file.
+
+### Example
+
+    tomcatRun {
+        httpPort = 8090
+        httpsPort = 8091
+        enableSSL = true
+        configFile = file('context.xml')
+    }
+
 ## System properties
 
 The convention properties can be overridden by system properties:
@@ -155,4 +167,34 @@ Check your IDE documentation on how to configure connecting to the remote debugg
 
 * [IntelliJ Remote Run/Debug Configuration](http://www.jetbrains.com/idea/webhelp/run-debug-configuration-remote.html)
 * [Eclipse Remote Debugging](http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Fconcepts%2Fcremdbug.htm)
+
+**My Tomcat container needs to use a JNDI datasource. How do I set up my project?**
+
+First of all you got to make sure to declare the connection pool dependency using the `tomcat` configuration.
+
+    def tomcatVersion = '6.0.35'
+    tomcat "org.apache.tomcat:dbcp:${tomcatVersion}"
+
+If you decide to go with the default settings place your `context.xml` in the directory `src/main/webapp/META-INF`. To
+set a custom location you can use the convention property `configFile`. Here's an example on how to set it for the tasks
+`tomcatRun` and `tomcatRunWar`.
+
+    [tomcatRun, tomcatRunWar]*.configFile = file('context.xml')
+
+Please refer to the [Tomcat documentation|http://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context] for a list
+of context attributes. The following example shows how to set up a MySQL JNDI datasource.
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Context>
+        <Resource name="jdbc/mydatabase"
+                  auth="Container"
+                  type="javax.sql.DataSource"
+                  username="superuser"
+                  password="secretpasswd"
+                  driverClassName="com.mysql.jdbc.Driver"
+                  url="jdbc:mysql://localhost:3306/mydb"
+                  validationQuery="select 1"
+                  maxActive="10"
+                  maxIdle="4"/>
+    </Context>
 
