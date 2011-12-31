@@ -128,6 +128,7 @@ repository or define a repository on your local disk where you can drop it in. H
          flatDir name: 'localRepository', dirs: 'lib'
     }
 
+<br>
 **Why do I get a `java.lang.ClassCastException` on `javax.servlet.Servlet`?**
 
 Tomcat is very sensitive to having multiple versions of the dependencies `javax.servlet:servlet-api` and `javax.servlet:jsp-api`
@@ -151,6 +152,7 @@ To fix this make sure you define your JSP and Servlet module dependencies with t
     providedCompile 'javax.servlet:servlet-api:2.5',
                     'javax.servlet:jsp-api:2.0'
 
+<br>
 **How do I remote debug my Tomcat started up by the plugin?**
 
 If you want to be able to debug your application remotely you have to set the following JVM options in your `GRADLE_OPTS`
@@ -168,6 +170,7 @@ Check your IDE documentation on how to configure connecting to the remote debugg
 * [IntelliJ Remote Run/Debug Configuration](http://www.jetbrains.com/idea/webhelp/run-debug-configuration-remote.html)
 * [Eclipse Remote Debugging](http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Fconcepts%2Fcremdbug.htm)
 
+<br>
 **My Tomcat container needs to use a JNDI datasource. How do I set up my project?**
 
 First of all you got to make sure to declare the connection pool dependency using the `tomcat` configuration.
@@ -198,3 +201,45 @@ of context attributes. The following example shows how to set up a MySQL JNDI da
                   maxIdle="4"/>
     </Context>
 
+<br>
+**How do I use byte code swap technologies like JRebel with the plugin?**
+
+The configuration is usually product-specific. Please refer to the product's documentation on how to set it up for your project.
+The following section describes how to set up Gradle and the plugin with [JRebel](http://zeroturnaround.com/jrebel/).
+First of all download [JRebel](http://zeroturnaround.com/jrebel/current/), install it on your machine and set up the [license](http://zeroturnaround.com/reference-manual/install.html#install-1.3).
+To tell JRebel which directory to scan for changed byte code you need to create a [rebel.xml](file://localhost/Users/benjamin/dev/tools/jrebel/doc/app.html#app) file. In
+your web module place the file under `build/classes/main` so it can be loaded by the Tomcat plugin. For creating the configuration of the file
+the [Gradle JRebel plugin](http://zeroturnaround.com/blog/jrebel-gradle-plugin-beta/) comes in handy. It's not required
+to use the plugin. You can also decide to create the configuration by hand. Keep in mind that `gradle clean` will delete the file. 
+For setting up JRebel in a multi-module project scenario please refer to the documentation. The following code snippet shows an example
+`rebel.xml` file.
+
+    <?xml version="1.0" encoding="UTF-8"?>
+	<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+		<classpath>
+			<dir name="/Users/ben/dev/projects/mywebproject/build/classes/main">
+			</dir>
+		</classpath>
+
+		<web>
+			<link target="/">
+				<dir name="/Users/ben/dev/projects/mywebproject/src/main/webapp">
+				</dir>
+			</link>
+		</web>
+	</application>
+
+Edit your Gradle startup script and add the following line to it to tell Gradle to [use the JRebel agent](http://zeroturnaround.com/reference-manual/server.html#server-4.5.36).
+Please make sure to set the environment variable `REBEL_HOME` that points to your JRebel installation directory.
+
+    JAVA_OPTS="-javaagent:$REBEL_HOME/jrebel.jar $JAVA_OPTS"
+
+On startup of your web module using `gradle tomcatRun` you should see information about the JRebel license being used and
+the directories being scanned for changes. For our example `rebel.xml` file it would look like this:
+
+    JRebel: Directory '/Users/ben/dev/projects/mywebproject/build/classes/main' will be monitored for changes.
+    JRebel: Directory '/Users/ben/dev/opensource/mywebproject/src/main/webapp' will be monitored for changes.
+
+If a file has been recompiled JRebel indicates this by writing it to the console like this:
+
+    JRebel: Reloading class 'de.muschko.web.controller.TestController'.
