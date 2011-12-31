@@ -215,7 +215,8 @@ For setting up JRebel in a multi-module project scenario please refer to the doc
 `rebel.xml` file.
 
     <?xml version="1.0" encoding="UTF-8"?>
-	<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+	<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" 
+	             xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
 		<classpath>
 			<dir name="/Users/ben/dev/projects/mywebproject/build/classes/main">
 			</dir>
