@@ -1,3 +1,8 @@
+### Version 0.8.2 (January 8, 2012)
+
+* Allow Tomcat protocol handler class to be set [Issue 17](https://github.com/bmuschko/gradle-tomcat-plugin/issues/17).
+* Added example of setting up in-container integration tests.
+
 ### Version 0.8.1 (November 22, 2011)
 
 * Removed reference to Gradle classpath variable - [Issue 12](https://github.com/bmuschko/gradle-tomcat-plugin/issues/12).
