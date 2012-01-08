@@ -74,13 +74,13 @@ The Tomcat plugin uses the same layout as the War plugin.
 
 The Tomcat plugin defines the following convention properties:
 
-* `httpPort`: The TCP port which Tomcat should listen for HTTP requests on (defaults to 8080).
-* `httpsPort`: The TCP port which Tomcat should listen for HTTPS requests on (defaults to 8443).
-* `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to 8081).
-* `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to null).
-* `enableSSL`: Determines whether the HTTPS connector should be created (defaults to false).
-* `httpProtocol`: The HTTP protocol handler class name to be used (defaults to org.apache.coyote.http11.Http11Protocol).
-* `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to org.apache.coyote.http11.Http11Protocol).
+* `httpPort`: The TCP port which Tomcat should listen for HTTP requests on (defaults to `8080`).
+* `httpsPort`: The TCP port which Tomcat should listen for HTTPS requests on (defaults to `8443`).
+* `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to `8081`).
+* `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to `null`).
+* `enableSSL`: Determines whether the HTTPS connector should be created (defaults to `false`).
+* `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
+* `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
