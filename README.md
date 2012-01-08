@@ -243,7 +243,7 @@ On startup of your web module using `gradle tomcatRun` you should see informatio
 the directories being scanned for changes. For our example `rebel.xml` file it would look like this:
 
     JRebel: Directory '/Users/ben/dev/projects/mywebproject/build/classes/main' will be monitored for changes.
-    JRebel: Directory '/Users/ben/dev/opensource/mywebproject/src/main/webapp' will be monitored for changes.
+    JRebel: Directory '/Users/ben/dev/projects/mywebproject/src/main/webapp' will be monitored for changes.
 
 If a file has been recompiled JRebel indicates this by writing it to the console like this:
 
