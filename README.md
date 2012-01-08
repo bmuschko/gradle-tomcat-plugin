@@ -248,3 +248,29 @@ the directories being scanned for changes. For our example `rebel.xml` file it w
 If a file has been recompiled JRebel indicates this by writing it to the console like this:
 
     JRebel: Reloading class 'de.muschko.web.controller.TestController'.
+
+<br>
+**In need to run in-container integration tests as part of my build. What needs to be done?**
+
+Usually unit and integration tests are kept separate by convention. One convention could be to name the test source
+files differently e.g. integration tests always end with the suffix `IntegrationTest`, unit test files end with `Test`.
+By doing that you can run them separately. For running the integration tests you will want to run the Tomcat task as daemon
+thread and shut it down once your tests are done. The following example demonstrates how to set up a Gradle task that provides this
+functionality. Of course this is only one way of doing it.
+
+    task integrationTest(type: Test) {
+        include '**/*IntegrationTest.*'
+
+        doFirst {
+            tomcatRun.daemon = true
+            tomcatRun.execute()
+        }
+
+        doLast {
+            tomcatStop.execute()
+        }
+    }
+
+    test {
+        exclude '**/*IntegrationTest.*'
+    }
