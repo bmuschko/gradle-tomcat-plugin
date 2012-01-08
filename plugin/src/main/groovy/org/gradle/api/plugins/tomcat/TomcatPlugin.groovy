@@ -36,6 +36,8 @@ class TomcatPlugin implements Plugin<Project> {
     static final String STOP_PORT_CONVENTION = 'stopPort'
     static final String STOP_KEY_CONVENTION = 'stopKey'
     static final String ENABLE_SSL_CONVENTION = 'enableSSL'
+    static final String HTTP_PROTOCOL = 'httpProtocol'
+    static final String HTTPS_PROTOCOL = 'httpsProtocol'
     static final String TOMCAT_CONFIGURATION_NAME = 'tomcat'
 
     @Override
@@ -71,6 +73,8 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatTask.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
         tomcatTask.conventionMapping.map(STOP_KEY_CONVENTION) { tomcatConvention.stopKey }
         tomcatTask.conventionMapping.map(ENABLE_SSL_CONVENTION) { tomcatConvention.enableSSL }
+        tomcatTask.conventionMapping.map(HTTP_PROTOCOL) { tomcatConvention.httpProtocol }
+        tomcatTask.conventionMapping.map(HTTPS_PROTOCOL) { tomcatConvention.httpsProtocol }
     }
 
     private void configureTomcatRun(final Project project) {

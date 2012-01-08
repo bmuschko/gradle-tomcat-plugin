@@ -28,6 +28,8 @@ final class TomcatSystemProperty {
     static final String STOP_PORT_SYSPROPERTY = 'tomcat.stop.port'
     static final String STOP_KEY_SYSPROPERTY = 'tomcat.stop.key'
     static final String ENABLE_SSL_SYSPROPERTY = 'tomcat.enable.ssl'
+    static final String HTTP_PROTOCOL_SYSPROPERTY = 'tomcat.http.protocol'
+    static final String HTTPS_PROTOCOL_SYSPROPERTY = 'tomcat.https.protocol'
 
     private TomcatSystemProperty() {}
 
@@ -78,21 +80,21 @@ final class TomcatSystemProperty {
 
     static String getStopKey() {
         String stopKeySystemProperty = System.getProperty(STOP_KEY_SYSPROPERTY)
-
-        if(stopKeySystemProperty) {
-            return stopKeySystemProperty
-        }
-
-        null
+        stopKeySystemProperty ?: null
     }
 
     static Boolean getEnableSSL() {
         String enableSSLSystemProperty = System.getProperty(ENABLE_SSL_SYSPROPERTY)
+        enableSSLSystemProperty ? new Boolean(enableSSLSystemProperty) : null
+    }
 
-        if(enableSSLSystemProperty) {
-            return new Boolean(enableSSLSystemProperty)
-        }
+    static String getHttpProtocolHandlerClassName() {
+        String httpProtocolHandlerClassName = System.getProperty(HTTP_PROTOCOL_SYSPROPERTY)
+        httpProtocolHandlerClassName ?: null
+    }
 
-        null
+    static String getHttpsProtocolHandlerClassName() {
+        String httpsProtocolHandlerClassName = System.getProperty(HTTPS_PROTOCOL_SYSPROPERTY)
+        httpsProtocolHandlerClassName ?: null
     }
 }

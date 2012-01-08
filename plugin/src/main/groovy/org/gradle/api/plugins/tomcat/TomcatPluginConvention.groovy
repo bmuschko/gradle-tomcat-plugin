@@ -21,9 +21,13 @@ package org.gradle.api.plugins.tomcat
  * @author Benjamin Muschko
  */
 class TomcatPluginConvention {
+    final static String DEFAULT_PROTOCOL_HANDLER = 'org.apache.coyote.http11.Http11Protocol'
+
     Integer httpPort = 8080
     Integer httpsPort = 8443
     Integer stopPort = 8081
     String stopKey
     Boolean enableSSL = false
+    String httpProtocol = DEFAULT_PROTOCOL_HANDLER
+    String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
 }

@@ -65,6 +65,8 @@ class TomcatRunTest {
     public void testValidateConfigurationForExistentWebAppSourceDirectory() {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getConfigFile() == null
@@ -83,6 +85,8 @@ class TomcatRunTest {
         File webDefaultXml = createWebDefaultXml()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setWebDefaultXml webDefaultXml
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == webDefaultXml
         assert tomcatRun.getConfigFile() == null
@@ -101,6 +105,8 @@ class TomcatRunTest {
         File configFile = createConfigFile()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setConfigFile configFile
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getConfigFile() == configFile
@@ -112,6 +118,8 @@ class TomcatRunTest {
         File webAppSourceDir = createWebAppSourceDirectory()
         File defaultConfigFile = createDefaultConfigFile(webAppSourceDir)
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getResolvedConfigFile().path == defaultConfigFile.toURI().toURL().path

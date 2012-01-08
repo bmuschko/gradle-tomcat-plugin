@@ -44,6 +44,8 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     Integer httpsPort
     Integer stopPort
     String stopKey
+    String httpProtocol
+    String httpsProtocol
     @InputFile @Optional File webDefaultXml
     def server
     def realm
@@ -131,6 +133,21 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                 LOGGER.info "context.xml = ${getResolvedConfigFile().toString()}"
             }
         }
+
+        // Check HTTP(S) protocol handler class names
+        if(!getHttpProtocol() || getHttpProtocol() == '') {
+            throw new InvalidUserDataException('The provided HTTP protocol handler classname may not be null or blank')
+        }
+        else {
+            LOGGER.info "HTTP protocol handler classname = ${getHttpProtocol()}"
+        }
+
+        if(!getHttpsProtocol() || getHttpsProtocol() == '') {
+            throw new InvalidUserDataException('The provided HTTPS protocol handler classname may not be null or blank')
+        }
+        else {
+            LOGGER.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
+        }
     }
 
     /**
@@ -163,12 +180,12 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             configureWebApplication()
 
             getServer().configureContainer()
-            getServer().configureHttpConnector(getHttpPort(), getURIEncoding())
+            getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
 
             if(getEnableSSL()) {
                 SSLKeystore sslKeystore = initSSLKeystore()
                 createSSLCertificate(sslKeystore)
-                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), sslKeystore.keystore, sslKeystore.keyPassword)
+                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), sslKeystore.keystore, sslKeystore.keyPassword)
             }
 
             // Start server
@@ -251,26 +268,36 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
     Integer getHttpPort() {
         Integer httpPortSystemProperty = TomcatSystemProperty.httpPort
-        httpPortSystemProperty ? httpPortSystemProperty : httpPort
+        httpPortSystemProperty ?: httpPort
     }
 
     Integer getHttpsPort() {
         Integer httpsPortSystemProperty = TomcatSystemProperty.httpsPort
-        httpsPortSystemProperty ? httpsPortSystemProperty : httpsPort
+        httpsPortSystemProperty ?: httpsPort
     }
 
     Integer getStopPort() {
         Integer stopPortSystemProperty = TomcatSystemProperty.stopPort
-        stopPortSystemProperty ? stopPortSystemProperty : stopPort
+        stopPortSystemProperty ?: stopPort
     }
 
     String getStopKey() {
         String stopKeySystemProperty = TomcatSystemProperty.stopKey
-        stopKeySystemProperty ? stopKeySystemProperty : stopKey
+        stopKeySystemProperty ?: stopKey
     }
 
     Boolean getEnableSSL() {
         Boolean enableSSLSystemProperty = TomcatSystemProperty.enableSSL
-        enableSSLSystemProperty ? enableSSLSystemProperty : enableSSL
+        enableSSLSystemProperty ?: enableSSL
+    }
+    
+    String getHttpProtocol() {
+        String httpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.httpProtocolHandlerClassName
+        httpProtocolHandlerClassNameSystemProperty ?: httpProtocol
+    }
+
+    String getHttpsProtocol() {
+        String httpsProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.httpsProtocolHandlerClassName
+        httpsProtocolHandlerClassNameSystemProperty ?: httpsProtocol
     }
 }

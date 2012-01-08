@@ -110,4 +110,26 @@ class TomcatSystemPropertyTest {
         System.setProperty(TomcatSystemProperty.ENABLE_SSL_SYSPROPERTY, "false")
         assert TomcatSystemProperty.getEnableSSL() == Boolean.FALSE
     }
+
+    @Test
+    void testGetHttpProtocolHandlerClassNameForNonExistingProperty() {
+        assert TomcatSystemProperty.getHttpProtocolHandlerClassName() == null
+    }
+
+    @Test
+    void testGetHttpProtocolHandlerClassNameForValidExistingProperty() {
+        System.setProperty(TomcatSystemProperty.HTTP_PROTOCOL_SYSPROPERTY, 'org.apache.coyote.http11.Http11NioProtocol')
+        assert TomcatSystemProperty.getHttpProtocolHandlerClassName() == 'org.apache.coyote.http11.Http11NioProtocol'
+    }
+
+    @Test
+    void testGetHttpsProtocolHandlerClassNameForNonExistingProperty() {
+        assert TomcatSystemProperty.getHttpsProtocolHandlerClassName() == null
+    }
+
+    @Test
+    void testGetHttpsProtocolHandlerClassNameForValidExistingProperty() {
+        System.setProperty(TomcatSystemProperty.HTTPS_PROTOCOL_SYSPROPERTY, 'org.apache.coyote.http11.Http11NioProtocol')
+        assert TomcatSystemProperty.getHttpsProtocolHandlerClassName() == 'org.apache.coyote.http11.Http11NioProtocol'
+    }
 }

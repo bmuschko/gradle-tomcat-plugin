@@ -26,7 +26,7 @@ of different versions.
         }
 
         dependencies {
-            classpath 'bmuschko:gradle-tomcat-plugin:0.8.1'
+            classpath 'bmuschko:gradle-tomcat-plugin:0.8.2'
         }
     }
 
@@ -79,6 +79,8 @@ The Tomcat plugin defines the following convention properties:
 * `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to 8081).
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to null).
 * `enableSSL`: Determines whether the HTTPS connector should be created (defaults to false).
+* `httpProtocol`: The HTTP protocol handler class name to be used (defaults to org.apache.coyote.http11.Http11Protocol).
+* `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to org.apache.coyote.http11.Http11Protocol).
 
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
@@ -114,6 +116,8 @@ The convention properties can be overridden by system properties:
 * `tomcat.stop.port`: Overrides the convention property `stopPort`.
 * `tomcat.stop.key`: Overrides the convention property `stopKey`.
 * `tomcat.enable.ssl`: Overrides the convention property `enableSSL`.
+* `tomcat.http.protocol`: Overrides the convention property `httpProtocol`.
+* `tomcat.https.protocol`: Overrides the convention property `httpsProtocol`.
 
 ## FAQ
 
@@ -215,20 +219,20 @@ For setting up JRebel in a multi-module project scenario please refer to the doc
 `rebel.xml` file.
 
     <?xml version="1.0" encoding="UTF-8"?>
-	<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" 
-	             xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
-		<classpath>
-			<dir name="/Users/ben/dev/projects/mywebproject/build/classes/main">
-			</dir>
-		</classpath>
+    <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com"
+                xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+        <classpath>
+            <dir name="/Users/ben/dev/projects/mywebproject/build/classes/main">
+            </dir>
+        </classpath>
 
-		<web>
-			<link target="/">
-				<dir name="/Users/ben/dev/projects/mywebproject/src/main/webapp">
-				</dir>
-			</link>
-		</web>
-	</application>
+        <web>
+            <link target="/">
+                <dir name="/Users/ben/dev/projects/mywebproject/src/main/webapp">
+                </dir>
+            </link>
+        </web>
+    </application>
 
 Edit your Gradle startup script and add the following line to it to tell Gradle to [use the JRebel agent](http://zeroturnaround.com/reference-manual/server.html#server-4.5.36).
 Please make sure to set the environment variable `REBEL_HOME` that points to your JRebel installation directory.

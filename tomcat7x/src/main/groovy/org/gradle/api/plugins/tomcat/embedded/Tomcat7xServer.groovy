@@ -15,6 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
+import java.lang.reflect.Constructor
+
 /**
  * Tomcat 7x server implementation.
  *
@@ -74,22 +76,33 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
-    void configureHttpConnector(int port, String uriEncoding) {
-        tomcat.port = port
-        tomcat.connector.URIEncoding = uriEncoding
+    void configureHttpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
+        def httpConnector = createConnector(protocolHandlerClassName, uriEncoding)
+        httpConnector.port = port
+
+        // Remove default connector and add new one
+        tomcat.service.removeConnector tomcat.connector
+        tomcat.service.addConnector httpConnector
      }
 
     @Override
-    void configureHttpsConnector(int port, String uriEncoding, String keystore, String keyPassword) {
-        def httpsConnector = loadClass('org.apache.catalina.connector.Connector').newInstance()
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword) {
+        def httpsConnector = createConnector(protocolHandlerClassName, uriEncoding)
         httpsConnector.scheme = 'https'
         httpsConnector.secure = true
         httpsConnector.port = port
         httpsConnector.setAttribute('SSLEnabled', 'true')
         httpsConnector.setAttribute('keystoreFile', keystore)
         httpsConnector.setAttribute('keystorePass', keyPassword)
-        httpsConnector.URIEncoding = uriEncoding
         tomcat.service.addConnector httpsConnector
+    }
+
+    private createConnector(String protocolHandlerClassName, String uriEncoding) {
+        Class connectorClass = loadClass('org.apache.catalina.connector.Connector')
+        Constructor constructor = connectorClass.getConstructor([String] as Class[])
+        def connector = constructor.newInstance([protocolHandlerClassName] as Object[])
+        connector.URIEncoding = uriEncoding
+        connector
     }
 
     @Override

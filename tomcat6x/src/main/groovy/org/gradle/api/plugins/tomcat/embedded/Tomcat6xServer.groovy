@@ -74,23 +74,26 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    void configureHttpConnector(int port, String uriEncoding) {
-        def httpConnector = embedded.createConnector((InetAddress) null, port, false)
-        httpConnector.URIEncoding =  uriEncoding ? uriEncoding : 'UTF-8'
-        embedded.addConnector(httpConnector)
+    void configureHttpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
+        def httpConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
+        embedded.addConnector httpConnector
     }
 
     @Override
-    void configureHttpsConnector(int port, String uriEncoding, String keystore, String keyPassword) {
-        def httpsConnector = loadClass('org.apache.catalina.connector.Connector').newInstance()
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword) {
+        def httpsConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
         httpsConnector.scheme = 'https'
         httpsConnector.secure = true
-        httpsConnector.port = port
         httpsConnector.setProperty('SSLEnabled', 'true')
         httpsConnector.setAttribute('keystore', keystore)
         httpsConnector.setAttribute('keystorePass', keyPassword)
-        httpsConnector.URIEncoding = uriEncoding
         embedded.addConnector httpsConnector
+    }
+
+    private createConnector(int port, String uriEncoding, String protocolHandlerClassName) {
+        def connector = embedded.createConnector((InetAddress) null, port, protocolHandlerClassName)
+        connector.URIEncoding =  uriEncoding ? uriEncoding : 'UTF-8'
+        connector
     }
 
     /**
