@@ -258,6 +258,9 @@ By doing that you can run them separately. For running the integration tests you
 thread and shut it down once your tests are done. The following example demonstrates how to set up a Gradle task that provides this
 functionality. Of course this is only one way of doing it.
 
+    [tomcatRun, tomcatStop]*.stopPort = 8081
+    [tomcatRun, tomcatStop]*.stopKey = 'stopKey'
+
     task integrationTest(type: Test) {
         include '**/*IntegrationTest.*'
 
