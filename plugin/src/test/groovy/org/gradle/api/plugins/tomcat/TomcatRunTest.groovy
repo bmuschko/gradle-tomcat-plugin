@@ -173,6 +173,34 @@ class TomcatRunTest {
         assert tomcatRun.getServer().getContext().getLoader().getRepositories()[0] == new File(testDir, "jars").toURI().toURL().toString()
     }
 
+    @Test
+    public void testSetWebApplicationContextForRootContextUrl() {
+        String contextPath = '/'
+        tomcatRun.setContextPath contextPath
+        assert tomcatRun.getFullContextPath() == ''
+    }
+
+    @Test
+    public void testSetWebApplicationContextForBlankContextUrl() {
+        String contextPath = ''
+        tomcatRun.setContextPath contextPath
+        assert tomcatRun.getFullContextPath() == ''
+    }
+
+    @Test
+    public void testSetWebApplicationContextForContextUrlWithLeadingSlash() {
+        String contextPath = '/app'
+        tomcatRun.setContextPath contextPath
+        assert tomcatRun.getFullContextPath() == '/app'
+    }
+
+    @Test
+    public void testSetWebApplicationContextForContextUrlWithoutLeadingSlash() {
+        String contextPath = 'app'
+        tomcatRun.setContextPath contextPath
+        assert tomcatRun.getFullContextPath() == '/app'
+    }
+
     private File createWebAppSourceDirectory() {
         File webAppSourceDir = new File(testDir, "webapp")
         boolean success = webAppSourceDir.mkdirs()

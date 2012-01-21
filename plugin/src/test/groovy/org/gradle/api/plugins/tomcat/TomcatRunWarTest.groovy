@@ -150,6 +150,34 @@ class TomcatRunWarTest {
         assert tomcatRunWar.getServer().getContext().getPath() == "/" + contextPath
     }
 
+    @Test
+    public void testSetWebApplicationContextForRootContextUrl() {
+        String contextPath = '/'
+        tomcatRunWar.setContextPath contextPath
+        assert tomcatRunWar.getFullContextPath() == ''
+    }
+
+    @Test
+    public void testSetWebApplicationContextForBlankContextUrl() {
+        String contextPath = ''
+        tomcatRunWar.setContextPath contextPath
+        assert tomcatRunWar.getFullContextPath() == ''
+    }
+
+    @Test
+    public void testSetWebApplicationContextForContextUrlWithLeadingSlash() {
+        String contextPath = '/app'
+        tomcatRunWar.setContextPath contextPath
+        assert tomcatRunWar.getFullContextPath() == '/app'
+    }
+
+    @Test
+    public void testSetWebApplicationContextForContextUrlWithoutLeadingSlash() {
+        String contextPath = 'app'
+        tomcatRunWar.setContextPath contextPath
+        assert tomcatRunWar.getFullContextPath() == '/app'
+    }
+
     private File createWebAppDir() {
         File webAppDir = new File(testDir, "webApp")
         boolean success = webAppDir.mkdirs()

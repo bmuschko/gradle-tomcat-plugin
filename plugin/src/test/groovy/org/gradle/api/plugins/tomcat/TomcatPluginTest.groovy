@@ -64,8 +64,10 @@ class TomcatPluginTest {
         assert task.group == WarPlugin.WEB_APP_GROUP
         assert task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
         assert task.httpPort == project.httpPort
+        assert task.httpsPort == project.httpsPort
         assert task.stopPort == project.stopPort
         assert task.stopKey == project.stopKey
+        assert task.enableSSL == project.enableSSL
         assert task.daemon == false
         assert task.reloadable == true
         assert task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
@@ -80,8 +82,10 @@ class TomcatPluginTest {
         assert task.group == WarPlugin.WEB_APP_GROUP
         assert task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
         assert task.httpPort == project.httpPort
+        assert task.httpsPort == project.httpsPort
         assert task.stopPort == project.stopPort
         assert task.stopKey == project.stopKey
+        assert task.enableSSL == project.enableSSL
         assert task.daemon == false
         assert task.reloadable == true
         assert task.webApp == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath

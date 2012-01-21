@@ -259,6 +259,10 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     }
 
     String getFullContextPath() {
+        if(getContextPath() == '/' || getContextPath() == '') {
+            return ''
+        }
+
         getContextPath().startsWith('/') ? getContextPath() : '/' + getContextPath()
     }
 
