@@ -1,3 +1,7 @@
+### Version 0.8.3 (February 9, 2012)
+
+* Fixed root context path issues - [Issue 20](https://github.com/bmuschko/gradle-tomcat-plugin/issues/20).
+
 ### Version 0.8.2 (January 8, 2012)
 
 * Allow Tomcat protocol handler class to be set - [Issue 17](https://github.com/bmuschko/gradle-tomcat-plugin/issues/17).
