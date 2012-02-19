@@ -1,3 +1,7 @@
+### Version 0.9 (February 19, 2012)
+
+* Provided Jasper task to validate/compile JSPs - [Issue 22](https://github.com/bmuschko/gradle-tomcat-plugin/issues/22).
+
 ### Version 0.8.3 (February 9, 2012)
 
 * Fixed root context path issues - [Issue 20](https://github.com/bmuschko/gradle-tomcat-plugin/issues/20).

@@ -26,7 +26,7 @@ of different versions.
         }
 
         dependencies {
-            classpath 'bmuschko:gradle-tomcat-plugin:0.8.3'
+            classpath 'bmuschko:gradle-tomcat-plugin:0.9'
         }
     }
 
@@ -65,6 +65,7 @@ The Tomcat plugin defines the following tasks:
 * `tomcatRun`: Starts a Tomcat instance and deploys the exploded web application to it.
 * `tomcatRunWar`: Starts a Tomcat instance and deploys the WAR to it.
 * `tomcatStop`: Stops the Tomcat instance.
+* `tomcatJasper`: Runs the JSP compiler and turns JSP pages into Java source.
 
 ## Project layout
 
@@ -105,6 +106,32 @@ convention property `enableSSL` to `true`. Furthermore, we declare a custom cont
         httpsPort = 8091
         enableSSL = true
         configFile = file('context.xml')
+    }
+
+To configure the Jasper compiler task you can choose to set the following properties within the `jasper` closure:
+
+* `validateXml`: Determines whether `web.xml` should be validated (defaults to `false`).
+* `uriroot`: The web application root directory (defaults to `src/main/webapp`).
+* `webXmlFragment`: The generated web XML fragment file to be referenced by your `web.xml` file.
+* `outputDir`: The output directory the compiled JSPs will end up in (defaults to `build/jasper`).
+* `classdebuginfo`: Should the class file be compiled with debugging information (defaults to `true`).
+* `compiler`: Which compiler Ant should use to compile JSP pages. See the Ant documentation for more information. If the value is not set, then the default Eclipse JDT Java compiler will be used instead of using Ant. No default value.
+* `compilerSourceVM`: What JDK version are the source files compatible with (defaults to `1.6`).
+* `compilerTargetVM`: What JDK version are the generated files compatible with (defaults to `1.6`).
+* `poolingEnabled`: Determines whether tag handler pooling is enabled. This is a compilation option. It will not alter the behaviour of JSPs that have already been compiled (defaults to `true`).
+* `errorOnUseBeanInvalidClassAttribute`: Should Jasper issue an error when the value of the class attribute in an useBean action is not a valid bean class (defaults to `true`).
+* `genStringAsCharArray`: Should text strings be generated as char arrays, to improve performance in some cases (defaults to `false`).
+* `ieClassId`: The class-id value to be sent to Internet Explorer when using <jsp:plugin> tags (defaults to `clsid:8AD9C840-044E-11D1-B3E9-00805F499D93`).
+* `javaEncoding`: Java file encoding to use for generating java source files (defaults to `UTF8`).
+* `trimSpaces`: Should white spaces in template text between actions or directives be trimmed (defaults to `false`).
+* `xpoweredBy`: Determines whether X-Powered-By response header is added by generated servlet (defaults to `false`).
+
+### Example
+
+    jasper {
+        validateXml = true
+        webXmlFragment = file("$webAppDir/WEB-INF/generated_web.xml")
+        outputDir = file("$webAppDir/WEB-INF/src")
     }
 
 ## System properties
