@@ -30,4 +30,11 @@ class TomcatPluginConvention {
     Boolean enableSSL = false
     String httpProtocol = DEFAULT_PROTOCOL_HANDLER
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
+    TomcatJasperConvention jasper = new TomcatJasperConvention()
+
+    def jasper(Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = jasper
+        closure()
+    }
 }

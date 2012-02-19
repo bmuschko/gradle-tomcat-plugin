@@ -30,6 +30,7 @@ class TomcatPlugin implements Plugin<Project> {
     static final String TOMCAT_RUN_TASK_NAME = 'tomcatRun'
     static final String TOMCAT_RUN_WAR_TASK_NAME = 'tomcatRunWar'
     static final String TOMCAT_STOP_TASK_NAME = 'tomcatStop'
+    static final String TOMCAT_JASPER_TASK_NAME = 'tomcatJasper'
     static final String CLASSPATH = 'classpath'
     static final String HTTP_PORT_CONVENTION = 'httpPort'
     static final String HTTPS_PORT_CONVENTION = 'httpsPort'
@@ -42,7 +43,7 @@ class TomcatPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(WarPlugin.class)
+        project.plugins.apply(WarPlugin)
 
         project.configurations.add(TOMCAT_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                .setDescription('The Tomcat libraries to be used for this project.')
@@ -54,10 +55,11 @@ class TomcatPlugin implements Plugin<Project> {
         configureTomcatRun(project)
         configureTomcatRunWar(project)
         configureTomcatStop(project, tomcatConvention)
+        configureJasper(project, tomcatConvention)
     }
 
     private void configureMappingRules(final Project project, final TomcatPluginConvention tomcatConvention) {
-        project.tasks.withType(AbstractTomcatRunTask.class).whenTaskAdded { AbstractTomcatRunTask abstractTomcatRunTask ->
+        project.tasks.withType(AbstractTomcatRunTask).whenTaskAdded { AbstractTomcatRunTask abstractTomcatRunTask ->
             configureAbstractTomcatTask(project, tomcatConvention, abstractTomcatRunTask)        
         }
     }
@@ -78,36 +80,61 @@ class TomcatPlugin implements Plugin<Project> {
     }
 
     private void configureTomcatRun(final Project project) {
-        project.tasks.withType(TomcatRun.class).whenTaskAdded { TomcatRun tomcatRun ->
+        project.tasks.withType(TomcatRun).whenTaskAdded { TomcatRun tomcatRun ->
             tomcatRun.conventionMapping.map('webAppClasspath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
             tomcatRun.conventionMapping.map('webAppSourceDirectory') { getWarConvention(project).webAppDir }
         }
 
-        TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN_TASK_NAME, TomcatRun.class)
+        TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN_TASK_NAME, TomcatRun)
         tomcatRun.description = 'Uses your files as and where they are and deploys them to Tomcat.'
         tomcatRun.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatRunWar(final Project project) {
-        project.tasks.withType(TomcatRunWar.class).whenTaskAdded { TomcatRunWar tomcatRunWar ->
+        project.tasks.withType(TomcatRunWar).whenTaskAdded { TomcatRunWar tomcatRunWar ->
             tomcatRunWar.dependsOn(WarPlugin.WAR_TASK_NAME)
             tomcatRunWar.conventionMapping.map('webApp') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
         }
 
-        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar.class)
+        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar)
         tomcatRunWar.description = 'Assembles the webapp into a war and deploys it to Tomcat.'
         tomcatRunWar.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatStop(final Project project, final TomcatPluginConvention tomcatConvention) {
-        TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP_TASK_NAME, TomcatStop.class)
+        TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP_TASK_NAME, TomcatStop)
         tomcatStop.description = 'Stops Tomcat.'
         tomcatStop.group = WarPlugin.WEB_APP_GROUP
         tomcatStop.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
         tomcatStop.conventionMapping.map(STOP_KEY_CONVENTION) { tomcatConvention.stopKey }
     }
 
+    private void configureJasper(final Project project, final TomcatPluginConvention tomcatConvention) {
+        project.tasks.withType(TomcatJasper).whenTaskAdded { TomcatJasper tomcatJasperTask ->
+            tomcatJasperTask.conventionMapping.map('classpath') { project.configurations.getByName(TOMCAT_CONFIGURATION_NAME).asFileTree + project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
+            tomcatJasperTask.conventionMapping.map('validateXml') { tomcatConvention.jasper.validateXml ?: false }
+            tomcatJasperTask.conventionMapping.map('uriroot') { tomcatConvention.jasper.uriroot ?: project.webAppDir }
+            tomcatJasperTask.conventionMapping.map('webXmlFragment') { tomcatConvention.jasper.webXmlFragment }
+            tomcatJasperTask.conventionMapping.map('outputDir') { tomcatConvention.jasper.outputDir ?: new File(project.buildDir, 'jasper') }
+            tomcatJasperTask.conventionMapping.map('classdebuginfo') { tomcatConvention.jasper.classdebuginfo ?: true }
+            tomcatJasperTask.conventionMapping.map('compiler') { tomcatConvention.jasper.compiler }
+            tomcatJasperTask.conventionMapping.map('compilerSourceVM') { tomcatConvention.jasper.compilerSourceVM ?: '1.6' }
+            tomcatJasperTask.conventionMapping.map('compilerTargetVM') { tomcatConvention.jasper.compilerTargetVM ?: '1.6' }
+            tomcatJasperTask.conventionMapping.map('poolingEnabled') { tomcatConvention.jasper.poolingEnabled ?: true }
+            tomcatJasperTask.conventionMapping.map('errorOnUseBeanInvalidClassAttribute') { tomcatConvention.jasper.errorOnUseBeanInvalidClassAttribute ?: true }
+            tomcatJasperTask.conventionMapping.map('genStringAsCharArray') { tomcatConvention.jasper.genStringAsCharArray ?: false }
+            tomcatJasperTask.conventionMapping.map('ieClassId') { tomcatConvention.jasper.ieClassId ?: 'clsid:8AD9C840-044E-11D1-B3E9-00805F499D93' }
+            tomcatJasperTask.conventionMapping.map('javaEncoding') { tomcatConvention.jasper.javaEncoding ?: 'UTF8' }
+            tomcatJasperTask.conventionMapping.map('trimSpaces') { tomcatConvention.jasper.trimSpaces ?: false }
+            tomcatJasperTask.conventionMapping.map('xpoweredBy') { tomcatConvention.jasper.xpoweredBy ?: false }
+        }
+
+        TomcatJasper tomcatJasper = project.tasks.add(TOMCAT_JASPER_TASK_NAME, TomcatJasper)
+        tomcatJasper.description = 'Runs the JSP compiler and turns JSP pages into Java source.'
+        tomcatJasper.group = WarPlugin.WEB_APP_GROUP
+    }
+
     WarPluginConvention getWarConvention(Project project) {
-        project.convention.getPlugin(WarPluginConvention.class)
+        project.convention.getPlugin(WarPluginConvention)
     }
 }
