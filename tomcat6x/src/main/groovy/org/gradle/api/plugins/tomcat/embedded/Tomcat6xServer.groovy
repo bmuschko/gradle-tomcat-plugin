@@ -56,7 +56,9 @@ class Tomcat6xServer implements TomcatServer {
 
     @Override
     void createContext(String fullContextPath, String webAppPath) {
-        context = embedded.createContext(fullContextPath, webAppPath)
+        def context = embedded.createContext(fullContextPath, webAppPath)
+        context.unpackWAR = false
+        this.context = context
     }
 
     @Override
