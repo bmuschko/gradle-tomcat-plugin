@@ -1,3 +1,7 @@
+### Version 0.9.1 (March 4, 2012)
+
+* Allow the task `tomcatRunWar` to pick up source file changes on subsequent calls - [Issue 23](https://github.com/bmuschko/gradle-tomcat-plugin/issues/23).
+
 ### Version 0.9 (February 19, 2012)
 
 * Provided Jasper task to validate/compile JSPs - [Issue 22](https://github.com/bmuschko/gradle-tomcat-plugin/issues/22).
