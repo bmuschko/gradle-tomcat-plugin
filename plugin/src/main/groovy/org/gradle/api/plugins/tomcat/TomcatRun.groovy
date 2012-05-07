@@ -115,7 +115,7 @@ class TomcatRun extends AbstractTomcatRunTask {
             boolean success = metaInfDir.mkdir()
 
             if(!success) {
-                logger.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
+                LOGGER.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
             }
         }
     }
