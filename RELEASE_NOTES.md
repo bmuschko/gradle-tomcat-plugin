@@ -1,3 +1,7 @@
+### Version 0.9.2 (May 7, 2012)
+
+* Correctly scan for `@HandleTypes` to support Servlet 3.0 applications without `web.xml` - [Issue 14](https://github.com/bmuschko/gradle-tomcat-plugin/issues/14).
+
 ### Version 0.9.1 (March 4, 2012)
 
 * Allow the task `tomcatRunWar` to pick up source file changes on subsequent calls - [Issue 23](https://github.com/bmuschko/gradle-tomcat-plugin/issues/23).

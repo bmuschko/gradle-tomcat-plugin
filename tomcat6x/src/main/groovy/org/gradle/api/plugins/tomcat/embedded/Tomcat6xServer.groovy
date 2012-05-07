@@ -35,6 +35,11 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
+    TomcatVersion getVersion() {
+        TomcatVersion.VERSION_6X
+    }
+
+    @Override
     def getEmbedded() {
         embedded
     }

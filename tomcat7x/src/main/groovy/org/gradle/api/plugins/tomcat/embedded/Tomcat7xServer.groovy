@@ -37,6 +37,11 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
+    TomcatVersion getVersion() {
+        TomcatVersion.VERSION_7X
+    }
+
+    @Override
     def getEmbedded() {
         tomcat
     }

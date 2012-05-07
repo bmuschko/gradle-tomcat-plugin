@@ -21,6 +21,7 @@ import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 
 /**
  * Deploys an exploded web application to an embedded Tomcat web container. Does not require that the web application
@@ -32,6 +33,7 @@ class TomcatRun extends AbstractTomcatRunTask {
     static final Logger LOGGER = LoggerFactory.getLogger(TomcatRun.class)
     @InputFiles FileCollection webAppClasspath
     @InputDirectory File webAppSourceDirectory
+    @InputDirectory File classesDirectory
 
     @Override
     void validateConfiguration() {
@@ -64,6 +66,58 @@ class TomcatRun extends AbstractTomcatRunTask {
     @Override
     void setWebApplicationContext() {
         getServer().createContext(getFullContextPath(), getWebAppSourceDirectory().canonicalPath)
+
+        if(isClassesJarScanningRequired()) {
+            setupClassesJarScanning()
+        }
+    }
+
+    /**
+     * Checks to see if classes JAR scanning is required.
+     *
+     * @return Flag
+     */
+    private boolean isClassesJarScanningRequired() {
+        isTomcat7x() && !existsWebXml()
+    }
+
+    /**
+     * Checks if used Tomcat version is 7.x.
+     *
+     * @return Flag
+     */
+    private boolean isTomcat7x() {
+        getServer().version == TomcatVersion.VERSION_7X
+    }
+
+    /**
+     * Checks if web.xml exists in web application source directory.
+     *
+     * @return Flag
+     */
+    private boolean existsWebXml() {
+        File webXml = new File(getWebAppSourceDirectory(), 'WEB-INF/web.xml')
+        webXml.exists()
+    }
+
+    /**
+     * For web applications without web.xml running in Tomcat 7.x we need to enable directory scanning and create
+     * a META-INF to recognize it as exploded JAR directory.
+     *
+     * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52853#c19">Tomcat Bugzilla ticket</a>
+     */
+    private void setupClassesJarScanning() {
+        getServer().context.jarScanner.scanAllDirectories = true
+
+        File metaInfDir = new File(getClassesDirectory(), 'META-INF')
+
+        if(!metaInfDir.exists()) {
+            boolean success = metaInfDir.mkdir()
+
+            if(!success) {
+                logger.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
+            }
+        }
     }
 
     @Override
