@@ -30,6 +30,10 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
+import java.util.logging.Level
+
+import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileLogger
+
 /**
  * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
  *
@@ -57,6 +61,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     @InputFile @Optional File configFile
     URL resolvedConfigFile
     Boolean enableSSL
+    File outputFile
 
     abstract void setWebApplicationContext()
 
@@ -106,7 +111,10 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
     private void validateConfigurationAndStartTomcat() {
         validateConfiguration()
-        startTomcat()
+
+        withJdkFileLogger(getOutputFile(), true, Level.INFO) {
+            startTomcat()
+        }
     }
 
     /**
@@ -147,6 +155,15 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
         else {
             LOGGER.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
+        }
+
+        if(getOutputFile()) {
+            if(getOutputFile().path == '') {
+                throw new InvalidUserDataException('The provided output file may not be blank')
+            }
+            else {
+                LOGGER.info "Output file = ${getOutputFile().canonicalPath}"
+            }
         }
     }
 

@@ -95,6 +95,7 @@ and `org.apache.jasper.servlet.JspServlet` will be set up.
 server has started. When false, this task blocks until the Tomcat server is stopped (defaults to false).
 * `configFile`: The path to the Tomcat context XML file (defaults to `src/main/webapp/META-INF/context.xml` for `tomcatRun`,
 defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
+* `outputFile`: The file to write Tomcat log messages to. If the file already exists new messages will be appended.
 
 The following example shows how to change the default HTTP/HTTPS ports for the task `tomcatRun`. To enable SSL we set the
 convention property `enableSSL` to `true`. Furthermore, we declare a custom context file.
