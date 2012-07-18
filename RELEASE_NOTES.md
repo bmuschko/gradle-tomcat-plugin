@@ -1,3 +1,8 @@
+### Version 0.9.3 (July 17, 2012)
+
+* Expose property to configure writing the Tomcat logs to a file - [Issue 28](https://github.com/bmuschko/gradle-tomcat-plugin/issues/28).
+* Upgrade to Gradle Wrapper 1.0.
+
 ### Version 0.9.2 (May 7, 2012)
 
 * Correctly scan for `@HandleTypes` to support Servlet 3.0 applications without `web.xml` - [Issue 14](https://github.com/bmuschko/gradle-tomcat-plugin/issues/14).
