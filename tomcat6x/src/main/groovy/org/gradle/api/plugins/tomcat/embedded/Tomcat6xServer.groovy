@@ -178,7 +178,7 @@ class Tomcat6xServer implements TomcatServer {
     @Override
     void setConfigFile(URL configFile) {
         if(configFile) {
-            context.configFile = configFile.path
+            context.configFile = configFile.toURI().path
         }
     }
 
