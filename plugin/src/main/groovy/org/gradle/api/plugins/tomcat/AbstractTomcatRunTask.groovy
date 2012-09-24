@@ -61,6 +61,8 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     @InputFile @Optional File configFile
     URL resolvedConfigFile
     Boolean enableSSL
+    String keystoreFile
+    String keystorePass
     File outputFile
 
     abstract void setWebApplicationContext()
@@ -200,9 +202,16 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
 
             if(getEnableSSL()) {
-                SSLKeystore sslKeystore = initSSLKeystore()
-                createSSLCertificate(sslKeystore)
-                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), sslKeystore.keystore, sslKeystore.keyPassword)
+                if (keystoreFile==null ^ keystorePass==null) {
+                    throw new GradleException('keystorePass and keystoreFile configurations must both be specified')
+                }
+                if (!keystoreFile) {
+                    SSLKeystore sslKeystore = initSSLKeystore()
+                    createSSLCertificate(sslKeystore)
+                    keystoreFile = sslKeystore.keystore
+                    keystorePass = sslKeystore.keyPassword
+                }
+                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), keystoreFile, keystorePass)
             }
 
             // Start server

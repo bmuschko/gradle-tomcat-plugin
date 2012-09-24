@@ -80,6 +80,8 @@ The Tomcat plugin defines the following convention properties:
 * `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to `8081`).
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to `null`).
 * `enableSSL`: Determines whether the HTTPS connector should be created (defaults to `false`).
+* `keystoreFile`: The keystore file to use for SSL, if enabled (by default, a keystore will be generated).
+* `keystorePass`: The keystore password to use for SSL, if enabled.
 * `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 
