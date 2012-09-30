@@ -21,6 +21,6 @@ package org.gradle.api.plugins.tomcat
  * @author Benjamin Muschko
  */
 class SSLKeystore {
-    String keystore
+    File keystore
     String keyPassword
 }

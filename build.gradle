@@ -1,7 +1,7 @@
 allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
-    version = '0.9.4'
+    version = '0.9.5'
     defaultTasks 'clean', 'build', 'uberjar'
 }
 

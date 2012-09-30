@@ -61,7 +61,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     @InputFile @Optional File configFile
     URL resolvedConfigFile
     Boolean enableSSL
-    String keystoreFile
+    @InputFile @Optional File keystoreFile
     String keystorePass
     File outputFile
 
@@ -167,6 +167,23 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                 LOGGER.info "Output file = ${getOutputFile().canonicalPath}"
             }
         }
+
+        if(getEnableSSL()) {
+            if(getKeystoreFile() == null ^ getKeystorePass() == null) {
+                throw new InvalidUserDataException('If you want to provide a keystore then password and file may not be null or blank')
+            }
+            else if(getKeystoreFile() && getKeystorePass()) {
+                if(!getKeystoreFile().exists()) {
+                    throw new InvalidUserDataException("Keystore file does not exist at location ${getKeystoreFile().canonicalPath}")
+                }
+                else {
+                    LOGGER.info "Keystore file = ${getKeystoreFile()}"
+                }
+            }
+            else {
+                LOGGER.info 'Generating temporary SSL keystore'
+            }
+        }
     }
 
     /**
@@ -202,16 +219,14 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
 
             if(getEnableSSL()) {
-                if (keystoreFile==null ^ keystorePass==null) {
-                    throw new GradleException('keystorePass and keystoreFile configurations must both be specified')
-                }
-                if (!keystoreFile) {
+                if(!getKeystoreFile()) {
                     SSLKeystore sslKeystore = initSSLKeystore()
                     createSSLCertificate(sslKeystore)
                     keystoreFile = sslKeystore.keystore
                     keystorePass = sslKeystore.keyPassword
                 }
-                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), keystoreFile, keystorePass)
+
+                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile().canonicalPath, getKeystorePass())
             }
 
             // Start server
@@ -243,7 +258,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
      * @return SSL keystore parameters
      */
     private SSLKeystore initSSLKeystore() {
-        final String keystore = "$project.buildDir/tmp/ssl/keystore"
+        final File keystore = new File("$project.buildDir/tmp/ssl/keystore")
         final String keyPassword = 'gradleTomcat'
         new SSLKeystore(keystore: keystore, keyPassword: keyPassword)
     }
@@ -256,9 +271,9 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     private void createSSLCertificate(SSLKeystore sslKeystore) {
         LOGGER.info 'Creating SSL certificate'
 
-        final File keystoreFile = new File(sslKeystore.keystore)
+        final File keystoreFile = sslKeystore.keystore
 
-        if(!keystoreFile.parentFile.exists() && !keystoreFile.parentFile.mkdirs()) {
+        if(!sslKeystore.keystore.parentFile.exists() && !sslKeystore.keystore.parentFile.mkdirs()) {
             throw new GradleException("Unable to create keystore folder: $keystoreFile.parentFile.canonicalPath")
         }
 

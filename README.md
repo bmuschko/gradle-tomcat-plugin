@@ -26,7 +26,7 @@ of different versions.
         }
 
         dependencies {
-            classpath 'bmuschko:gradle-tomcat-plugin:0.9.4'
+            classpath 'bmuschko:gradle-tomcat-plugin:0.9.5'
         }
     }
 

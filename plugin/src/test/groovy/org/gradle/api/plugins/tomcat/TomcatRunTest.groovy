@@ -127,6 +127,56 @@ class TomcatRunTest {
     }
 
     @Test
+    void testValidateConfigurationForEnabledSSLButNoKeystoreConfigured() {
+        File webAppSourceDir = createWebAppSourceDirectory()
+        tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.enableSSL = true
+        tomcatRun.validateConfiguration()
+        assert tomcatRun.getEnableSSL() == true
+        assert tomcatRun.getKeystoreFile() == null
+        assert tomcatRun.getKeystorePass() == null
+    }
+
+    @Test(expected = InvalidUserDataException.class)
+    void testValidateConfigurationForEnabledSSLButOnlyKeystoreFileConfigured() {
+        File webAppSourceDir = createWebAppSourceDirectory()
+        tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setKeystoreFile createKeystoreFile()
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.enableSSL = true
+        tomcatRun.validateConfiguration()
+    }
+
+    @Test(expected = InvalidUserDataException.class)
+    void testValidateConfigurationForEnabledSSLButOnlyKeystorePasswordConfigured() {
+        File webAppSourceDir = createWebAppSourceDirectory()
+        tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setKeystorePass 'pwd'
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.enableSSL = true
+        tomcatRun.validateConfiguration()
+    }
+
+    @Test
+    void testValidateConfigurationForEnabledSSLForKeystoreFileAndPasswordConfigured() {
+        File webAppSourceDir = createWebAppSourceDirectory()
+        tomcatRun.setWebAppSourceDirectory webAppSourceDir
+        tomcatRun.setKeystoreFile createKeystoreFile()
+        tomcatRun.setKeystorePass 'pwd'
+        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.enableSSL = true
+        tomcatRun.validateConfiguration()
+        assert tomcatRun.getEnableSSL() == true
+        assert tomcatRun.getKeystoreFile() == new File(testDir, "keystore.jks")
+        assert tomcatRun.getKeystorePass() == 'pwd'
+    }
+
+    @Test
     public void testSetWebApplicationContextForFullContextPath() {
         File webAppSourceDir = createWebAppSourceDirectory()
         String contextPath = "/app"
@@ -245,5 +295,16 @@ class TomcatRunTest {
         }
 
         defaultConfigFile
+    }
+
+    private File createKeystoreFile() {
+        File keystoreFile = new File(testDir, "keystore.jks")
+        boolean success = keystoreFile.createNewFile()
+
+        if(!success) {
+            fail "Unable to create keystore file"
+        }
+
+        keystoreFile
     }
 }

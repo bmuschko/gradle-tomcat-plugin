@@ -1,3 +1,7 @@
+### Version 0.9.5 (September 30, 2012)
+
+* Exposed convention properties for configuring external SSL keystore - [Pull Request 35](https://github.com/bmuschko/gradle-tomcat-plugin/pull/35).
+
 ### Version 0.9.4 (August 12, 2012)
 
 * ConfigFile not taken correctly if its path contains spaces with Tomcat 6 - [Issue 30](https://github.com/bmuschko/gradle-tomcat-plugin/issues/30).
