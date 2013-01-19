@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import groovy.util.logging.Slf4j
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
@@ -25,7 +24,6 @@ import org.gradle.api.tasks.*
  *
  * @author Benjamin Muschko
  */
-@Slf4j
 class TomcatJasper extends DefaultTask {
     @InputFiles FileCollection classpath
     Boolean validateXml
@@ -46,8 +44,8 @@ class TomcatJasper extends DefaultTask {
 
     @TaskAction
     void start() {
-        log.info "Running Jasper for ${getProject()}"
-        log.info "Jasper classpath = ${getClasspath().asPath}"
+        logger.info "Running Jasper for ${getProject()}"
+        logger.info "Jasper classpath = ${getClasspath().asPath}"
 
         ant.taskdef(classname: 'org.apache.jasper.JspC', name: 'jasper', classpath: getClasspath().asPath)
         ant.jasper(getJasperAttributes())

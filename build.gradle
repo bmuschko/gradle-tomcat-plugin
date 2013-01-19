@@ -1,8 +1,11 @@
+apply plugin: 'maven'
+
 allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
-    version = '0.9.5'
-    defaultTasks 'clean', 'build', 'uberjar'
+    group = 'org.gradle.api.plugins'
+    version = '0.9.6'
+    defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
 subprojects {
@@ -16,18 +19,16 @@ subprojects {
     }
 
     dependencies {
-        groovy 'org.codehaus.groovy:groovy:1.8.4'
-        testCompile 'junit:junit:4.+'
+        groovy localGroovy()
+        testCompile 'junit:junit:4.11'
     }
 }
 
-task uberjar(type: Jar, dependsOn: subprojects.assemble) {
-    description = 'Creates Tomcat plugin uberjar'
+task uberJar(type: Jar, dependsOn: subprojects.assemble) {
+    description = 'Creates Uberjar.'
 
     subprojects.each { project ->
-        from({
-            project.configurations.archives.allArtifacts.files.collect { zipTree(it) }
-        })
+        from project.configurations.archives.allArtifacts.files.collect { zipTree(it) }
     }
 
     manifest {
@@ -40,8 +41,109 @@ task uberjar(type: Jar, dependsOn: subprojects.assemble) {
     }
 }
 
+task sourcesJar(type: Jar) {
+    description = 'Creates sources JAR.'
+    classifier = 'sources'
+
+    subprojects.each { project ->
+        from project.sourceSets.main.allSource
+    }
+}
+
+ext.groovyDocsDir = 'build/docs/groovydoc'
+
+task aggregateGroovydocs(type: Groovydoc, dependsOn: subprojects.groovydoc) {
+    description = 'Creates Groovydocs.'
+
+    ext.title = "Gradle Tomcat plugin ($version)"
+    docTitle title
+    windowTitle title
+    source subprojects.groovydoc.source
+    destinationDir file(groovyDocsDir)
+    classpath = files(subprojects.groovydoc.classpath)
+    groovyClasspath = project(':plugin').groovydoc.groovyClasspath
+}
+
+task groovydocJar(type: Jar, dependsOn: aggregateGroovydocs) {
+    description = 'Creates GroovyDocs JAR.'
+    classifier = 'javadoc'
+
+    from groovyDocsDir
+}
+
+task createAllDeliverables(dependsOn: [uberJar, sourcesJar, groovydocJar]) {
+    description = 'Creates all deliverables including plugin JAR, sources JAR and Groovydoc JAR.'
+}
+
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0'
+    gradleVersion = '1.3'
+}
+
+artifacts {
+    archives uberJar
+    archives sourcesJar
+    archives groovydocJar
+}
+
+ext.pomConfiguration = {
+    name 'Gradle Tomcat plugin'
+    description 'Gradle plugin supporting deployment of your web application to an embedded Tomcat web container.'
+    url 'https://github.com/bmuschko/gradle-tomcat-plugin'
+    inceptionYear '2010'
+
+    scm {
+        url 'https://github.com/bmuschko/gradle-tomcat-plugin'
+        connection 'scm:https://bmuschko@github.com/bmuschko/gradle-tomcat-plugin.git'
+        developerConnection 'scm:git://github.com/bmuschko/gradle-tomcat-plugin.git'
+    }
+
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
+    }
+
+    developers {
+        developer {
+            id 'bmuschko'
+            name 'Benjamin Muschko'
+            email 'benjamin.muschko@gmail.com'
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project pomConfiguration
+    }
+}
+
+if(hasProperty('nexusUsername') && hasProperty('nexusPassword')) {
+    apply plugin: 'signing'
+
+    signing {
+        required { gradle.taskGraph.hasTask(uploadArchives) && !version.endsWith('SNAPSHOT') }
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories.mavenDeployer {
+            beforeDeployment { deployment ->
+                signing.signPom(deployment)
+            }
+
+            name = 'mavenCentralReleaseDeployer'
+
+            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                authentication(userName: nexusUsername, password: nexusPassword)
+                releases(updatePolicy: 'always')
+            }
+
+            pom.project pomConfiguration
+        }
+    }
 }
 
 idea.project {

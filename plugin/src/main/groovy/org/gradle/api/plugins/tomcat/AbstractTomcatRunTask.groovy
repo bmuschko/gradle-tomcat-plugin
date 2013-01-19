@@ -21,8 +21,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.tasks.InputFile
@@ -40,7 +38,6 @@ import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileL
  * @author Benjamin Muschko
  */
 abstract class AbstractTomcatRunTask extends DefaultTask {
-    static final Logger LOGGER = Logging.getLogger(AbstractTomcatRunTask.class)
     static final CONFIG_FILE = 'META-INF/context.xml'
     boolean reloadable
     String contextPath
@@ -69,7 +66,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
     @TaskAction
     protected void start() {
-        LOGGER.info "Configuring Tomcat for ${getProject()}"
+        logger.info "Configuring Tomcat for ${getProject()}"
 
         ClassLoader originalClassLoader = getClass().classLoader
         URLClassLoader tomcatClassloader = createTomcatClassLoader()
@@ -129,7 +126,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                 throw new InvalidUserDataException('The provided default web.xml file does not exist')
             }
             else {
-                LOGGER.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
+                logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
             }
         }
 
@@ -140,7 +137,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             }
             else {
                 setResolvedConfigFile(getConfigFile().toURI().toURL())
-                LOGGER.info "context.xml = ${getResolvedConfigFile().toString()}"
+                logger.info "context.xml = ${getResolvedConfigFile().toString()}"
             }
         }
 
@@ -149,14 +146,14 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             throw new InvalidUserDataException('The provided HTTP protocol handler classname may not be null or blank')
         }
         else {
-            LOGGER.info "HTTP protocol handler classname = ${getHttpProtocol()}"
+            logger.info "HTTP protocol handler classname = ${getHttpProtocol()}"
         }
 
         if(!getHttpsProtocol() || getHttpsProtocol() == '') {
             throw new InvalidUserDataException('The provided HTTPS protocol handler classname may not be null or blank')
         }
         else {
-            LOGGER.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
+            logger.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
         }
 
         if(getOutputFile()) {
@@ -164,7 +161,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                 throw new InvalidUserDataException('The provided output file may not be blank')
             }
             else {
-                LOGGER.info "Output file = ${getOutputFile().canonicalPath}"
+                logger.info "Output file = ${getOutputFile().canonicalPath}"
             }
         }
 
@@ -177,11 +174,11 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                     throw new InvalidUserDataException("Keystore file does not exist at location ${getKeystoreFile().canonicalPath}")
                 }
                 else {
-                    LOGGER.info "Keystore file = ${getKeystoreFile()}"
+                    logger.info "Keystore file = ${getKeystoreFile()}"
                 }
             }
             else {
-                LOGGER.info 'Generating temporary SSL keystore'
+                logger.info 'Generating temporary SSL keystore'
             }
         }
     }
@@ -207,7 +204,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
     void startTomcat() {
         try {
-            LOGGER.debug 'Starting Tomcat Server ...'
+            logger.debug 'Starting Tomcat Server ...'
 
             setServer(createServer())
             getServer().home = getTemporaryDir().absolutePath
@@ -232,8 +229,8 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             // Start server
             getServer().start()
 
-            LOGGER.lifecycle 'Started Tomcat Server'
-            LOGGER.lifecycle "The Server is running at http://localhost:${getHttpPort()}${getServer().context.path}"
+            logger.quiet 'Started Tomcat Server'
+            logger.quiet "The Server is running at http://localhost:${getHttpPort()}${getServer().context.path}"
 
             Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
             shutdownMonitor.start()
@@ -247,7 +244,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
         finally {
             if(!daemon) {
-                LOGGER.info 'Tomcat server exiting.'
+                logger.info 'Tomcat server exiting.'
             }
         }
     }
@@ -269,7 +266,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
      * @param sslKeystore SSL keystore parameters
      */
     private void createSSLCertificate(SSLKeystore sslKeystore) {
-        LOGGER.info 'Creating SSL certificate'
+        logger.info 'Creating SSL certificate'
 
         final File keystoreFile = sslKeystore.keystore
 
@@ -296,7 +293,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
 
         keyToolClass.main(keytoolArgs)
-        LOGGER.info 'Created SSL certificate'
+        logger.info 'Created SSL certificate'
     }
 
     String getFullContextPath() {

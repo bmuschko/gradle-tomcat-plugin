@@ -15,12 +15,11 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.InputFile
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
 
 /**
  * Deploys a WAR to an embedded Tomcat web container.
@@ -28,7 +27,6 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko
  */
 class TomcatRunWar extends AbstractTomcatRunTask {
-    static final Logger LOGGER = LoggerFactory.getLogger(TomcatRunWar.class)
     @InputFile File webApp
 
     @Override
@@ -41,7 +39,7 @@ class TomcatRunWar extends AbstractTomcatRunTask {
                     + ' does not exist')
         }
         else {
-            LOGGER.info "Web application WAR = ${getWebApp().canonicalPath}"
+            logger.info "Web application WAR = ${getWebApp().canonicalPath}"
         }
 
         JarFile war = new JarFile(getWebApp())
@@ -50,7 +48,7 @@ class TomcatRunWar extends AbstractTomcatRunTask {
         // If context.xml wasn't provided check the default location
         if(!getConfigFile() && defaultConfigFileEntry){
             setResolvedConfigFile(new URL("jar:${getWebApp().toURI().toString()}!/${CONFIG_FILE}"))
-            LOGGER.info "context.xml = ${getResolvedConfigFile().toString()}"
+            logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
     }
 

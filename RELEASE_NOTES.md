@@ -1,3 +1,8 @@
+### Version 0.9.6 (January 19, 2013)
+
+* Using Gradle logger instance from `DefaultTask`.
+* Upgrade to Gradle Wrapper 1.3.
+
 ### Version 0.9.5 (September 30, 2012)
 
 * Exposed convention properties for configuring external SSL keystore - [Pull Request 35](https://github.com/bmuschko/gradle-tomcat-plugin/pull/35).

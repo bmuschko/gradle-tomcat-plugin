@@ -15,16 +15,15 @@
  */
 package org.gradle.api.plugins.tomcat.internal
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import groovy.util.logging.Slf4j
 
 /**
  * Monitor that keeps thread running until stop command got issued.
  *
  * @author Benjamin Muschko
  */
+@Slf4j
 class ShutdownMonitor extends Thread {
-    static final Logger LOGGER = LoggerFactory.getLogger(ShutdownMonitor.class)
     final int port
     final String key
     final server
@@ -68,39 +67,39 @@ class ShutdownMonitor extends Thread {
                 String cmd = lin.readLine()
 
                 if('stop' == cmd) {
-                    LOGGER.info 'Shutting down server'
+                    log.info 'Shutting down server'
                   
                     try {
                         socket.close()
                     }
                     catch(Exception e) {
-                        LOGGER.debug 'Exception when stopping server', e
+                        log.debug 'Exception when stopping server', e
                     }
                     try {
                         serverSocket.close()
                     }
                     catch(IOException e) {
-                        LOGGER.debug 'Exception when stopping server', e
+                        log.debug 'Exception when stopping server', e
                     }
 
                     serverSocket = null
 
                     if(!daemon) {
-                        LOGGER.info 'Killing Tomcat'
+                        log.info 'Killing Tomcat'
                         System.exit(0)
                     } else {
                         try {
-                            LOGGER.info 'Stopping server'
+                            log.info 'Stopping server'
                             server.stop()
                         }
                         catch(Exception e) {
-                            LOGGER.error 'Exception when stopping server', e
+                            log.error 'Exception when stopping server', e
                         }
                     }
                 }
             }
             catch(Exception e) {
-                LOGGER.error 'Exception in monitoring monitor', e
+                log.error 'Exception in monitoring monitor', e
                 System.exit(1)
             }
             finally {
@@ -109,7 +108,7 @@ class ShutdownMonitor extends Thread {
                         socket.close()
                     }
                     catch(Exception e) {
-                        LOGGER.debug 'Exception when stopping server', e
+                        log.debug 'Exception when stopping server', e
                     }
                 }
 

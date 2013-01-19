@@ -17,11 +17,9 @@ package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 
 /**
  * Deploys an exploded web application to an embedded Tomcat web container. Does not require that the web application
@@ -30,7 +28,6 @@ import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
  * @author Benjamin Muschko
  */
 class TomcatRun extends AbstractTomcatRunTask {
-    static final Logger LOGGER = LoggerFactory.getLogger(TomcatRun.class)
     @InputFiles FileCollection webAppClasspath
     @InputDirectory File webAppSourceDirectory
     @InputDirectory File classesDirectory
@@ -47,7 +44,7 @@ class TomcatRun extends AbstractTomcatRunTask {
                         + ' does not exist')
             }
             else {
-                LOGGER.info "Webapp source directory = ${getWebAppSourceDirectory().canonicalPath}"
+                logger.info "Webapp source directory = ${getWebAppSourceDirectory().canonicalPath}"
             }
         }
         catch(IOException e) {
@@ -59,7 +56,7 @@ class TomcatRun extends AbstractTomcatRunTask {
         // If context.xml wasn't provided check the default location
         if(!getConfigFile() && defaultConfigFile.exists()){
             setResolvedConfigFile(defaultConfigFile.toURI().toURL())
-            LOGGER.info "context.xml = ${getResolvedConfigFile().toString()}"
+            logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
     }
 
@@ -115,7 +112,7 @@ class TomcatRun extends AbstractTomcatRunTask {
             boolean success = metaInfDir.mkdir()
 
             if(!success) {
-                LOGGER.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
+                logger.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
             }
         }
     }
@@ -124,7 +121,7 @@ class TomcatRun extends AbstractTomcatRunTask {
     void configureWebApplication() {
         super.configureWebApplication()
 
-        LOGGER.info "web app loader classpath = ${getWebAppClasspath().asPath}"
+        logger.info "web app loader classpath = ${getWebAppClasspath().asPath}"
       
         getWebAppClasspath().each { file ->
             getServer().context.loader.addRepository(file.toURI().toURL().toString())

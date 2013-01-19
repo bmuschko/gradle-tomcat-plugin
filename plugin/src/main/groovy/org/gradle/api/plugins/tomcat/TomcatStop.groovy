@@ -18,8 +18,6 @@ package org.gradle.api.plugins.tomcat
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.TaskAction
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 /**
  * Stops the embedded Tomcat web container.
@@ -27,7 +25,6 @@ import org.slf4j.LoggerFactory
  * @author Benjamin Muschko 
  */
 class TomcatStop extends DefaultTask {
-    static final Logger LOGGER = LoggerFactory.getLogger(TomcatStop.class)
     Integer stopPort
     String stopKey
 
@@ -50,10 +47,10 @@ class TomcatStop extends DefaultTask {
             s.close()
         }
         catch(ConnectException e) {
-            LOGGER.info 'Tomcat not running!'
+            logger.info 'Tomcat not running!'
         }
         catch(Exception e) {
-            LOGGER.error 'Exception during stopping', e
+            logger.error 'Exception during stopping', e
         }
     }
 
