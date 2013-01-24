@@ -36,4 +36,5 @@ class TomcatJasperConvention {
     String javaEncoding
     Boolean trimSpaces
     Boolean xpoweredBy
+    Boolean addWebXmlMappings
 }
