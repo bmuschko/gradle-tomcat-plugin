@@ -1,3 +1,8 @@
+### Version 0.9.7 (February 17, 2013)
+
+* Exposed convention property `addWebXmlMappings` for Jasper task - [Pull Request 38](https://github.com/bmuschko/gradle-tomcat-plugin/pull/38).
+* Upgrade to Gradle Wrapper 1.4.
+
 ### Version 0.9.6 (January 19, 2013)
 
 * Using Gradle logger instance from `DefaultTask`.

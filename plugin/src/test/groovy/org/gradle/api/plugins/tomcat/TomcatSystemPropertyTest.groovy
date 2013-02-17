@@ -16,7 +16,7 @@
 package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.InvalidUserDataException
-import org.junit.After
+import org.junit.Before
 import org.junit.Test
 
 /**
@@ -25,11 +25,15 @@ import org.junit.Test
  * @author Benjamin Muschko
  */
 class TomcatSystemPropertyTest {
-    @After
+    @Before
     void tearDown() {
         System.clearProperty(TomcatSystemProperty.HTTP_PORT_SYSPROPERTY)
+        System.clearProperty(TomcatSystemProperty.HTTPS_PORT_SYSPROPERTY)
         System.clearProperty(TomcatSystemProperty.STOP_PORT_SYSPROPERTY)
         System.clearProperty(TomcatSystemProperty.STOP_KEY_SYSPROPERTY)
+        System.clearProperty(TomcatSystemProperty.ENABLE_SSL_SYSPROPERTY)
+        System.clearProperty(TomcatSystemProperty.HTTP_PROTOCOL_SYSPROPERTY)
+        System.clearProperty(TomcatSystemProperty.HTTPS_PROTOCOL_SYSPROPERTY)
     }
 
     @Test
