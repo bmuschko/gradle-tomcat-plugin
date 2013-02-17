@@ -115,6 +115,7 @@ To configure the Jasper compiler task you can choose to set the following proper
 * `validateXml`: Determines whether `web.xml` should be validated (defaults to `false`).
 * `uriroot`: The web application root directory (defaults to `src/main/webapp`).
 * `webXmlFragment`: The generated web XML fragment file to be referenced by your `web.xml` file.
+* `addWebXmlMappings`: Automatically add the generated web XML fragment to the `web.xml` file.  Caution: this will modify the `web.xml` file in the project, not the build directory.
 * `outputDir`: The output directory the compiled JSPs will end up in (defaults to `build/jasper`).
 * `classdebuginfo`: Should the class file be compiled with debugging information (defaults to `true`).
 * `compiler`: Which compiler Ant should use to compile JSP pages. See the Ant documentation for more information. If the value is not set, then the default Eclipse JDT Java compiler will be used instead of using Ant. No default value.

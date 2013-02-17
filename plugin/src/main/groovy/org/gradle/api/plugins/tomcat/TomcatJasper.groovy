@@ -41,6 +41,7 @@ class TomcatJasper extends DefaultTask {
     String javaEncoding
     Boolean trimSpaces
     Boolean xpoweredBy
+    Boolean addWebXmlMappings
 
     @TaskAction
     void start() {
@@ -61,6 +62,10 @@ class TomcatJasper extends DefaultTask {
 
         if(getWebXmlFragment()) {
             jasperAttributes['webXmlFragment'] = getWebXmlFragment()
+        }
+
+        if(getAddWebXmlMappings()) {
+            jasperAttributes['addWebXmlMappings'] = getAddWebXmlMappings()
         }
 
         if(getCompiler()) {

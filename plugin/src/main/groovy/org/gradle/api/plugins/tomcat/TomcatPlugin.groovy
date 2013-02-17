@@ -116,6 +116,7 @@ class TomcatPlugin implements Plugin<Project> {
             tomcatJasperTask.conventionMapping.map('validateXml') { tomcatConvention.jasper.validateXml ?: false }
             tomcatJasperTask.conventionMapping.map('uriroot') { tomcatConvention.jasper.uriroot ?: project.webAppDir }
             tomcatJasperTask.conventionMapping.map('webXmlFragment') { tomcatConvention.jasper.webXmlFragment }
+            tomcatJasperTask.conventionMapping.map('addWebXmlMappings') { tomcatConvention.jasper.addWebXmlMappings }
             tomcatJasperTask.conventionMapping.map('outputDir') { tomcatConvention.jasper.outputDir ?: new File(project.buildDir, 'jasper') }
             tomcatJasperTask.conventionMapping.map('classdebuginfo') { tomcatConvention.jasper.classdebuginfo ?: true }
             tomcatJasperTask.conventionMapping.map('compiler') { tomcatConvention.jasper.compiler }
