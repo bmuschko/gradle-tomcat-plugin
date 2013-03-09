@@ -97,6 +97,7 @@ server has started. When false, this task blocks until the Tomcat server is stop
 * `configFile`: The path to the Tomcat context XML file (defaults to `src/main/webapp/META-INF/context.xml` for `tomcatRun`,
 defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
 * `outputFile`: The file to write Tomcat log messages to. If the file already exists new messages will be appended.
+* `reloadable`: Forces context scanning if you don't use a context file (defaults to 'true').
 
 The following example shows how to change the default HTTP/HTTPS ports for the task `tomcatRun`. To enable SSL we set the
 convention property `enableSSL` to `true`. Furthermore, we declare a custom context file.
@@ -236,10 +237,19 @@ of context attributes. The following example shows how to set up a MySQL JNDI da
     </Context>
 
 <br>
-**How do I use byte code swap technologies like JRebel with the plugin?**
+**How do I use hot code deployment with the plugin?**
 
-The configuration is usually product-specific. Please refer to the product's documentation on how to set it up for your project.
-The following section describes how to set up Gradle and the plugin with [JRebel](http://zeroturnaround.com/jrebel/).
+The plugin provides out-of-the-box support for swapping out byte code through the property `reloadable`. By default this option
+is turned out so you don't need any additional configuration changes. All you need to do is to have a running instance of the
+container initiated by `tomcatRun`. Fire up your favorite editor, change a production source file, save it and recompile your
+sources in another terminal via `gradle compileJava`. After a couple of seconds the context is reloaded and you should see the
+behavior reflected in the terminal window running the container:
+
+    Reloading Context with name [/myapp] has started
+    Reloading Context with name [/myapp] is completed
+
+Alternatively, you can use other commericial byte code swap technologies. The configuration is usually product-specific.
+Please refer to the product's documentation on how to set it up for your project. The following section describes how to set up Gradle and the plugin with [JRebel](http://zeroturnaround.com/jrebel/).
 First of all download [JRebel](http://zeroturnaround.com/jrebel/current/), install it on your machine and set up the [license](http://zeroturnaround.com/reference-manual/install.html#install-1.3).
 To tell JRebel which directory to scan for changed byte code you need to create a [rebel.xml](file://localhost/Users/benjamin/dev/tools/jrebel/doc/app.html#app) file. In
 your web module place the file under `build/classes/main` so it can be loaded by the Tomcat plugin. For creating the configuration of the file
