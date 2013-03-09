@@ -91,13 +91,13 @@ optional properties:
 * `webDefaultXml`: The default web.xml. If it doesn't get defined an instance of `org.apache.catalina.servlets.DefaultServlet`
 and `org.apache.jasper.servlet.JspServlet` will be set up.
 * `additionalRuntimeJars`: Defines additional runtime JARs that are not provided by the web application.
-* `URIEncoding`: Specifies the character encoding used to decode the URI bytes by the HTTP Connector (defaults to 'UTF-8').
+* `URIEncoding`: Specifies the character encoding used to decode the URI bytes by the HTTP Connector (defaults to `UTF-8`).
 * `daemon`: Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
-server has started. When false, this task blocks until the Tomcat server is stopped (defaults to false).
+server has started. When false, this task blocks until the Tomcat server is stopped (defaults to `false`).
 * `configFile`: The path to the Tomcat context XML file (defaults to `src/main/webapp/META-INF/context.xml` for `tomcatRun`,
 defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
 * `outputFile`: The file to write Tomcat log messages to. If the file already exists new messages will be appended.
-* `reloadable`: Forces context scanning if you don't use a context file (defaults to 'true').
+* `reloadable`: Forces context scanning if you don't use a context file (defaults to `true`).
 
 The following example shows how to change the default HTTP/HTTPS ports for the task `tomcatRun`. To enable SSL we set the
 convention property `enableSSL` to `true`. Furthermore, we declare a custom context file.
