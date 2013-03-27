@@ -46,55 +46,30 @@ class ShutdownMonitor extends Thread {
 
         setName('TomcatPluginShutdownMonitor')
         serverSocket = new ServerSocket(port, 1, InetAddress.getByName('127.0.0.1'))
+        serverSocket.setReuseAddress(true)
     }
 
     @Override
     void run() {
-        while(serverSocket != null) {
-            Socket socket = null;
-
+        Socket socket = serverSocket.accept();
+        socket.setSoLinger(false, 0)
+        socket.setKeepAlive(true)
+        while(!server.stopped) {
             try {
-                socket = serverSocket.accept()
-                socket.setSoLinger(false, 0)
                 LineNumberReader lin = new LineNumberReader(new InputStreamReader(socket.inputStream))
 
                 String keyCmd = lin.readLine()
-
-                if(key && !(key == keyCmd)) {
-                    continue
-                }
 
                 String cmd = lin.readLine()
 
                 if('stop' == cmd) {
                     log.info 'Shutting down server'
-                  
                     try {
-                        socket.close()
+                        log.info 'Stopping server'
+                        server.stop()
                     }
                     catch(Exception e) {
-                        log.debug 'Exception when stopping server', e
-                    }
-                    try {
-                        serverSocket.close()
-                    }
-                    catch(IOException e) {
-                        log.debug 'Exception when stopping server', e
-                    }
-
-                    serverSocket = null
-
-                    if(!daemon) {
-                        log.info 'Killing Tomcat'
-                        System.exit(0)
-                    } else {
-                        try {
-                            log.info 'Stopping server'
-                            server.stop()
-                        }
-                        catch(Exception e) {
-                            log.error 'Exception when stopping server', e
-                        }
+                        log.error 'Exception when stopping server', e
                     }
                 }
             }
@@ -102,18 +77,15 @@ class ShutdownMonitor extends Thread {
                 log.error 'Exception in monitoring monitor', e
                 System.exit(1)
             }
-            finally {
-                if(socket != null) {
-                    try {
-                        socket.close()
-                    }
-                    catch(Exception e) {
-                        log.debug 'Exception when stopping server', e
-                    }
-                }
+        }
 
-                socket = null
-            }
+        try {
+            socket.close()
+            serverSocket.close()
+        }
+        catch(Exception e) {
+            log.error 'Exception when stopping server', e
+            System.exit(1)
         }
     }
 }
