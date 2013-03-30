@@ -41,29 +41,35 @@ class ShutdownMonitor extends Thread {
         this.daemon = daemon
 
         if(daemon) {
-            setDaemon(true);
+            setDaemon(true)
         }
 
         setName('TomcatPluginShutdownMonitor')
         serverSocket = new ServerSocket(port, 1, InetAddress.getByName('127.0.0.1'))
-        serverSocket.setReuseAddress(true)
+        serverSocket.reuseAddress = true
     }
 
     @Override
     void run() {
-        Socket socket = serverSocket.accept();
+        Socket socket = serverSocket.accept()
         socket.setSoLinger(false, 0)
-        socket.setKeepAlive(true)
+        socket.keepAlive = true
+
         while(!server.stopped) {
             try {
                 LineNumberReader lin = new LineNumberReader(new InputStreamReader(socket.inputStream))
 
                 String keyCmd = lin.readLine()
 
+                if(key && !(key == keyCmd)) {
+                    continue
+                }
+
                 String cmd = lin.readLine()
 
                 if('stop' == cmd) {
                     log.info 'Shutting down server'
+
                     try {
                         log.info 'Stopping server'
                         server.stop()
@@ -74,7 +80,7 @@ class ShutdownMonitor extends Thread {
                 }
             }
             catch(Exception e) {
-                log.error 'Exception in monitoring monitor', e
+                log.error 'Exception in shutdown monitor', e
                 System.exit(1)
             }
         }

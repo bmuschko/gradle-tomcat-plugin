@@ -25,7 +25,7 @@ import java.lang.reflect.Constructor
 class Tomcat7xServer implements TomcatServer {
     final tomcat
     def context
-    Boolean stopped
+    private boolean stopped
 
     public Tomcat7xServer() {
         Class serverClass = loadClass('org.apache.catalina.startup.Tomcat')
@@ -127,14 +127,19 @@ class Tomcat7xServer implements TomcatServer {
 
     @Override
     void start() {
-        this.setStopped false
+        stopped = false
         tomcat.start()
     }
 
     @Override
     void stop() {
-        this.setStopped true
+        stopped = true
         tomcat.stop()
         tomcat.destroy()
+    }
+
+    @Override
+    boolean isStopped() {
+        stopped
     }
 }

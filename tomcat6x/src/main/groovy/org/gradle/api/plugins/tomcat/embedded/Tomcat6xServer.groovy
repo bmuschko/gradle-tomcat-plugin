@@ -23,7 +23,7 @@ package org.gradle.api.plugins.tomcat.embedded
 class Tomcat6xServer implements TomcatServer {
     final embedded
     def context
-    Boolean stopped
+    boolean stopped
 
     public Tomcat6xServer() {
         Class serverClass = loadClass('org.apache.catalina.startup.Embedded')
@@ -185,14 +185,19 @@ class Tomcat6xServer implements TomcatServer {
 
     @Override
     void start() {
-        this.setStopped false
+        stopped = false
         embedded.start()
     }
 
     @Override
     void stop() {
-        this.setStopped true
+        stopped = true
         embedded.stop()
         embedded.destroy()
+    }
+
+    @Override
+    boolean isStopped() {
+        stopped
     }
 }

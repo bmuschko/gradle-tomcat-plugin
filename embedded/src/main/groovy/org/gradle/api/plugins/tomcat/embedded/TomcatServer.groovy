@@ -35,4 +35,5 @@ interface TomcatServer {
     void setConfigFile(URL configFile)
     void start()
     void stop()
+    boolean isStopped()
 }
