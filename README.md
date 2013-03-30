@@ -22,7 +22,7 @@ The following code snippet shows an example on how to retrieve it from Maven Cen
         }
 
         dependencies {
-            classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:0.9.7'
+            classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:0.9.8'
         }
     }
 

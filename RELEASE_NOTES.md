@@ -1,3 +1,7 @@
+### Version 0.9.8 (March 30, 2013)
+
+* Call tomcat.destroy() when stopping Tomcat to avoid Gradle daemon to exit [Pull Request 42](https://github.com/bmuschko/gradle-tomcat-plugin/pull/42).
+
 ### Version 0.9.7 (February 17, 2013)
 
 * Exposed convention property `addWebXmlMappings` for Jasper task - [Pull Request 38](https://github.com/bmuschko/gradle-tomcat-plugin/pull/38).
