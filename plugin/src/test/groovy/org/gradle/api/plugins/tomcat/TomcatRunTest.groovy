@@ -38,7 +38,7 @@ class TomcatRunTest {
     @Before
     void setUp() {
         project = ProjectBuilder.builder().withProjectDir(testDir).build()
-        tomcatRun = project.tasks.add(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatRun.class)
+        tomcatRun = project.tasks.create(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatRun.class)
     }
 
     @After

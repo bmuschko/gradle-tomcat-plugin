@@ -45,7 +45,7 @@ class TomcatPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.plugins.apply(WarPlugin)
 
-        project.configurations.add(TOMCAT_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
+        project.configurations.create(TOMCAT_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
                .setDescription('The Tomcat libraries to be used for this project.')
 
         TomcatPluginConvention tomcatConvention = new TomcatPluginConvention()
@@ -86,7 +86,7 @@ class TomcatPlugin implements Plugin<Project> {
             tomcatRun.conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir }
         }
 
-        TomcatRun tomcatRun = project.tasks.add(TOMCAT_RUN_TASK_NAME, TomcatRun)
+        TomcatRun tomcatRun = project.tasks.create(TOMCAT_RUN_TASK_NAME, TomcatRun)
         tomcatRun.description = 'Uses your files as and where they are and deploys them to Tomcat.'
         tomcatRun.group = WarPlugin.WEB_APP_GROUP
     }
@@ -97,13 +97,13 @@ class TomcatPlugin implements Plugin<Project> {
             tomcatRunWar.conventionMapping.map('webApp') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
         }
 
-        TomcatRunWar tomcatRunWar = project.tasks.add(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar)
+        TomcatRunWar tomcatRunWar = project.tasks.create(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar)
         tomcatRunWar.description = 'Assembles the webapp into a war and deploys it to Tomcat.'
         tomcatRunWar.group = WarPlugin.WEB_APP_GROUP
     }
 
     private void configureTomcatStop(final Project project, final TomcatPluginConvention tomcatConvention) {
-        TomcatStop tomcatStop = project.tasks.add(TOMCAT_STOP_TASK_NAME, TomcatStop)
+        TomcatStop tomcatStop = project.tasks.create(TOMCAT_STOP_TASK_NAME, TomcatStop)
         tomcatStop.description = 'Stops Tomcat.'
         tomcatStop.group = WarPlugin.WEB_APP_GROUP
         tomcatStop.conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
@@ -131,7 +131,7 @@ class TomcatPlugin implements Plugin<Project> {
             tomcatJasperTask.conventionMapping.map('xpoweredBy') { tomcatConvention.jasper.xpoweredBy ?: false }
         }
 
-        TomcatJasper tomcatJasper = project.tasks.add(TOMCAT_JASPER_TASK_NAME, TomcatJasper)
+        TomcatJasper tomcatJasper = project.tasks.create(TOMCAT_JASPER_TASK_NAME, TomcatJasper)
         tomcatJasper.description = 'Runs the JSP compiler and turns JSP pages into Java source.'
         tomcatJasper.group = WarPlugin.WEB_APP_GROUP
     }
