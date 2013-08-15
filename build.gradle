@@ -4,7 +4,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'org.gradle.api.plugins'
-    version = '0.9.8'
+    version = '0.9.9'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
@@ -18,7 +18,7 @@ subprojects {
     }
 
     dependencies {
-        groovy localGroovy()
+        compile localGroovy()
         testCompile 'junit:junit:4.11'
     }
 }
@@ -82,7 +82,7 @@ task aggregateTestReports(type: TestReport) {
 check.dependsOn aggregateTestReports
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.4'
+    gradleVersion = '1.7'
 }
 
 artifacts {

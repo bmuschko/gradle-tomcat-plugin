@@ -1,3 +1,8 @@
+### Version 0.9.9 (August 14, 2013)
+
+* Resolve `ConfigurationContainer.add()` deprecation warning - [Pull Request 55](https://github.com/bmuschko/gradle-tomcat-plugin/pull/55).
+* Upgrade to Gradle Wrapper 1.7.
+
 ### Version 0.9.8 (March 30, 2013)
 
 * Call tomcat.destroy() when stopping Tomcat to avoid Gradle daemon to exit [Pull Request 42](https://github.com/bmuschko/gradle-tomcat-plugin/pull/42).
