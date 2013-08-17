@@ -296,22 +296,29 @@ Usually unit and integration tests are kept separate by convention. One conventi
 files differently e.g. integration tests always end with the suffix `IntegrationTest`, unit test files end with `Test`.
 By doing that you can run them separately. For running the integration tests you will want to run the Tomcat task as daemon
 thread and shut it down once your tests are done. The following example demonstrates how to set up a Gradle task that provides this
-functionality. Of course this is only one way of doing it.
+functionality. Of course this is only one way of doing it. The following example requires Gradle >= 1.7:
 
-    [tomcatRun, tomcatStop]*.stopPort = 8081
-    [tomcatRun, tomcatStop]*.stopKey = 'stopKey'
+
+    ext {
+        tomcatStopPort = 8081
+    	tomcatStopKey = 'stopKey'
+    }
+
+    task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.TomcatRun) {
+    	stopPort = tomcatStopPort
+    	stopKey = tomcatStopKey
+    	daemon = true
+    }
+
+    task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.TomcatStop) {
+    	stopPort = tomcatStopPort
+        stopKey = tomcatStopKey
+    }
 
     task integrationTest(type: Test) {
         include '**/*IntegrationTest.*'
-
-        doFirst {
-            tomcatRun.daemon = true
-            tomcatRun.execute()
-        }
-
-        doLast {
-            tomcatStop.execute()
-        }
+        dependsOn integrationTomcatRun
+        finalizedBy integrationTomcatStop
     }
 
     test {
