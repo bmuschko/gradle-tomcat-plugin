@@ -72,6 +72,8 @@ class TomcatPluginTest {
         assert task.reloadable == true
         assert task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
         assert task.webAppSourceDirectory == project.convention.getPlugin(WarPluginConvention.class).webAppDir
+        assert task.ajpPort == 8009
+        assert task.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
     }
 
     @Test
