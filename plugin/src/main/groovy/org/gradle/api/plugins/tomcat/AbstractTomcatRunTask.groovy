@@ -61,6 +61,8 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     @InputFile @Optional File keystoreFile
     String keystorePass
     File outputFile
+    Integer ajpPort
+    String ajpProtocol
 
     abstract void setWebApplicationContext()
 
@@ -214,6 +216,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
             getServer().configureContainer()
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
+            getServer().configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
 
             if(getEnableSSL()) {
                 if(!getKeystoreFile()) {
@@ -341,5 +344,15 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     String getHttpsProtocol() {
         String httpsProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.httpsProtocolHandlerClassName
         httpsProtocolHandlerClassNameSystemProperty ?: httpsProtocol
+    }
+    
+    Integer getAjpPort() {
+      Integer ajpPortSystemProperty = TomcatSystemProperty.ajpPort
+      ajpPortSystemProperty ?: ajpPort
+    }
+    
+    String getAjpProtocol() {
+      String ajpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.ajpProtocolHandlerClassName
+      ajpProtocolHandlerClassNameSystemProperty ?: ajpProtocol
     }
 }

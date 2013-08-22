@@ -22,14 +22,17 @@ package org.gradle.api.plugins.tomcat
  */
 class TomcatPluginConvention {
     final static String DEFAULT_PROTOCOL_HANDLER = 'org.apache.coyote.http11.Http11Protocol'
+    final static String DEFAULT_AJP_PROTOCOL_HANDLER = 'org.apache.coyote.ajp.AjpProtocol'
 
     Integer httpPort = 8080
     Integer httpsPort = 8443
     Integer stopPort = 8081
+    Integer ajpPort = 8009
     String stopKey
     Boolean enableSSL = false
     String httpProtocol = DEFAULT_PROTOCOL_HANDLER
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
+    String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
     TomcatJasperConvention jasper = new TomcatJasperConvention()
 
     def jasper(Closure closure) {

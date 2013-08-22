@@ -40,6 +40,9 @@ class TomcatPlugin implements Plugin<Project> {
     static final String HTTP_PROTOCOL = 'httpProtocol'
     static final String HTTPS_PROTOCOL = 'httpsProtocol'
     static final String TOMCAT_CONFIGURATION_NAME = 'tomcat'
+    static final String AJP_PORT_CONVENTION = 'ajpPort'
+    static final String AJP_PROTOCOL_CONVENTION = 'ajpProtocol'
+    
 
     @Override
     void apply(Project project) {
@@ -77,6 +80,8 @@ class TomcatPlugin implements Plugin<Project> {
         tomcatTask.conventionMapping.map(ENABLE_SSL_CONVENTION) { tomcatConvention.enableSSL }
         tomcatTask.conventionMapping.map(HTTP_PROTOCOL) { tomcatConvention.httpProtocol }
         tomcatTask.conventionMapping.map(HTTPS_PROTOCOL) { tomcatConvention.httpsProtocol }
+        tomcatTask.conventionMapping.map(AJP_PORT_CONVENTION) { tomcatConvention.ajpPort }
+        tomcatTask.conventionMapping.map(AJP_PROTOCOL_CONVENTION) { tomcatConvention.ajpProtocol }
     }
 
     private void configureTomcatRun(final Project project) {

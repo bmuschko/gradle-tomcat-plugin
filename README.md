@@ -76,6 +76,7 @@ The Tomcat plugin defines the following convention properties:
 
 * `httpPort`: The TCP port which Tomcat should listen for HTTP requests on (defaults to `8080`).
 * `httpsPort`: The TCP port which Tomcat should listen for HTTPS requests on (defaults to `8443`).
+* `ajpPort`: The TCP port which Tomcat should listen for AJP requests on (defaults to `8009`).
 * `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to `8081`).
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to `null`).
 * `enableSSL`: Determines whether the HTTPS connector should be created (defaults to `false`).
@@ -83,6 +84,7 @@ The Tomcat plugin defines the following convention properties:
 * `keystorePass`: The keystore password to use for SSL, if enabled.
 * `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
+* `ajpProtocol`: The AJP protocol handler class name to be used (defaults to `org.apache.coyote.ajp.AjpProtocol`).
 
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
@@ -144,11 +146,13 @@ The convention properties can be overridden by system properties:
 
 * `tomcat.http.port`: Overrides the convention property `httpPort`.
 * `tomcat.https.port`: Overrides the convention property `httpsPort`.
+* `tomcat.ajp.port`: Overrides the convention property `ajpPort`.
 * `tomcat.stop.port`: Overrides the convention property `stopPort`.
 * `tomcat.stop.key`: Overrides the convention property `stopKey`.
 * `tomcat.enable.ssl`: Overrides the convention property `enableSSL`.
 * `tomcat.http.protocol`: Overrides the convention property `httpProtocol`.
 * `tomcat.https.protocol`: Overrides the convention property `httpsProtocol`.
+* `tomcat.ajp.protocol`: Overrides the convention property `ajpProtocol`.
 
 ## FAQ
 

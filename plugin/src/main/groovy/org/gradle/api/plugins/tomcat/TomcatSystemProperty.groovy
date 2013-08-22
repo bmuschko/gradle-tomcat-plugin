@@ -30,6 +30,8 @@ final class TomcatSystemProperty {
     static final String ENABLE_SSL_SYSPROPERTY = 'tomcat.enable.ssl'
     static final String HTTP_PROTOCOL_SYSPROPERTY = 'tomcat.http.protocol'
     static final String HTTPS_PROTOCOL_SYSPROPERTY = 'tomcat.https.protocol'
+    static final String AJP_PROTOCOL_SYSPROPERTY = 'tomcat.ajp.protocol'
+    static final String AJP_PORT_SYSPROPERTY = 'tomcat.ajp.port'
 
     private TomcatSystemProperty() {}
 
@@ -92,9 +94,29 @@ final class TomcatSystemProperty {
         String httpProtocolHandlerClassName = System.getProperty(HTTP_PROTOCOL_SYSPROPERTY)
         httpProtocolHandlerClassName ?: null
     }
-
+    
     static String getHttpsProtocolHandlerClassName() {
         String httpsProtocolHandlerClassName = System.getProperty(HTTPS_PROTOCOL_SYSPROPERTY)
         httpsProtocolHandlerClassName ?: null
     }
+    
+    static String getAjpProtocolHandlerClassName() {
+      String ajpProtocolHandlerClassName = System.getProperty(AJP_PROTOCOL_SYSPROPERTY)
+      ajpProtocolHandlerClassName ?: null
+    }
+    
+    static Integer getAjpPort() {
+      String ajpPortSystemProperty = System.getProperty(AJP_PORT_SYSPROPERTY)
+
+      if(ajpPortSystemProperty) {
+          try {
+              return ajpPortSystemProperty.toInteger()
+          }
+          catch(NumberFormatException e) {
+              throw new InvalidUserDataException("Bad AJP port provided as system property: ${ajpPortSystemProperty}", e)
+          }
+      }
+
+      null
+  }
 }
