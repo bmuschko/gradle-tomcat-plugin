@@ -58,6 +58,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     @InputFile @Optional File configFile
     URL resolvedConfigFile
     Boolean enableSSL
+    Boolean persistSSLKey
     @InputFile @Optional File keystoreFile
     String keystorePass
     File outputFile
@@ -275,7 +276,14 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
 
         if(keystoreFile.exists()) {
-            keystoreFile.delete()
+            if(this.persistSSLKey)
+            {
+                return;
+            }
+            else
+            {
+                keystoreFile.delete()
+            }
         }
 
         String[] keytoolArgs = ["-genkey", "-alias", "localhost", "-dname",
