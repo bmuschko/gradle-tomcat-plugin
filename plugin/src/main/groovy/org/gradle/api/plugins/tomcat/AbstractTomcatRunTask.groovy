@@ -60,6 +60,9 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     Boolean enableSSL
     @InputFile @Optional File keystoreFile
     String keystorePass
+    @InputFile @Optional File truststoreFile
+    String truststorePass
+    String clientAuth
     File outputFile
 
     abstract void setWebApplicationContext()
@@ -166,19 +169,11 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
 
         if(getEnableSSL()) {
-            if(getKeystoreFile() == null ^ getKeystorePass() == null) {
-                throw new InvalidUserDataException('If you want to provide a keystore then password and file may not be null or blank')
-            }
-            else if(getKeystoreFile() && getKeystorePass()) {
-                if(!getKeystoreFile().exists()) {
-                    throw new InvalidUserDataException("Keystore file does not exist at location ${getKeystoreFile().canonicalPath}")
-                }
-                else {
-                    logger.info "Keystore file = ${getKeystoreFile()}"
-                }
-            }
-            else {
-                logger.info 'Generating temporary SSL keystore'
+            validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
+            validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
+            def validClientAuthPhrases = ["true", "false", "want"]
+            if(clientAuth && (!validClientAuthPhrases.contains(clientAuth))) {
+              throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
         }
     }
@@ -223,7 +218,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                     keystorePass = sslKeystore.keyPassword
                 }
 
-                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile().canonicalPath, getKeystorePass())
+                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile().canonicalPath, getKeystorePass(), getTruststoreFile().canonicalPath, getTruststorePass(), getClientAuth())
             }
 
             // Start server
@@ -255,6 +250,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
      * @return SSL keystore parameters
      */
     private SSLKeystore initSSLKeystore() {
+        logger.info 'Generating temporary SSL keystore'
         final File keystore = new File("$project.buildDir/tmp/ssl/keystore")
         final String keyPassword = 'gradleTomcat'
         new SSLKeystore(keystore: keystore, keyPassword: keyPassword)
@@ -294,6 +290,27 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
         keyToolClass.main(keytoolArgs)
         logger.info 'Created SSL certificate'
+    }
+    
+    /**
+     * Validates that the necessary parameters have been provided for the specified key/trust store.
+     *
+     * @param file The file representing the store
+     * @param password The password to the store
+     * @param storeType identifies whether the store is a KeyStore or TrustStore
+     */
+    private void validateStore(File file, String password, StoreType storeType) {
+        if(file == null ^ password == null) {
+            throw new InvalidUserDataException('If you want to provide a ${storeType.description} then password and file may not be null or blank')
+        }
+        else if(file && password) {
+        if(!file.exists()) {
+                throw new InvalidUserDataException("${storeType.description} file does not exist at location ${file.canonicalPath}")
+            }
+            else {
+                logger.info "${storeType.description} file = ${file}"
+            }
+        }
     }
 
     String getFullContextPath() {
@@ -342,4 +359,16 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         String httpsProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.httpsProtocolHandlerClassName
         httpsProtocolHandlerClassNameSystemProperty ?: httpsProtocol
     }
+}
+
+enum StoreType {
+
+  TRUST("TrustStore"),
+  KEY("KeyStore")  
+  
+  StoreType(String description) {
+    this.description = description
+  }
+  
+  String description
 }

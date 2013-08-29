@@ -88,7 +88,7 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword) {
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword, String truststore, String trustPassword, String clientAuth) {
         def httpsConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
         httpsConnector.scheme = 'https'
         httpsConnector.secure = true

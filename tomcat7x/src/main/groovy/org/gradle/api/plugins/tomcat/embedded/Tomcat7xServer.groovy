@@ -92,7 +92,7 @@ class Tomcat7xServer implements TomcatServer {
      }
 
     @Override
-    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword) {
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword, String truststore, String trustPassword, String clientAuth) {
         def httpsConnector = createConnector(protocolHandlerClassName, uriEncoding)
         httpsConnector.scheme = 'https'
         httpsConnector.secure = true
@@ -100,6 +100,9 @@ class Tomcat7xServer implements TomcatServer {
         httpsConnector.setAttribute('SSLEnabled', 'true')
         httpsConnector.setAttribute('keystoreFile', keystore)
         httpsConnector.setAttribute('keystorePass', keyPassword)
+        httpsConnector.setAttribute('truststoreFile', truststore)
+        httpsConnector.setAttribute('truststorePass', trustPassword)
+        httpsConnector.setAttribute('clientAuth', clientAuth)
         tomcat.service.addConnector httpsConnector
     }
 
