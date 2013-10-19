@@ -58,7 +58,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     @InputFile @Optional File configFile
     URL resolvedConfigFile
     Boolean enableSSL
-    Boolean persistSSLKey
+    Boolean preserveSSLKey
     @InputFile @Optional File keystoreFile
     String keystorePass
     File outputFile
@@ -265,30 +265,47 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     }
 
     /**
-     * Creates SSL certifacte.
+     * Creates SSL certificate.
      *
      * @param sslKeystore SSL keystore parameters
      */
     private void createSSLCertificate(SSLKeystore sslKeystore) {
         logger.info 'Creating SSL certificate'
 
+        prepareKeystoreDirectory(sslKeystore)
+
+        if(sslKeystore.keystore.exists()) {
+            if(getPreserveSSLKey()) {
+                return
+            }
+
+            keystoreFile.delete()
+        }
+
+        invokeKeyTool(sslKeystore)
+
+        logger.info 'Created SSL certificate'
+    }
+
+    /**
+     * Prepares keystore directory.
+     *
+     * @param sslKeystore SSL keystore
+     */
+    private void prepareKeystoreDirectory(SSLKeystore sslKeystore) {
         final File keystoreFile = sslKeystore.keystore
 
-        if(!sslKeystore.keystore.parentFile.exists() && !sslKeystore.keystore.parentFile.mkdirs()) {
-            throw new GradleException("Unable to create keystore folder: $keystoreFile.parentFile.canonicalPath")
+        if(!keystoreFile.parentFile.exists() && !keystoreFile.parentFile.mkdirs()) {
+            throw new GradleException("Unable to create keystore directory: $keystoreFile.parentFile.canonicalPath")
         }
+    }
 
-        if(keystoreFile.exists()) {
-            if(this.persistSSLKey)
-            {
-                return;
-            }
-            else
-            {
-                keystoreFile.delete()
-            }
-        }
-
+    /**
+     * Invokes keytool to create SSL certificate.
+     *
+     * @param sslKeystore SSL keystore
+     */
+    private void invokeKeyTool(SSLKeystore sslKeystore) {
         String[] keytoolArgs = ["-genkey", "-alias", "localhost", "-dname",
                 "CN=localhost,OU=Test,O=Test,C=US", "-keyalg", "RSA",
                 "-validity", "365", "-storepass", "key", "-keystore",
@@ -304,7 +321,6 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
 
         keyToolClass.main(keytoolArgs)
-        logger.info 'Created SSL certificate'
     }
 
     String getFullContextPath() {
