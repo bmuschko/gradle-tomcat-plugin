@@ -97,20 +97,31 @@ class Tomcat7xServer implements TomcatServer {
         ajpConnector.port = port
         tomcat.service.addConnector ajpConnector
     }
-    
+
     @Override
-    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword, String truststore, String trustPassword, String clientAuth) {
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword) {
+        def httpsConnector = createHttpsConnector(port, uriEncoding, protocolHandlerClassName, keystoreFile, keyPassword)
+        tomcat.service.addConnector httpsConnector
+    }
+
+    @Override
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword, File truststoreFile, String trustPassword, String clientAuth) {
+        def httpsConnector = createHttpsConnector(port, uriEncoding, protocolHandlerClassName, keystoreFile, keyPassword)
+        httpsConnector.setAttribute('truststoreFile', truststoreFile.canonicalPath)
+        httpsConnector.setAttribute('truststorePass', trustPassword)
+        httpsConnector.setAttribute('clientAuth', clientAuth)
+        tomcat.service.addConnector httpsConnector
+    }
+
+    private createHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystore, String keyPassword) {
         def httpsConnector = createConnector(protocolHandlerClassName, uriEncoding)
         httpsConnector.scheme = 'https'
         httpsConnector.secure = true
         httpsConnector.port = port
         httpsConnector.setAttribute('SSLEnabled', 'true')
-        httpsConnector.setAttribute('keystoreFile', keystore)
+        httpsConnector.setAttribute('keystoreFile', keystore.canonicalPath)
         httpsConnector.setAttribute('keystorePass', keyPassword)
-        httpsConnector.setAttribute('truststoreFile', truststore)
-        httpsConnector.setAttribute('truststorePass', trustPassword)
-        httpsConnector.setAttribute('clientAuth', clientAuth)
-        tomcat.service.addConnector httpsConnector
+        httpsConnector
     }
 
     private createConnector(String protocolHandlerClassName, String uriEncoding) {

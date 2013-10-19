@@ -222,7 +222,13 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                     keystorePass = sslKeystore.keyPassword
                 }
 
-                getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile().canonicalPath, getKeystorePass(), getTruststoreFile().canonicalPath, getTruststorePass(), getClientAuth())
+                if(getTruststoreFile()) {
+                    getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(),
+                                                        getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
+                }
+                else {
+                    getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(), getKeystorePass())
+                }
             }
 
             // Start server
@@ -327,11 +333,11 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
      * @param storeType identifies whether the store is a KeyStore or TrustStore
      */
     private void validateStore(File file, String password, StoreType storeType) {
-        if(file == null ^ password == null) {
+        if(!file ^ !password) {
             throw new InvalidUserDataException('If you want to provide a ${storeType.description} then password and file may not be null or blank')
         }
         else if(file && password) {
-        if(!file.exists()) {
+            if(!file.exists()) {
                 throw new InvalidUserDataException("${storeType.description} file does not exist at location ${file.canonicalPath}")
             }
             else {

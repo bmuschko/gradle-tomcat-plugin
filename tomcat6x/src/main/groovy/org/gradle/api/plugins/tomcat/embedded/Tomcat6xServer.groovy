@@ -94,17 +94,28 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, String keystore, String keyPassword, String truststore, String trustPassword, String clientAuth) {
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword) {
+        def httpsConnector = createHttpsConnector(port, uriEncoding, protocolHandlerClassName, keystoreFile, keyPassword)
+        embedded.addConnector httpsConnector
+    }
+
+    @Override
+    void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword, File truststoreFile, String trustPassword, String clientAuth) {
+        def httpsConnector = createHttpsConnector(port, uriEncoding, protocolHandlerClassName, keystoreFile, keyPassword)
+        httpsConnector.setAttribute('truststoreFile', truststoreFile.canonicalPath)
+        httpsConnector.setAttribute('truststorePass', trustPassword)
+        httpsConnector.setAttribute('clientAuth', clientAuth)
+        embedded.addConnector httpsConnector
+    }
+
+    private createHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystore, String keyPassword) {
         def httpsConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
         httpsConnector.scheme = 'https'
         httpsConnector.secure = true
         httpsConnector.setProperty('SSLEnabled', 'true')
-        httpsConnector.setAttribute('keystore', keystore)
+        httpsConnector.setAttribute('keystore', keystore.canonicalPath)
         httpsConnector.setAttribute('keystorePass', keyPassword)
-        httpsConnector.setAttribute('truststoreFile', truststore)
-        httpsConnector.setAttribute('truststorePass', trustPassword)
-        httpsConnector.setAttribute('clientAuth', clientAuth)
-        embedded.addConnector httpsConnector
+        httpsConnector
     }
 
     private createConnector(int port, String uriEncoding, String protocolHandlerClassName) {
