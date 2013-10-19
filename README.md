@@ -82,9 +82,14 @@ The Tomcat plugin defines the following convention properties:
 * `enableSSL`: Determines whether the HTTPS connector should be created (defaults to `false`).
 * `keystoreFile`: The keystore file to use for SSL, if enabled (by default, a keystore will be generated).
 * `keystorePass`: The keystore password to use for SSL, if enabled.
+* `truststoreFile`: The truststore file to use for SSL, if enabled.
+* `truststorePass`: The truststore password to use for SSL, if enabled.
+* `clientAuth`: The clientAuth setting to use, values may be: `true`, `false` or `want` (defaults to `false`).
 * `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `ajpProtocol`: The AJP protocol handler class name to be used (defaults to `org.apache.coyote.ajp.AjpProtocol`).
+
+Note: `keystoreFile` and `truststoreFile` each require an instance of a `File` object e.g. `file("/path/my.file")`
 
 These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
 optional properties:
