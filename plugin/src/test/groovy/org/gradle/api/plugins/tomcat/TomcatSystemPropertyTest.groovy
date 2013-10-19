@@ -138,18 +138,18 @@ class TomcatSystemPropertyTest {
         System.setProperty(TomcatSystemProperty.HTTPS_PROTOCOL_SYSPROPERTY, 'org.apache.coyote.http11.Http11NioProtocol')
         assert TomcatSystemProperty.getHttpsProtocolHandlerClassName() == 'org.apache.coyote.http11.Http11NioProtocol'
     }
-    
+
     @Test
     void testGetAjpProtocolHandlerClassNameForNonExistingProperty() {
-      assert TomcatSystemProperty.getAjpProtocolHandlerClassName() == null
+        assert TomcatSystemProperty.getAjpProtocolHandlerClassName() == null
     }
-    
+
     @Test
     void testGetAjpProtocolHandlerClassNameForValidExistingProperty() {
-      System.setProperty(TomcatSystemProperty.AJP_PROTOCOL_SYSPROPERTY, 'org.apache.coyote.ajp.AjpAprProtocol')
-      assert TomcatSystemProperty.getAjpProtocolHandlerClassName() == 'org.apache.coyote.ajp.AjpAprProtocol'
+        System.setProperty(TomcatSystemProperty.AJP_PROTOCOL_SYSPROPERTY, 'org.apache.coyote.ajp.AjpAprProtocol')
+        assert TomcatSystemProperty.getAjpProtocolHandlerClassName() == 'org.apache.coyote.ajp.AjpAprProtocol'
     }
-    
+
     @Test
     void testGetAjpPortForNonExistingProperty() {
         assert TomcatSystemProperty.getAjpPort() == null
@@ -160,7 +160,7 @@ class TomcatSystemPropertyTest {
         System.setProperty(TomcatSystemProperty.AJP_PORT_SYSPROPERTY, "8109")
         assert TomcatSystemProperty.getAjpPort() == 8109
     }
-    
+
     @Test(expected = InvalidUserDataException.class)
     void testGetAjpPortForInvalidExistingProperty() {
         System.setProperty(TomcatSystemProperty.AJP_PORT_SYSPROPERTY, "xxx")

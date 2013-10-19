@@ -41,12 +41,12 @@ class TomcatPluginConventionTest {
     void testGetHttpPortForDefaultValue() {
         assert pluginConvention.httpPort == 8080
     }
-    
+
     @Test
     void testGetAjpProtocolForDefaultValue() {
       assert pluginConvention.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
     }
-    
+
     @Test
     void testGetAjpPortForDefaultValue() {
       assert pluginConvention.ajpPort == 8009

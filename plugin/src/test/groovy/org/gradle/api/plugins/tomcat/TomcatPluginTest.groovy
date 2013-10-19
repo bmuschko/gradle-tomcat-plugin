@@ -16,14 +16,13 @@
 package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.WarPlugin
+import org.gradle.api.plugins.WarPluginConvention
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-
-import org.gradle.api.Task
-import org.gradle.api.plugins.WarPluginConvention
 
 /**
  * Test case for Tomcat plugin.
@@ -52,14 +51,14 @@ class TomcatPluginTest {
 
     @Test
     public void testApplyBasicSetup() {
-        assert project.plugins.hasPlugin(WarPlugin) == true
-        assert project.convention.plugins.tomcat instanceof TomcatPluginConvention == true
+        assert project.plugins.hasPlugin(WarPlugin)
+        assert project.convention.plugins.tomcat instanceof TomcatPluginConvention
     }
 
     @Test
     public void testApplyTomcatRunTask() {
         Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_TASK_NAME]
-        assert task instanceof TomcatRun == true
+        assert task instanceof TomcatRun
         assert task.description == "Uses your files as and where they are and deploys them to Tomcat."
         assert task.group == WarPlugin.WEB_APP_GROUP
         assert task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
@@ -68,8 +67,8 @@ class TomcatPluginTest {
         assert task.stopPort == project.stopPort
         assert task.stopKey == project.stopKey
         assert task.enableSSL == project.enableSSL
-        assert task.daemon == false
-        assert task.reloadable == true
+        assert !task.daemon
+        assert task.reloadable
         assert task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
         assert task.webAppSourceDirectory == project.convention.getPlugin(WarPluginConvention.class).webAppDir
         assert task.ajpPort == 8009
@@ -79,7 +78,7 @@ class TomcatPluginTest {
     @Test
     public void testApplyTomcatRunWarTask() {
         Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME]
-        assert task instanceof TomcatRunWar == true
+        assert task instanceof TomcatRunWar
         assert task.description == "Assembles the webapp into a war and deploys it to Tomcat."
         assert task.group == WarPlugin.WEB_APP_GROUP
         assert task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
@@ -88,15 +87,15 @@ class TomcatPluginTest {
         assert task.stopPort == project.stopPort
         assert task.stopKey == project.stopKey
         assert task.enableSSL == project.enableSSL
-        assert task.daemon == false
-        assert task.reloadable == true
+        assert !task.daemon
+        assert task.reloadable
         assert task.webApp == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath
     }
 
     @Test
     public void testApplyTomcatStopTask() {
         Task task = project.tasks[TomcatPlugin.TOMCAT_STOP_TASK_NAME]
-        assert task instanceof TomcatStop == true
+        assert task instanceof TomcatStop
         assert task.description == "Stops Tomcat."
         assert task.group == WarPlugin.WEB_APP_GROUP
         assert task.stopPort == project.stopPort

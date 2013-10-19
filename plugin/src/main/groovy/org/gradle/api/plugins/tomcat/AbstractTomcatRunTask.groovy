@@ -347,12 +347,12 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
     }
     
     Integer getAjpPort() {
-      Integer ajpPortSystemProperty = TomcatSystemProperty.ajpPort
-      ajpPortSystemProperty ?: ajpPort
+        Integer ajpPortSystemProperty = TomcatSystemProperty.ajpPort
+        ajpPortSystemProperty ?: ajpPort
     }
     
     String getAjpProtocol() {
-      String ajpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.ajpProtocolHandlerClassName
-      ajpProtocolHandlerClassNameSystemProperty ?: ajpProtocol
+        String ajpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.ajpProtocolHandlerClassName
+        ajpProtocolHandlerClassNameSystemProperty ?: ajpProtocol
     }
 }

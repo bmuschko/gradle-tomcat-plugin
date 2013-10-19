@@ -22,7 +22,7 @@ The following code snippet shows an example on how to retrieve it from Maven Cen
         }
 
         dependencies {
-            classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:0.9.9'
+            classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
         }
     }
 
@@ -305,17 +305,17 @@ functionality. Of course this is only one way of doing it. The following example
 
     ext {
         tomcatStopPort = 8081
-    	tomcatStopKey = 'stopKey'
+        tomcatStopKey = 'stopKey'
     }
 
     task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.TomcatRun) {
-    	stopPort = tomcatStopPort
-    	stopKey = tomcatStopKey
-    	daemon = true
+        stopPort = tomcatStopPort
+        stopKey = tomcatStopKey
+        daemon = true
     }
 
     task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.TomcatStop) {
-    	stopPort = tomcatStopPort
+        stopPort = tomcatStopPort
         stopKey = tomcatStopKey
     }
 

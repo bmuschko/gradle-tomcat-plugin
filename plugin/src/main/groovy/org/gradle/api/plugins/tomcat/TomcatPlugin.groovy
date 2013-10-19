@@ -42,7 +42,6 @@ class TomcatPlugin implements Plugin<Project> {
     static final String TOMCAT_CONFIGURATION_NAME = 'tomcat'
     static final String AJP_PORT_CONVENTION = 'ajpPort'
     static final String AJP_PROTOCOL_CONVENTION = 'ajpProtocol'
-    
 
     @Override
     void apply(Project project) {

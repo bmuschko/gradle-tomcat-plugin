@@ -95,7 +95,6 @@ class Tomcat7xServer implements TomcatServer {
     void configureAjpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
         def ajpConnector = createConnector(protocolHandlerClassName, uriEncoding)
         ajpConnector.port = port
-        
         tomcat.service.addConnector ajpConnector
     }
     

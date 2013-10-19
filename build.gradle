@@ -4,7 +4,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'org.gradle.api.plugins'
-    version = '0.9.9'
+    version = '1.0'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 

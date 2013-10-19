@@ -1,3 +1,7 @@
+### Version 1.0 (October 19, 2013)
+
+* Support for configuring AJP connector - [Pull Request 57](https://github.com/bmuschko/gradle-tomcat-plugin/pull/57).
+
 ### Version 0.9.9 (August 14, 2013)
 
 * Resolve `ConfigurationContainer.add()` deprecation warning - [Pull Request 55](https://github.com/bmuschko/gradle-tomcat-plugin/pull/55).
