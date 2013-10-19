@@ -1,6 +1,9 @@
 ### Version 1.0 (October 19, 2013)
 
 * Support for configuring AJP connector - [Pull Request 57](https://github.com/bmuschko/gradle-tomcat-plugin/pull/57).
+* Allow preserving existing SSL key - [Pull Request 59](https://github.com/bmuschko/gradle-tomcat-plugin/pull/59).
+* Added capability for user to specify truststore file - [Pull Request 61](https://github.com/bmuschko/gradle-tomcat-plugin/pull/61).
+* The plugin is now published to Bintray. Maven Central is not going to be supported anymore.
 
 ### Version 0.9.9 (August 14, 2013)
 

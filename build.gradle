@@ -1,4 +1,15 @@
-apply plugin: 'maven'
+buildscript {
+    repositories {
+        maven { url 'http://jcenter.bintray.com' }
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
+    }
+}
+
+apply plugin: 'maven-publish'
+apply plugin: 'bintray'
 
 allprojects {
     apply plugin: 'groovy'
@@ -91,64 +102,49 @@ artifacts {
     archives groovydocJar
 }
 
-ext.pomConfiguration = {
-    name 'Gradle Tomcat plugin'
-    description 'Gradle plugin supporting deployment of your web application to an embedded Tomcat web container.'
-    url 'https://github.com/bmuschko/gradle-tomcat-plugin'
-    inceptionYear '2010'
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact uberJar
+            artifact sourcesJar
+            artifact groovydocJar
 
-    scm {
-        url 'https://github.com/bmuschko/gradle-tomcat-plugin'
-        connection 'scm:https://bmuschko@github.com/bmuschko/gradle-tomcat-plugin.git'
-        developerConnection 'scm:git://github.com/bmuschko/gradle-tomcat-plugin.git'
-    }
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', 'Gradle Tomcat plugin')
+                root.appendNode('description', 'Gradle plugin supporting deployment of your web application to an embedded Tomcat web container.')
+                root.appendNode('url', 'https://github.com/bmuschko/gradle-tomcat-plugin')
+                root.appendNode('inceptionYear', '2010')
 
-    licenses {
-        license {
-            name 'The Apache Software License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            distribution 'repo'
-        }
-    }
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', 'https://github.com/bmuschko/gradle-tomcat-plugin')
+                scm.appendNode('connection', 'scm:https://bmuschko@github.com/bmuschko/gradle-tomcat-plugin.git')
+                scm.appendNode('developerConnection', 'scm:git://github.com/bmuschko/gradle-tomcat-plugin.git')
 
-    developers {
-        developer {
-            id 'bmuschko'
-            name 'Benjamin Muschko'
-            email 'benjamin.muschko@gmail.com'
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', 'The Apache Software License, Version 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                license.appendNode('distribution', 'repo')
+
+                def developers = root.appendNode('developers')
+                def bmuschko = developers.appendNode('developer')
+                bmuschko.appendNode('id', 'bmuschko')
+                bmuschko.appendNode('name', 'Benjamin Muschko')
+                bmuschko.appendNode('email', 'benjamin.muschko@gmail.com')
+            }
         }
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.project pomConfiguration
-    }
-}
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : null
+    key =  project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : null
+    publications = ['mavenJava']
 
-if(hasProperty('nexusUsername') && hasProperty('nexusPassword')) {
-    apply plugin: 'signing'
-
-    signing {
-        required { gradle.taskGraph.hasTask(uploadArchives) && !version.endsWith('SNAPSHOT') }
-        sign configurations.archives
-    }
-
-    uploadArchives {
-        repositories.mavenDeployer {
-            beforeDeployment { deployment ->
-                signing.signPom(deployment)
-            }
-
-            name = 'mavenCentralReleaseDeployer'
-
-            repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                authentication(userName: nexusUsername, password: nexusPassword)
-                releases(updatePolicy: 'always')
-            }
-
-            pom.project pomConfiguration
-        }
+    pkg {
+        repo = 'gradle-plugins'
+        name = 'gradle-tomcat-plugin'
+        licenses = ['Apache-2.0']
     }
 }
 

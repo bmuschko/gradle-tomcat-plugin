@@ -13,12 +13,12 @@ To use the Tomcat plugin, include in your build script:
     apply plugin: 'tomcat'
 
 The plugin JAR needs to be defined in the classpath of your build script. It is directly available on
-[Maven Central](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.gradle.api.plugins%22%20AND%20a%3A%22gradle-tomcat-plugin%22).
-The following code snippet shows an example on how to retrieve it from Maven Central:
+[Bintray](https://bintray.com/bmuschko/gradle-plugins/gradle-tomcat-plugin).
+The following code snippet shows an example on how to retrieve it from Bintray:
 
     buildscript {
         repositories {
-            mavenCentral()
+            jcenter()
         }
 
         dependencies {
