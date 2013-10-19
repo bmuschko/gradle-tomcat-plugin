@@ -275,7 +275,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                 return
             }
 
-            keystoreFile.delete()
+            sslKeystore.keystore.delete()
         }
 
         invokeKeyTool(sslKeystore)
