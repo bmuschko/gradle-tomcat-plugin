@@ -258,19 +258,19 @@ Please refer to the [Tomcat documentation](http://tomcat.apache.org/tomcat-7.0-d
 of context attributes. The following example shows how to set up a MySQL JNDI datasource.
 
 ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <Context>
-        <Resource name="jdbc/mydatabase"
-                  auth="Container"
-                  type="javax.sql.DataSource"
-                  username="superuser"
-                  password="secretpasswd"
-                  driverClassName="com.mysql.jdbc.Driver"
-                  url="jdbc:mysql://localhost:3306/mydb"
-                  validationQuery="select 1"
-                  maxActive="10"
-                  maxIdle="4"/>
-    </Context>
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/mydatabase"
+              auth="Container"
+              type="javax.sql.DataSource"
+              username="superuser"
+              password="secretpasswd"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/mydb"
+              validationQuery="select 1"
+              maxActive="10"
+              maxIdle="4"/>
+</Context>
 ```
 
 <br>
