@@ -10,52 +10,60 @@ and 7.x are supported.
 
 To use the Tomcat plugin, include in your build script:
 
-    apply plugin: 'tomcat'
+```groovy
+apply plugin: 'tomcat'
+```
 
 The plugin JAR needs to be defined in the classpath of your build script. It is directly available on
 [Bintray](https://bintray.com/bmuschko/gradle-plugins/gradle-tomcat-plugin).
 The following code snippet shows an example on how to retrieve it from Bintray:
 
-    buildscript {
-        repositories {
-            jcenter()
-        }
-
-        dependencies {
-            classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
-        }
+```groovy
+buildscript {
+    repositories {
+        jcenter()
     }
+
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
+    }
+}
+```
 
 Additionally, the Tomcat runtime libraries need to be added to the configuration `tomcat`. At the moment the Tomcat
 versions 6.x and 7.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different versions.
 
 **Tomcat 6.x:**
 
-    repositories {
-        mavenCentral()
-    }
+```groovy
+repositories {
+    mavenCentral()
+}
 
-    dependencies {
-        def tomcatVersion = '6.0.29'
-        tomcat "org.apache.tomcat:catalina:${tomcatVersion}",
-               "org.apache.tomcat:coyote:${tomcatVersion}",
-               "org.apache.tomcat:jasper:${tomcatVersion}"
-    }
+dependencies {
+    def tomcatVersion = '6.0.29'
+    tomcat "org.apache.tomcat:catalina:${tomcatVersion}",
+           "org.apache.tomcat:coyote:${tomcatVersion}",
+           "org.apache.tomcat:jasper:${tomcatVersion}"
+}
+```
 
 **Tomcat 7.x:**
 
-    repositories {
-        mavenCentral()
-    }
+```groovy
+repositories {
+    mavenCentral()
+}
 
-    dependencies {
-        def tomcatVersion = '7.0.11'
-        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-               "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-        tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
-            exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-        }
+dependencies {
+    def tomcatVersion = '7.0.11'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
+}
+```
 
 ## Tasks
 
@@ -111,12 +119,14 @@ convention property `enableSSL` to `true`. Furthermore, we declare a custom cont
 
 ### Example
 
-    tomcatRun {
-        httpPort = 8090
-        httpsPort = 8091
-        enableSSL = true
-        configFile = file('context.xml')
-    }
+```groovy
+tomcatRun {
+    httpPort = 8090
+    httpsPort = 8091
+    enableSSL = true
+    configFile = file('context.xml')
+}
+```
 
 To configure the Jasper compiler task you can choose to set the following properties within the `jasper` closure:
 
@@ -139,11 +149,13 @@ To configure the Jasper compiler task you can choose to set the following proper
 
 ### Example
 
-    jasper {
-        validateXml = true
-        webXmlFragment = file("$webAppDir/WEB-INF/generated_web.xml")
-        outputDir = file("$webAppDir/WEB-INF/src")
-    }
+```groovy
+jasper {
+    validateXml = true
+    webXmlFragment = file("$webAppDir/WEB-INF/generated_web.xml")
+    outputDir = file("$webAppDir/WEB-INF/src")
+}
+```
 
 ## System properties
 
@@ -168,9 +180,11 @@ Tomcat 7.x requires you to have [Eclipse ECJ 3.6.x](http://www.eclipse.org/jdt/c
 version of the dependency does not exist in Maven Central. You'll have to download that dependency and put it in your own
 repository or define a repository on your local disk where you can drop it in. Here's an example:
 
-    repositories {
-         flatDir name: 'localRepository', dirs: 'lib'
-    }
+```groovy
+repositories {
+     flatDir name: 'localRepository', dirs: 'lib'
+}
+```
 
 <br>
 **Why do I get a `java.lang.ClassCastException` on `javax.servlet.Servlet`?**
@@ -179,22 +193,26 @@ Tomcat is very sensitive to having multiple versions of the dependencies `javax.
 in its classpath. By default they already get pulled in as transitive dependencies of the embedded Tomcat libraries. The
 exception you might see looks similar to this one:
 
-    java.lang.ClassCastException: org.springframework.web.servlet.DispatcherServlet cannot be cast to javax.servlet.Servlet
-            at org.apache.catalina.core.StandardWrapper.loadServlet(StandardWrapper.java:1062)
-            at org.apache.catalina.core.StandardWrapper.load(StandardWrapper.java:1010)
-            at org.apache.catalina.core.StandardContext.loadOnStartup(StandardContext.java:4935)
-            at org.apache.catalina.core.StandardContext$3.call(StandardContext.java:5262)
-            at org.apache.catalina.core.StandardContext$3.call(StandardContext.java:5257)
-            at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
-            at java.util.concurrent.FutureTask.run(FutureTask.java:138)
-            at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
-            at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
-            at java.lang.Thread.run(Thread.java:662)
+```
+java.lang.ClassCastException: org.springframework.web.servlet.DispatcherServlet cannot be cast to javax.servlet.Servlet
+        at org.apache.catalina.core.StandardWrapper.loadServlet(StandardWrapper.java:1062)
+        at org.apache.catalina.core.StandardWrapper.load(StandardWrapper.java:1010)
+        at org.apache.catalina.core.StandardContext.loadOnStartup(StandardContext.java:4935)
+        at org.apache.catalina.core.StandardContext$3.call(StandardContext.java:5262)
+        at org.apache.catalina.core.StandardContext$3.call(StandardContext.java:5257)
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+        at java.lang.Thread.run(Thread.java:662)
+```
 
 To fix this make sure you define your JSP and Servlet module dependencies with the scope `providedCompile` like this:
 
-    providedCompile 'javax.servlet:servlet-api:2.5',
-                    'javax.servlet:jsp-api:2.0'
+```groovy
+providedCompile 'javax.servlet:servlet-api:2.5',
+                'javax.servlet:jsp-api:2.0'
+```
 
 <br>
 **How do I remote debug my Tomcat started up by the plugin?**
@@ -202,12 +220,16 @@ To fix this make sure you define your JSP and Servlet module dependencies with t
 If you want to be able to debug your application remotely you have to set the following JVM options in your `GRADLE_OPTS`
 environment variable before starting up the container. The port number you choose is up to you.
 
-    -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
+```
+-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005
+```
 
 Tomcat will then listen on the specified port for incoming remote debugging connections. When starting up the container
 you should see the following message:
 
-    Listening for transport dt_socket at address: 5005
+```
+Listening for transport dt_socket at address: 5005
+```
 
 Check your IDE documentation on how to configure connecting to the remote debugging port.
 
@@ -219,31 +241,37 @@ Check your IDE documentation on how to configure connecting to the remote debugg
 
 First of all you got to make sure to declare the connection pool dependency using the `tomcat` configuration.
 
-    def tomcatVersion = '6.0.35'
-    tomcat "org.apache.tomcat:dbcp:${tomcatVersion}"
+```groovy
+def tomcatVersion = '6.0.35'
+tomcat "org.apache.tomcat:dbcp:${tomcatVersion}"
+```
 
 If you decide to go with the default settings place your `context.xml` in the directory `src/main/webapp/META-INF`. To
 set a custom location you can use the convention property `configFile`. Here's an example on how to set it for the tasks
 `tomcatRun` and `tomcatRunWar`.
 
-    [tomcatRun, tomcatRunWar]*.configFile = file('context.xml')
+```groovy
+[tomcatRun, tomcatRunWar]*.configFile = file('context.xml')
+```
 
 Please refer to the [Tomcat documentation](http://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Defining_a_context) for a list
 of context attributes. The following example shows how to set up a MySQL JNDI datasource.
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <Context>
-        <Resource name="jdbc/mydatabase"
-                  auth="Container"
-                  type="javax.sql.DataSource"
-                  username="superuser"
-                  password="secretpasswd"
-                  driverClassName="com.mysql.jdbc.Driver"
-                  url="jdbc:mysql://localhost:3306/mydb"
-                  validationQuery="select 1"
-                  maxActive="10"
-                  maxIdle="4"/>
-    </Context>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource name="jdbc/mydatabase"
+              auth="Container"
+              type="javax.sql.DataSource"
+              username="superuser"
+              password="secretpasswd"
+              driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/mydb"
+              validationQuery="select 1"
+              maxActive="10"
+              maxIdle="4"/>
+</Context>
+```
 
 <br>
 **How do I use hot code deployment with the plugin?**
@@ -254,8 +282,10 @@ container initiated by `tomcatRun`. Fire up your favorite editor, change a produ
 sources in another terminal via `gradle compileJava`. After a couple of seconds the context is reloaded and you should see the
 behavior reflected in the terminal window running the container:
 
-    Reloading Context with name [/myapp] has started
-    Reloading Context with name [/myapp] is completed
+```
+Reloading Context with name [/myapp] has started
+Reloading Context with name [/myapp] is completed
+```
 
 Alternatively, you can use other commericial byte code swap technologies. The configuration is usually product-specific.
 Please refer to the product's documentation on how to set it up for your project. The following section describes how to set up Gradle and the plugin with [JRebel](http://zeroturnaround.com/jrebel/).
@@ -267,36 +297,44 @@ to use the plugin. You can also decide to create the configuration by hand. Keep
 For setting up JRebel in a multi-module project scenario please refer to the documentation. The following code snippet shows an example
 `rebel.xml` file.
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com"
-                xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
-        <classpath>
-            <dir name="/Users/ben/dev/projects/mywebproject/build/classes/main">
-            </dir>
-        </classpath>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com"
+            xsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
+    <classpath>
+        <dir name="/Users/ben/dev/projects/mywebproject/build/classes/main">
+        </dir>
+    </classpath>
 
-        <web>
-            <link target="/">
-                <dir name="/Users/ben/dev/projects/mywebproject/src/main/webapp">
-                </dir>
-            </link>
-        </web>
-    </application>
+    <web>
+        <link target="/">
+            <dir name="/Users/ben/dev/projects/mywebproject/src/main/webapp">
+            </dir>
+        </link>
+    </web>
+</application>
+```
 
 Edit your Gradle startup script and add the following line to it to tell Gradle to [use the JRebel agent](http://zeroturnaround.com/reference-manual/server.html#server-4.5.36).
 Please make sure to set the environment variable `REBEL_HOME` that points to your JRebel installation directory.
 
-    JAVA_OPTS="-javaagent:$REBEL_HOME/jrebel.jar $JAVA_OPTS"
+```
+JAVA_OPTS="-javaagent:$REBEL_HOME/jrebel.jar $JAVA_OPTS"
+```
 
 On startup of your web module using `gradle tomcatRun` you should see information about the JRebel license being used and
 the directories being scanned for changes. For our example `rebel.xml` file it would look like this:
 
-    JRebel: Directory '/Users/ben/dev/projects/mywebproject/build/classes/main' will be monitored for changes.
-    JRebel: Directory '/Users/ben/dev/projects/mywebproject/src/main/webapp' will be monitored for changes.
+```
+JRebel: Directory '/Users/ben/dev/projects/mywebproject/build/classes/main' will be monitored for changes.
+JRebel: Directory '/Users/ben/dev/projects/mywebproject/src/main/webapp' will be monitored for changes.
+```
 
 If a file has been recompiled JRebel indicates this by writing it to the console like this:
 
-    JRebel: Reloading class 'de.muschko.web.controller.TestController'.
+```
+JRebel: Reloading class 'de.muschko.web.controller.TestController'.
+```
 
 <br>
 **In need to run in-container integration tests as part of my build. What needs to be done?**
@@ -307,29 +345,30 @@ By doing that you can run them separately. For running the integration tests you
 thread and shut it down once your tests are done. The following example demonstrates how to set up a Gradle task that provides this
 functionality. Of course this is only one way of doing it. The following example requires Gradle >= 1.7:
 
+```groovy
+ext {
+    tomcatStopPort = 8081
+    tomcatStopKey = 'stopKey'
+}
 
-    ext {
-        tomcatStopPort = 8081
-        tomcatStopKey = 'stopKey'
-    }
+task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.TomcatRun) {
+    stopPort = tomcatStopPort
+    stopKey = tomcatStopKey
+    daemon = true
+}
 
-    task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.TomcatRun) {
-        stopPort = tomcatStopPort
-        stopKey = tomcatStopKey
-        daemon = true
-    }
+task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.TomcatStop) {
+    stopPort = tomcatStopPort
+    stopKey = tomcatStopKey
+}
 
-    task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.TomcatStop) {
-        stopPort = tomcatStopPort
-        stopKey = tomcatStopKey
-    }
+task integrationTest(type: Test) {
+    include '**/*IntegrationTest.*'
+    dependsOn integrationTomcatRun
+    finalizedBy integrationTomcatStop
+}
 
-    task integrationTest(type: Test) {
-        include '**/*IntegrationTest.*'
-        dependsOn integrationTomcatRun
-        finalizedBy integrationTomcatStop
-    }
-
-    test {
-        exclude '**/*IntegrationTest.*'
-    }
+test {
+    exclude '**/*IntegrationTest.*'
+}
+```
