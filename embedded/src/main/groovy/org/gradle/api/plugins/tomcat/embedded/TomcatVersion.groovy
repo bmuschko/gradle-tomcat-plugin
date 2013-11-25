@@ -21,5 +21,5 @@ package org.gradle.api.plugins.tomcat.embedded
  * @author Benjamin Muschko
  */
 enum TomcatVersion {
-    VERSION_6X, VERSION_7X
+    VERSION_6X, VERSION_7X, VERSION_8X
 }

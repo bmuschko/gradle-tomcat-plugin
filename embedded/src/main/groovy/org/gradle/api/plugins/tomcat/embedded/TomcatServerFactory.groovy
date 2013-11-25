@@ -41,19 +41,19 @@ class TomcatServerFactory {
         Class tomcatServerImpl
 
         try {
-            // Try to find embedded Tomcat implementation class introduced in version 7
-            classLoader.findClass('org.apache.catalina.startup.Tomcat')
-            LOGGER.info 'Resolved Tomcat 7x server implementation in classpath'
-            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer')
-        }
-        catch(ClassNotFoundException e) {
-            try {
+            if (classLoader.getResource('javax/servlet/resources/web-app_3_1.xsd')) {
+                tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat8xServer')
+                LOGGER.info 'Resolved Tomcat 8x server implementation in classpath'
+            } else if (classLoader.getResource('javax/servlet/resources/web-app_3_0.xsd')) {
+                tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer')
+                LOGGER.info 'Resolved Tomcat 7x server implementation in classpath'
+            } else {
                 tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer')
                 LOGGER.info 'Resolved Tomcat 6x server implementation in classpath'
             }
-            catch(ClassNotFoundException cnfe) {
-                throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
-            }
+        }
+        catch(ClassNotFoundException e) {
+            throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
         }
 
         tomcatServerImpl
