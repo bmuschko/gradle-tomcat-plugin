@@ -2,6 +2,7 @@ project(':plugin') {
     dependencies {
         compile gradleApi(),
                 project(':tomcat6x'),
-                project(':tomcat7x')
+                project(':tomcat7x'),
+                project(':tomcat8x')
     }
 }
