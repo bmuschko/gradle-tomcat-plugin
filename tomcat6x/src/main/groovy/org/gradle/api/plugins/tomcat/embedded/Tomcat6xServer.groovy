@@ -20,19 +20,10 @@ package org.gradle.api.plugins.tomcat.embedded
  *
  * @author Benjamin Muschko
  */
-class Tomcat6xServer implements TomcatServer {
-    final embedded
-    def context
-    boolean stopped
-
-    public Tomcat6xServer() {
-        Class serverClass = loadClass('org.apache.catalina.startup.Embedded')
-        this.embedded = serverClass.newInstance()
-    }
-
-    private Class loadClass(String className) {
-        ClassLoader classLoader = Thread.currentThread().contextClassLoader
-        classLoader.loadClass(className)
+class Tomcat6xServer extends BaseTomcatServerImpl {
+    @Override
+    String getServerClassName() {
+        'org.apache.catalina.startup.Embedded'
     }
 
     @Override
@@ -41,40 +32,30 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     @Override
-    def getEmbedded() {
-        embedded
-    }
-
-    @Override
     void setHome(String home) {
-        embedded.catalinaHome = home
+        tomcat.catalinaHome = home
     }
 
     @Override
     void setRealm(realm) {
-        embedded.realm = realm
-    }
-
-    @Override
-    def getContext() {
-        context
+        tomcat.realm = realm
     }
 
     @Override
     void createContext(String fullContextPath, String webAppPath) {
-        def context = embedded.createContext(fullContextPath, webAppPath)
+        def context = tomcat.createContext(fullContextPath, webAppPath)
         context.unpackWAR = false
         this.context = context
     }
 
     @Override
     void createLoader(ClassLoader classLoader) {
-        context.loader = embedded.createLoader(classLoader)
+        context.loader = tomcat.createLoader(classLoader)
     }
 
     @Override
     void configureContainer() {
-        def localHost = embedded.createHost('localHost', new File('.').absolutePath)
+        def localHost = tomcat.createHost('localHost', new File('.').absolutePath)
         localHost.addChild(context)
 
         // Create engine
@@ -84,19 +65,19 @@ class Tomcat6xServer implements TomcatServer {
     @Override
     void configureHttpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
         def httpConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
-        embedded.addConnector httpConnector
+        tomcat.addConnector httpConnector
     }
 
     @Override
     void configureAjpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
         def ajpConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
-        embedded.addConnector ajpConnector
+        tomcat.addConnector ajpConnector
     }
 
     @Override
     void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword) {
         def httpsConnector = createHttpsConnector(port, uriEncoding, protocolHandlerClassName, keystoreFile, keyPassword)
-        embedded.addConnector httpsConnector
+        tomcat.addConnector httpsConnector
     }
 
     @Override
@@ -105,7 +86,7 @@ class Tomcat6xServer implements TomcatServer {
         httpsConnector.setAttribute('truststoreFile', truststoreFile.canonicalPath)
         httpsConnector.setAttribute('truststorePass', trustPassword)
         httpsConnector.setAttribute('clientAuth', clientAuth)
-        embedded.addConnector httpsConnector
+        tomcat.addConnector httpsConnector
     }
 
     private createHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystore, String keyPassword) {
@@ -119,7 +100,7 @@ class Tomcat6xServer implements TomcatServer {
     }
 
     private createConnector(int port, String uriEncoding, String protocolHandlerClassName) {
-        def connector = embedded.createConnector((InetAddress) null, port, protocolHandlerClassName)
+        def connector = tomcat.createConnector((InetAddress) null, port, protocolHandlerClassName)
         connector.URIEncoding =  uriEncoding ? uriEncoding : 'UTF-8'
         connector
     }
@@ -130,7 +111,7 @@ class Tomcat6xServer implements TomcatServer {
      * @param localHost host
      */
     void addEngineToServer(localHost) {
-        def engine = embedded.createEngine()
+        def engine = tomcat.createEngine()
 
         engine.with {
             setName 'localEngine'
@@ -138,7 +119,7 @@ class Tomcat6xServer implements TomcatServer {
             setDefaultHost localHost.name
         }
 
-        embedded.addEngine(engine)
+        tomcat.addEngine(engine)
     }
 
     /**
@@ -201,23 +182,5 @@ class Tomcat6xServer implements TomcatServer {
         if(configFile) {
             context.configFile = configFile.toURI().path
         }
-    }
-
-    @Override
-    void start() {
-        stopped = false
-        embedded.start()
-    }
-
-    @Override
-    void stop() {
-        stopped = true
-        embedded.stop()
-        embedded.destroy()
-    }
-
-    @Override
-    boolean isStopped() {
-        stopped
     }
 }
