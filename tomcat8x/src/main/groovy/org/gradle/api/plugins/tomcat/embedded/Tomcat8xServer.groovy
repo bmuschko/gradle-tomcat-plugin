@@ -15,14 +15,12 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import java.lang.reflect.Constructor
-
 /**
  * Tomcat 8x server implementation.
  *
  * @author Andrey Bloschetsov
  */
-class Tomcat8xServer extends Tomcat7xServer {
+class Tomcat8xServer extends BaseTomcat7andUpperImpl {
     @Override
     TomcatVersion getVersion() {
         TomcatVersion.VERSION_8X

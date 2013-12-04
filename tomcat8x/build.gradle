@@ -2,7 +2,7 @@ project(':tomcat8x') {
     dependencies {
         def tomcatVersion = '8.0.0-RC5'
 
-        compile project(':embedded'), project(':tomcat7x'),
+        compile project(':embedded'),
                 "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
                 "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
         compile("org.apache.tomcat:tomcat-jasper:${tomcatVersion}") {
