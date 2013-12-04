@@ -21,6 +21,7 @@ package org.gradle.api.plugins.tomcat.embedded
  * @author Benjamin Muschko
  */
 interface TomcatServer {
+    String getServerClassName()
     TomcatVersion getVersion()
     def getEmbedded()
     void setHome(String home)

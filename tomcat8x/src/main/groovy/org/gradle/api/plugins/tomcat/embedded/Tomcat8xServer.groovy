@@ -15,20 +15,19 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-
 /**
- * Tomcat 7x server implementation.
+ * Tomcat 8x server implementation.
  *
- * @author Benjamin Muschko
+ * @author Andrey Bloschetsov
  */
-class Tomcat7xServer extends BaseTomcat7andUpperImpl {
+class Tomcat8xServer extends BaseTomcat7andUpperImpl {
     @Override
     TomcatVersion getVersion() {
-        TomcatVersion.VERSION_7X
+        TomcatVersion.VERSION_8X
     }
 
     @Override
     void setRealm(realm) {
-        tomcat.defaultRealm = realm
+        tomcat.engine.realm = realm
     }
 }

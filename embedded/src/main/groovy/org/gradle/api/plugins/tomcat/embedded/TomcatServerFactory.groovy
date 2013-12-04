@@ -19,6 +19,8 @@ import org.gradle.api.GradleException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.util.jar.Manifest
+
 /**
  * Tomcat server factory which resolves its implementation by checking the classpath for a specific
  * implementation class. Acts as a bootstrapper to make sure server implementation is running in
@@ -38,22 +40,38 @@ class TomcatServerFactory {
     }
 
     private Class resolveTomcatServerImpl(ClassLoader classLoader) {
-        Class tomcatServerImpl
-
-        try {
-            // Try to find embedded Tomcat implementation class introduced in version 7
-            classLoader.findClass('org.apache.catalina.startup.Tomcat')
-            LOGGER.info 'Resolved Tomcat 7x server implementation in classpath'
-            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer')
-        }
-        catch(ClassNotFoundException e) {
+        String txtVersion
+        classLoader.getResources('META-INF/MANIFEST.MF').every {
+            InputStream inputStream = it.openStream()
             try {
-                tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer')
-                LOGGER.info 'Resolved Tomcat 6x server implementation in classpath'
+                Manifest manifest = new Manifest(inputStream)
+                def attrs = manifest.mainAttributes
+                if(attrs.getValue('Specification-Title') == 'Apache Tomcat') {
+                    txtVersion = attrs.getValue('Specification-Version')
+                }
             }
-            catch(ClassNotFoundException cnfe) {
-                throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
+            finally {
+                try {
+                    inputStream.close()
+                }
+                catch(any) {}
             }
+
+            !txtVersion
+        }
+
+        Class tomcatServerImpl
+        if(txtVersion == '8.0') {
+            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat8xServer')
+            LOGGER.info 'Resolved Tomcat 8x server implementation in classpath'
+        } else if(txtVersion == '7.0') {
+            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer')
+            LOGGER.info 'Resolved Tomcat 7x server implementation in classpath'
+        } else if(txtVersion == '6.0') {
+            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer')
+            LOGGER.info 'Resolved Tomcat 6x server implementation in classpath'
+        } else {
+            throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
         }
 
         tomcatServerImpl
