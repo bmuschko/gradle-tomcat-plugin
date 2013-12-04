@@ -3,8 +3,8 @@
 ![Tomcat Logo](http://tomcat.apache.org/images/tomcat.gif)
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
-Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions 6.x
-and 7.x are supported.
+Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
+6.x, 7.x and 8.x are supported.
 
 ## Usage
 
@@ -31,7 +31,8 @@ buildscript {
 ```
 
 Additionally, the Tomcat runtime libraries need to be added to the configuration `tomcat`. At the moment the Tomcat
-versions 6.x and 7.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different versions.
+versions 6.x, 7.x and 8.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
+versions.
 
 **Tomcat 6.x:**
 
@@ -57,6 +58,23 @@ repositories {
 
 dependencies {
     def tomcatVersion = '7.0.11'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+}
+```
+
+**Tomcat 8.x:**
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def tomcatVersion = '8.0.0-RC5'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
@@ -176,7 +194,7 @@ The convention properties can be overridden by system properties:
 **I get a compile exception when calling a JSP. Is there something I am missing?**
 
 The exception you might see is probably similar to this one: `org.apache.jasper.JasperException: Unable to compile class for JSP`.
-Tomcat 7.x requires you to have [Eclipse ECJ 3.6.x](http://www.eclipse.org/jdt/core/) in your the classpath. However, this
+Tomcat 7.x and 8.x requires you to have [Eclipse ECJ 3.6.x](http://www.eclipse.org/jdt/core/) in your the classpath. However, this
 version of the dependency does not exist in Maven Central. You'll have to download that dependency and put it in your own
 repository or define a repository on your local disk where you can drop it in. Here's an example:
 
