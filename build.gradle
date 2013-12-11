@@ -33,6 +33,29 @@ subprojects {
         testCompile 'junit:junit:4.11'
         testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
     }
+
+    sourceSets {
+        integrationTest {
+            groovy.srcDir file('src/integTest/groovy')
+            resources.srcDir file('src/integTest/resources')
+            compileClasspath = sourceSets.main.output + configurations.testRuntime
+            runtimeClasspath = output + compileClasspath
+        }
+    }
+
+    task integrationTest(type: Test, dependsOn: test) {
+        description = 'Runs the integration tests.'
+        group = 'verification'
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+        classpath = sourceSets.integrationTest.runtimeClasspath
+        mustRunAfter test
+    }
+
+    check.dependsOn integrationTest
+
+    idea.module {
+        testSourceDirs += file('src/integTest/groovy')
+    }
 }
 
 task uberJar(type: Jar, dependsOn: subprojects.assemble) {
@@ -88,7 +111,7 @@ task createAllDeliverables(dependsOn: [uberJar, sourcesJar, groovydocJar]) {
 
 task aggregateTestReports(type: TestReport) {
     destinationDir = file("$buildDir/reports/all-tests")
-    reportOn subprojects*.test
+    reportOn subprojects*.test, subprojects*.integrationTest
 }
 
 check.dependsOn aggregateTestReports
