@@ -1,12 +1,19 @@
-project(':tomcat8x') {
-    dependencies {
-        def tomcatVersion = '8.0.0-RC5'
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
 
-        compile project(':embedded'),
-                "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
-                "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
-        compile("org.apache.tomcat:tomcat-jasper:${tomcatVersion}") {
-            exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-        }
+dependencies {
+    def tomcatVersion = '8.0.0-RC5'
+
+    compile project(':embedded'),
+            "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
+            "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
+    compile("org.apache.tomcat:tomcat-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+}
+
+idea {
+    module {
+        jdkName = '1.7'
     }
 }

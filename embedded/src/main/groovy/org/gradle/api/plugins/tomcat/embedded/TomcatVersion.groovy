@@ -21,5 +21,43 @@ package org.gradle.api.plugins.tomcat.embedded
  * @author Benjamin Muschko
  */
 enum TomcatVersion {
-    VERSION_6X, VERSION_7X, VERSION_8X
+    VERSION_6X('6.0', 'Tomcat 6x', 'org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer'),
+    VERSION_7X('7.0', 'Tomcat 7x', 'org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer'),
+    VERSION_8X('8.0', 'Tomcat 8x', 'org.gradle.api.plugins.tomcat.embedded.Tomcat8xServer')
+
+    private static final TOMCAT_VERSIONS = [:]
+
+    static {
+        values().each {
+            TOMCAT_VERSIONS[it.specVersion] = it
+        }
+
+        TOMCAT_VERSIONS.asImmutable()
+    }
+
+    private final String specVersion
+    private final String description
+    private final String serverImplClass
+
+    TomcatVersion(String specVersion, String description, String serverImplClass) {
+        this.specVersion = specVersion
+        this.description = description
+        this.serverImplClass = serverImplClass
+    }
+
+    String getDescription() {
+        description
+    }
+
+    String getServerImplClass() {
+        serverImplClass
+    }
+
+    static TomcatVersion getTomcatVersionForSpec(String specVersion) {
+        if(!TOMCAT_VERSIONS.containsKey(specVersion)) {
+            throw new IllegalArgumentException("Unsupported specification version '$specVersion'")
+        }
+
+        TOMCAT_VERSIONS[specVersion]
+    }
 }

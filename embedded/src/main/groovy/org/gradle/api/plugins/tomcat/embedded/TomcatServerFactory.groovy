@@ -15,11 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
+import groovy.util.logging.Slf4j
 import org.gradle.api.GradleException
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
-import java.util.jar.Manifest
 
 /**
  * Tomcat server factory which resolves its implementation by checking the classpath for a specific
@@ -30,8 +27,9 @@ import java.util.jar.Manifest
  * @author Benjamin Muschko
  */
 @Singleton
+@Slf4j
 class TomcatServerFactory {
-    static final Logger LOGGER = LoggerFactory.getLogger(TomcatServerFactory)
+    ManifestReader manifestReader = new TomcatSpecVersionManifestReader()
 
     def getTomcatServer() {
         ClassLoader classLoader = Thread.currentThread().contextClassLoader
@@ -40,40 +38,50 @@ class TomcatServerFactory {
     }
 
     private Class resolveTomcatServerImpl(ClassLoader classLoader) {
-        String txtVersion
-        classLoader.getResources('META-INF/MANIFEST.MF').every {
-            InputStream inputStream = it.openStream()
-            try {
-                Manifest manifest = new Manifest(inputStream)
-                def attrs = manifest.mainAttributes
-                if(attrs.getValue('Specification-Title') == 'Apache Tomcat') {
-                    txtVersion = attrs.getValue('Specification-Version')
-                }
-            }
-            finally {
-                try {
-                    inputStream.close()
-                }
-                catch(any) {}
-            }
-
-            !txtVersion
-        }
-
-        Class tomcatServerImpl
-        if(txtVersion == '8.0') {
-            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat8xServer')
-            LOGGER.info 'Resolved Tomcat 8x server implementation in classpath'
-        } else if(txtVersion == '7.0') {
-            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat7xServer')
-            LOGGER.info 'Resolved Tomcat 7x server implementation in classpath'
-        } else if(txtVersion == '6.0') {
-            tomcatServerImpl = classLoader.loadClass('org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer')
-            LOGGER.info 'Resolved Tomcat 6x server implementation in classpath'
-        } else {
-            throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.')
-        }
-
+        String specVersion = readTomcatSpecVersionFromManifest(classLoader)
+        TomcatVersion tomcatVersion = resolveTomcatVersion(specVersion)
+        Class tomcatServerImpl = classLoader.loadClass(tomcatVersion.serverImplClass)
+        log.info "Resolved $tomcatVersion.description server implementation in classpath"
         tomcatServerImpl
+    }
+
+    /**
+     * Reads Tomcat specification version from manifest files.
+     *
+     * @param classLoader Classloader
+     * @return Specification version
+     */
+    private String readTomcatSpecVersionFromManifest(ClassLoader classLoader) {
+        String specVersion
+
+        classLoader.getResources('META-INF/MANIFEST.MF').every {
+            specVersion = manifestReader.readAttributeValue(it)
+            !specVersion
+        }
+
+        if(!specVersion) {
+            throw new GradleException('Unable to resolve Tomcat server specification version.')
+        }
+
+        specVersion
+    }
+
+    /**
+     * Gets Tomcat version for resolved spec.
+     *
+     * @param spec
+     * @return Tomcat version
+     */
+    private TomcatVersion resolveTomcatVersion(String spec) {
+        TomcatVersion tomcatVersion
+
+        try {
+            tomcatVersion = TomcatVersion.getTomcatVersionForSpec(spec)
+        }
+        catch(IllegalArgumentException e) {
+            throw new GradleException('Unable to find embedded Tomcat server implementation in classpath.', e)
+        }
+
+        tomcatVersion
     }
 }

@@ -23,6 +23,7 @@ import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
+import org.gradle.api.plugins.tomcat.internal.StoreType
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional
@@ -402,16 +403,4 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         String ajpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.ajpProtocolHandlerClassName
         ajpProtocolHandlerClassNameSystemProperty ?: ajpProtocol
     }
-}
-
-enum StoreType {
-
-  TRUST("TrustStore"),
-  KEY("KeyStore")  
-  
-  StoreType(String description) {
-    this.description = description
-  }
-  
-  String description
 }

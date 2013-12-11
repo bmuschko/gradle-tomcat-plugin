@@ -3,6 +3,7 @@ package org.gradle.api.plugins.tomcat.embedded
 /**
  * Implementation of common Tomcat server logic.
  *
+ * @author Benjamin Muschko
  * @author Andrey Bloschetsov
  */
 abstract class BaseTomcatServerImpl implements TomcatServer {

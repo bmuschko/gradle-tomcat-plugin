@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,10 @@
 package org.gradle.api.plugins.tomcat.embedded
 
 /**
- * Tomcat 8x server implementation.
+ * Manifest reader.
  *
  * @author Benjamin Muschko
- * @author Andrey Bloschetsov
  */
-class Tomcat8xServer extends BaseTomcat7xPlusImpl {
-    @Override
-    TomcatVersion getVersion() {
-        TomcatVersion.VERSION_8X
-    }
-
-    @Override
-    void setRealm(realm) {
-        tomcat.engine.realm = realm
-    }
+interface ManifestReader {
+    String readAttributeValue(URL manifestUrl)
 }

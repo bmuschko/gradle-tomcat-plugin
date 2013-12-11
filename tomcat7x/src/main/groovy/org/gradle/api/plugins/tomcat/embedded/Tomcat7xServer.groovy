@@ -21,7 +21,7 @@ package org.gradle.api.plugins.tomcat.embedded
  *
  * @author Benjamin Muschko
  */
-class Tomcat7xServer extends BaseTomcat7andUpperImpl {
+class Tomcat7xServer extends BaseTomcat7xPlusImpl {
     @Override
     TomcatVersion getVersion() {
         TomcatVersion.VERSION_7X

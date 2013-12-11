@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 the original author or authors.
+ * Copyright 2013 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,20 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
+import spock.lang.Specification
+
 /**
- * Tomcat 8x server implementation.
+ * Tomcat server factory test.
  *
  * @author Benjamin Muschko
- * @author Andrey Bloschetsov
  */
-class Tomcat8xServer extends BaseTomcat7xPlusImpl {
-    @Override
-    TomcatVersion getVersion() {
-        TomcatVersion.VERSION_8X
-    }
+class TomcatServer7xFactoryTest extends Specification {
+    def "Loads correct Tomcat server 7x implementation"() {
+        when:
+            TomcatServer tomcatServer = TomcatServerFactory.instance.tomcatServer
 
-    @Override
-    void setRealm(realm) {
-        tomcat.engine.realm = realm
+        then:
+            tomcatServer
+            tomcatServer instanceof Tomcat7xServer
     }
 }
