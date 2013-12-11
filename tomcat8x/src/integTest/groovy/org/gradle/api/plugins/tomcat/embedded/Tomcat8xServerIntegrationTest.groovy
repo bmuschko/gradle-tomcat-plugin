@@ -24,7 +24,7 @@ import static org.spockframework.util.Assert.fail
  *
  * @author Benjamin Muschko
  */
-class Tomcat8xServerTest extends Specification {
+class Tomcat8xServerIntegrationTest extends Specification {
     TomcatServer tomcatServer = new Tomcat8xServer()
 
     def setup() {

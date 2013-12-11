@@ -22,13 +22,13 @@ import spock.lang.Specification
  *
  * @author Benjamin Muschko
  */
-class TomcatServer7xFactoryTest extends Specification {
-    def "Loads correct Tomcat server 7x implementation"() {
+class TomcatServer8xFactoryIntegrationTest extends Specification {
+    def "Loads correct Tomcat server 8x implementation"() {
         when:
             TomcatServer tomcatServer = TomcatServerFactory.instance.tomcatServer
 
         then:
             tomcatServer
-            tomcatServer instanceof Tomcat7xServer
+            tomcatServer instanceof Tomcat8xServer
     }
 }

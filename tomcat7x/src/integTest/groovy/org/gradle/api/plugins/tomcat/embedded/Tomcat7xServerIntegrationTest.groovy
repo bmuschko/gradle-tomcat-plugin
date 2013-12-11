@@ -20,20 +20,20 @@ import spock.lang.Specification
 import static org.spockframework.util.Assert.fail
 
 /**
- * Tomcat 6x server test.
+ * Tomcat 7x server test.
  *
  * @author Benjamin Muschko
  */
-class Tomcat6xServerTest extends Specification {
-    TomcatServer tomcatServer = new Tomcat6xServer()
+class Tomcat7xServerIntegrationTest extends Specification {
+    TomcatServer tomcatServer = new Tomcat7xServer()
 
     def setup() {
-        tomcatServer.home = new File(System.properties['user.home'], 'tmp/tomcat6xHome').canonicalPath
+        tomcatServer.home = new File(System.properties['user.home'], 'tmp/tomcat7xHome').canonicalPath
     }
 
     def "Indicates correct version"() {
         expect:
-            tomcatServer.version == TomcatVersion.VERSION_6X
+            tomcatServer.version == TomcatVersion.VERSION_7X
     }
 
     def "Can start server"() {
@@ -46,9 +46,8 @@ class Tomcat6xServerTest extends Specification {
             }
             catch(ConnectException e) {}
         when:
-            def localHost = tomcatServer.embedded.createHost('localHost', new File('.').absolutePath)
-            tomcatServer.addEngineToServer(localHost)
-            tomcatServer.configureHttpConnector(port, null, 'org.apache.coyote.http11.Http11Protocol')
+            tomcatServer.embedded.getHost()
+            tomcatServer.embedded.port = port
             tomcatServer.start()
         then:
             new Socket(InetAddress.getByName('localhost'), port)
