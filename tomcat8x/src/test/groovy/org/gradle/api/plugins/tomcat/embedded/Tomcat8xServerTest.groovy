@@ -25,7 +25,11 @@ import static org.spockframework.util.Assert.fail
  * @author Benjamin Muschko
  */
 class Tomcat8xServerTest extends Specification {
-        TomcatServer tomcatServer = new Tomcat8xServer()
+    TomcatServer tomcatServer = new Tomcat8xServer()
+
+    def setup() {
+        tomcatServer.home = new File(System.properties['user.home'], 'tmp/tomcat8xHome').canonicalPath
+    }
 
     def "Indicates correct version"() {
         expect:

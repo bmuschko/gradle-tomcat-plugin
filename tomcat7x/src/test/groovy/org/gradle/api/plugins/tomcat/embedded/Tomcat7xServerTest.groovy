@@ -27,6 +27,10 @@ import static org.spockframework.util.Assert.fail
 class Tomcat7xServerTest extends Specification {
     TomcatServer tomcatServer = new Tomcat7xServer()
 
+    def setup() {
+        tomcatServer.home = new File(System.properties['user.home'], 'tmp/tomcat7xHome').canonicalPath
+    }
+
     def "Indicates correct version"() {
         expect:
             tomcatServer.version == TomcatVersion.VERSION_7X
