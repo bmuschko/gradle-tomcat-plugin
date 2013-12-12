@@ -1,5 +1,6 @@
 package org.gradle.api.plugins.tomcat
 
+import org.gradle.api.plugins.tomcat.embedded.PortFinder
 import org.gradle.tooling.BuildLauncher
 import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
@@ -25,16 +26,37 @@ abstract class GradleToolingApiIntegrationTest extends Specification {
             fail('Unable to create Gradle build script.')
         }
 
+        setupWebAppDirectories()
+        Integer httpPort = 8080
+        Integer stopPort = 8081
+
         buildFile << """
 buildscript {
     dependencies {
-        classpath files('../classes/main')
+        classpath files('../../../embedded/build/classes/main',
+                        '../classes/main',
+                        '../../../tomcat6x/build/classes/main',
+                        '../../../tomcat7x/build/classes/main',
+                        '../../../tomcat8x/build/classes/main')
     }
 }
 
 apply plugin: 'java'
 apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
 
+repositories {
+    mavenCentral()
+}
+
+tomcatRun.daemon = true
+tomcatRun.httpPort = $httpPort
+[tomcatRun, tomcatStop]*.stopKey = 'stopKey'
+[tomcatRun, tomcatStop]*.stopPort = $stopPort
+
+task startAndStopTomcat {
+    dependsOn tomcatRun
+    finalizedBy tomcatStop
+}
 """
     }
 
@@ -48,8 +70,24 @@ apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
         }
     }
 
+    private void setupWebAppDirectories() {
+        File webappDir = new File(integTestDir, 'src/main/webapp')
+
+        if(!webappDir.mkdirs()) {
+            fail('Unable to create web application source directory.')
+        }
+
+        File classesDir = new File(integTestDir, 'build/classes/main')
+
+        if(!classesDir.mkdirs()) {
+            fail('Unable to create classes directory.')
+        }
+    }
+
     protected GradleProject runTasks(File projectDir, String... tasks) {
-        ProjectConnection connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
+        GradleConnector gradleConnector = GradleConnector.newConnector()
+        gradleConnector.forProjectDirectory(projectDir)
+        ProjectConnection connection = gradleConnector.connect()
 
         try {
             BuildLauncher builder = connection.newBuild()

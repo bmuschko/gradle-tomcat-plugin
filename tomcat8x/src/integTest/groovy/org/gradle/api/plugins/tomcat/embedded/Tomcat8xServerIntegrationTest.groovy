@@ -38,7 +38,7 @@ class Tomcat8xServerIntegrationTest extends Specification {
 
     def "Can start server"() {
         setup:
-            Integer port = PortFinder.findFreePort()
+            Integer port = 8080
         expect:
             try {
                 new Socket(InetAddress.getByName('localhost'), port)
