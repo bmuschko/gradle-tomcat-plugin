@@ -20,6 +20,8 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'jacoco'
+
     def compatibilityVersion = 1.5
     sourceCompatibility = compatibilityVersion
     targetCompatibility = compatibilityVersion
@@ -49,6 +51,11 @@ subprojects {
         testClassesDir = sourceSets.integrationTest.output.classesDir
         classpath = sourceSets.integrationTest.runtimeClasspath
         mustRunAfter test
+    }
+
+    task jacocoIntegrationTestReport(type: JacocoReport) {
+        sourceSets sourceSets.main
+        executionData integrationTest
     }
 
     check.dependsOn integrationTest
@@ -117,7 +124,7 @@ task aggregateTestReports(type: TestReport) {
 check.dependsOn aggregateTestReports
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.7'
+    gradleVersion = '1.9'
 }
 
 artifacts {
