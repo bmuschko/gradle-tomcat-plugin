@@ -20,6 +20,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
 
 /**
  * Deploys an exploded web application to an embedded Tomcat web container. Does not require that the web application
@@ -30,7 +31,7 @@ import org.gradle.api.tasks.InputFiles
 class TomcatRun extends AbstractTomcatRunTask {
     @InputFiles FileCollection webAppClasspath
     @InputDirectory File webAppSourceDirectory
-    @InputDirectory File classesDirectory
+    @InputDirectory @Optional File classesDirectory
 
     @Override
     void validateConfiguration() {
@@ -106,13 +107,15 @@ class TomcatRun extends AbstractTomcatRunTask {
     private void setupClassesJarScanning() {
         getServer().context.jarScanner.scanAllDirectories = true
 
-        File metaInfDir = new File(getClassesDirectory(), 'META-INF')
+        if(getClassesDirectory()) {
+            File metaInfDir = new File(getClassesDirectory(), 'META-INF')
 
-        if(!metaInfDir.exists()) {
-            boolean success = metaInfDir.mkdir()
+            if(!metaInfDir.exists()) {
+                boolean success = metaInfDir.mkdir()
 
-            if(!success) {
-                logger.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
+                if(!success) {
+                    logger.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
+                }
             }
         }
     }

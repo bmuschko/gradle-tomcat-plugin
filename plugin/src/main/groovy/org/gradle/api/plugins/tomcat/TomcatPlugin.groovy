@@ -87,7 +87,7 @@ class TomcatPlugin implements Plugin<Project> {
         project.tasks.withType(TomcatRun).whenTaskAdded { TomcatRun tomcatRun ->
             tomcatRun.conventionMapping.map('webAppClasspath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
             tomcatRun.conventionMapping.map('webAppSourceDirectory') { getWarConvention(project).webAppDir }
-            tomcatRun.conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir }
+            tomcatRun.conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir.exists() ? project.sourceSets.main.output.classesDir : null }
         }
 
         TomcatRun tomcatRun = project.tasks.create(TOMCAT_RUN_TASK_NAME, TomcatRun)

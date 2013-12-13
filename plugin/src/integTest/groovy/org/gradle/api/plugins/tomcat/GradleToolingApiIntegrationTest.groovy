@@ -1,6 +1,5 @@
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.plugins.tomcat.embedded.PortFinder
 import org.gradle.tooling.BuildLauncher
 import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
@@ -75,12 +74,6 @@ task startAndStopTomcat {
 
         if(!webappDir.mkdirs()) {
             fail('Unable to create web application source directory.')
-        }
-
-        File classesDir = new File(integTestDir, 'build/classes/main')
-
-        if(!classesDir.mkdirs()) {
-            fail('Unable to create classes directory.')
         }
     }
 
