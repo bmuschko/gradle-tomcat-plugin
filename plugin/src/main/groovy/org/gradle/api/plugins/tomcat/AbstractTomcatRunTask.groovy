@@ -15,6 +15,7 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.apache.catalina.WebResourceRoot
 import org.apache.tools.ant.AntClassLoader
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -22,6 +23,7 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
+import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.StoreType
 import org.gradle.api.tasks.InputFile
@@ -177,7 +179,7 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
             validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
             if(clientAuth && (!validClientAuthPhrases.contains(clientAuth))) {
-              throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
+                throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
         }
     }
@@ -190,7 +192,14 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
         getAdditionalRuntimeJars().each { additionalRuntimeJar ->
-            getServer().context.loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
+            if(isTomcat8x()) {
+                if(file.exists()) {
+                    getServer().context.resources.createWebResourceSet(WebResourceRoot.ResourceSetType.POST, '/WEB-INF/lib', additionalRuntimeJar.getAbsolutePath(), null, '/')
+                }
+            }
+            else {
+                getServer().context.loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
+            }
         }
 
         getServer().context.reloadable = reloadable
@@ -253,6 +262,24 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
                 logger.info 'Tomcat server exiting.'
             }
         }
+    }
+
+    /**
+     * Checks if used Tomcat version is 8.x.
+     *
+     * @return Flag
+     */
+    public boolean isTomcat8x() {
+        getServer().version == TomcatVersion.VERSION_8X
+    }
+
+    /**
+     * Checks if used Tomcat version is 7.x.
+     *
+     * @return Flag
+     */
+    public boolean isTomcat7x() {
+        getServer().version == TomcatVersion.VERSION_7X
     }
 
     /**

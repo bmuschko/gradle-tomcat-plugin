@@ -15,6 +15,7 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.apache.catalina.WebResourceRoot
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
@@ -76,16 +77,7 @@ class TomcatRun extends AbstractTomcatRunTask {
      * @return Flag
      */
     private boolean isClassesJarScanningRequired() {
-        isTomcat7x() && !existsWebXml()
-    }
-
-    /**
-     * Checks if used Tomcat version is 7.x.
-     *
-     * @return Flag
-     */
-    private boolean isTomcat7x() {
-        getServer().version == TomcatVersion.VERSION_7X
+        (isTomcat7x() || isTomcat8x()) && !existsWebXml()
     }
 
     /**
@@ -125,9 +117,16 @@ class TomcatRun extends AbstractTomcatRunTask {
         super.configureWebApplication()
 
         logger.info "web app loader classpath = ${getWebAppClasspath().asPath}"
-      
+
         getWebAppClasspath().each { file ->
-            getServer().context.loader.addRepository(file.toURI().toURL().toString())
+            if(isTomcat8x()) {
+                if(file.exists()) {
+                    getServer().context.resources.createWebResourceSet(WebResourceRoot.ResourceSetType.POST, '/WEB-INF/classes', file.getAbsolutePath(), null, '/')
+                }
+            }
+            else {
+                getServer().context.loader.addRepository(file.toURI().toURL().toString())
+            }
         }
     }
 }

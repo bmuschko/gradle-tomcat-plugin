@@ -29,7 +29,7 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
     @Override
     void createLoader(ClassLoader classLoader) {
         Class webappLoader = classLoader.loadClass('org.apache.catalina.loader.WebappLoader')
-        context.loader = webappLoader.newInstance(classLoader)
+        this.context.loader = webappLoader.newInstance(classLoader)
     }
 
     @Override

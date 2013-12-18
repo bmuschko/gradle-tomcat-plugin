@@ -15,6 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
+import org.apache.catalina.webresources.StandardRoot
+
 /**
  * Tomcat 8x server implementation.
  *
@@ -30,5 +32,11 @@ class Tomcat8xServer extends BaseTomcat7xPlusImpl {
     @Override
     void setRealm(realm) {
         tomcat.engine.realm = realm
+    }
+
+    @Override
+    void createContext(String fullContextPath, String webAppPath) {
+        super.createContext(fullContextPath, webAppPath)
+        context.resources = new StandardRoot(context)
     }
 }
