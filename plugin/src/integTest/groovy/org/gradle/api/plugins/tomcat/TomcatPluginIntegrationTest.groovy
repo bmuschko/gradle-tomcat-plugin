@@ -54,20 +54,6 @@ dependencies {
     def "Start and stop Tomcat 8x"() {
         expect:
             buildFile << """
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        def tomcatVersion = '8.0.0-RC5'
-        classpath "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
-                "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
-        classpath("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {
-            exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-        }
-    }
-}
-
 dependencies {
     def tomcatVersion = '8.0.0-RC5'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
