@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.apache.catalina.WebResourceRoot
 import org.apache.tools.ant.AntClassLoader
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -184,6 +183,13 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         }
     }
 
+    def getResourceSetType(String name) {
+        ClassLoader loader = Thread.currentThread().contextClassLoader
+        Class resourceSetTypeClass = loader.loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
+        def type = resourceSetTypeClass.enumConstants.find { it.name() == 'POST' }
+        type
+    }
+
     /**
      * Configures web application
      */
@@ -191,10 +197,15 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
         setWebApplicationContext()
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
+        def type
+        if(isTomcat8x()) {
+            type = getResourceSetType('POST')
+        }
+
         getAdditionalRuntimeJars().each { additionalRuntimeJar ->
             if(isTomcat8x()) {
                 if(file.exists()) {
-                    getServer().context.resources.createWebResourceSet(WebResourceRoot.ResourceSetType.POST, '/WEB-INF/lib', additionalRuntimeJar.getAbsolutePath(), null, '/')
+                    getServer().context.resources.createWebResourceSet(type, '/WEB-INF/lib', additionalRuntimeJar.getAbsolutePath(), null, '/')
                 }
             }
             else {
