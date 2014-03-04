@@ -46,7 +46,7 @@ class TomcatRunWar extends AbstractTomcatRunTask {
         JarEntry defaultConfigFileEntry = war.getJarEntry(CONFIG_FILE)
 
         // If context.xml wasn't provided check the default location
-        if(!getConfigFile() && defaultConfigFileEntry){
+        if(!getConfigFile() && defaultConfigFileEntry) {
             setResolvedConfigFile(new URL("jar:${getWebApp().toURI().toString()}!/${CONFIG_FILE}"))
             logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }

@@ -51,7 +51,6 @@ dependencies {
             runTasks(integTestDir, 'startAndStopTomcat')
     }
 
-    @Ignore
     def "Start and stop Tomcat 8x"() {
         expect:
             buildFile << """
