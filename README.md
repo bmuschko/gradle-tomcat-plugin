@@ -90,7 +90,7 @@ The Tomcat plugin defines the following tasks:
 * `tomcatRun`: Starts a Tomcat instance and deploys the exploded web application to it.
 * `tomcatRunWar`: Starts a Tomcat instance and deploys the WAR to it.
 * `tomcatStop`: Stops the Tomcat instance.
-* `tomcatJasper`: Runs the JSP compiler ([Jasper](http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html)) and turns JSP pages into Java source using.
+* `tomcatJasper`: Runs the JSP compiler and turns JSP pages into Java source using [Jasper](http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html).
 
 ## Project layout
 
