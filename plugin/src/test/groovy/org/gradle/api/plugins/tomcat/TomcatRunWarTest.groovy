@@ -15,8 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
@@ -25,6 +23,10 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
 import static org.junit.Assert.fail
 
 /**
@@ -50,17 +52,6 @@ class TomcatRunWarTest {
         if(testDir.exists()) {
             testDir.deleteDir()
         }
-    }
-
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForInvalidWebApp() {
-        tomcatRunWar.validateConfiguration()
-    }
-
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForNonExistentWebApp() {
-        tomcatRunWar.setWebApp new File(testDir, "webApp.war")
-        tomcatRunWar.validateConfiguration()
     }
 
     @Test

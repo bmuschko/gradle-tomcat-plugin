@@ -15,8 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
 /**
@@ -24,9 +24,18 @@ import org.gradle.api.tasks.TaskAction
  *
  * @author Benjamin Muschko 
  */
-class TomcatStop extends DefaultTask {
-    Integer stopPort
-    String stopKey
+class TomcatStop extends Tomcat {
+    /**
+     * The TCP port which Tomcat should listen for admin requests. Defaults to 8081.
+     */
+    @Input
+    Integer stopPort = 8081
+
+    /**
+     * The key to pass to Tomcat when requesting it to stop. Defaults to "stopKey".
+     */
+    @Input
+    String stopKey = 'stopKey'
 
     @TaskAction
     void stop() {
@@ -52,25 +61,5 @@ class TomcatStop extends DefaultTask {
         catch(Exception e) {
             logger.error 'Exception during stopping', e
         }
-    }
-
-    /**
-     * Returns port to listen to stop Tomcat on sending stop command.
-     *
-     * @return Stop port
-     */
-    Integer getStopPort() {
-        Integer stopPortSystemProperty = TomcatSystemProperty.getStopPort()
-        stopPortSystemProperty ?: stopPort
-    }
-
-    /**
-     * Returns stop key.
-     *
-     * @return Stop key
-     */
-    String getStopKey() {
-        String stopKeySystemProperty = TomcatSystemProperty.getStopKey()
-        stopKeySystemProperty ?: stopKey
     }
 }

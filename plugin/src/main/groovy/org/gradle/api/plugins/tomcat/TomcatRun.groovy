@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 import org.gradle.api.tasks.InputDirectory
@@ -28,42 +27,57 @@ import org.gradle.api.tasks.Optional
  *
  * @author Benjamin Muschko
  */
-class TomcatRun extends AbstractTomcatRunTask {
-    @InputFiles FileCollection webAppClasspath
-    @InputDirectory File webAppSourceDirectory
-    @InputDirectory @Optional File classesDirectory
+class TomcatRun extends AbstractTomcatRun {
+    /**
+     * The web application's classpath. This classpath usually contains the external libraries assigned to the compile
+     * and runtime configurations.
+     */
+    @InputFiles
+    FileCollection webAppClasspath
+
+    /**
+     * The web application's source directory. For applications following the Servlet 3.x specification this directory
+     * is not required.
+     */
+    @InputDirectory
+    @Optional
+    File webAppSourceDirectory
+
+    /**
+     * The directory containing the compiled class files. This property is optional as a web application project may
+     * simply not contain any classes.
+     */
+    @InputDirectory
+    @Optional
+    File classesDirectory
 
     @Override
     void validateConfiguration() {
         super.validateConfiguration()
+        validateConfigFile()
+    }
 
-        // Check the location of the static content/JSPs etc.
-        try {
-            if(!getWebAppSourceDirectory() || !getWebAppSourceDirectory().exists()) {
-                throw new InvalidUserDataException('Webapp source directory '
-                        + (!getWebAppSourceDirectory() ? 'null' : getWebAppSourceDirectory().canonicalPath)
-                        + ' does not exist')
+    /**
+     * Validate the configuration file.
+     */
+    private void validateConfigFile() {
+        File resolvedWebAppSourceDirectory = getWebAppSourceDirectory()
+        logger.info "Webapp source directory = ${resolvedWebAppSourceDirectory?.canonicalPath}"
+
+        if(resolvedWebAppSourceDirectory) {
+            File defaultConfigFile = new File(getWebAppSourceDirectory(), "/${CONFIG_FILE}")
+
+            // If context.xml wasn't provided, check the default location
+            if(!getConfigFile() && defaultConfigFile.exists()){
+                setResolvedConfigFile(defaultConfigFile.toURI().toURL())
+                logger.info "context.xml = ${getResolvedConfigFile().toString()}"
             }
-            else {
-                logger.info "Webapp source directory = ${getWebAppSourceDirectory().canonicalPath}"
-            }
-        }
-        catch(IOException e) {
-            throw new InvalidUserDataException('Webapp source directory does not exist', e)
-        }
-
-        File defaultConfigFile = new File(getWebAppSourceDirectory(), "/${CONFIG_FILE}")
-
-        // If context.xml wasn't provided check the default location
-        if(!getConfigFile() && defaultConfigFile.exists()){
-            setResolvedConfigFile(defaultConfigFile.toURI().toURL())
-            logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
     }
 
     @Override
     void setWebApplicationContext() {
-        getServer().createContext(getFullContextPath(), getWebAppSourceDirectory().canonicalPath)
+        getServer().createContext(getFullContextPath(), getWebAppSourceDirectory()?.canonicalPath)
 
         if(isClassesJarScanningRequired()) {
             setupClassesJarScanning()
@@ -94,8 +108,14 @@ class TomcatRun extends AbstractTomcatRunTask {
      * @return Flag
      */
     private boolean existsWebXml() {
-        File webXml = new File(getWebAppSourceDirectory(), 'WEB-INF/web.xml')
-        webXml.exists()
+        File resolvedWebAppSourceDirectory = getWebAppSourceDirectory()
+
+        if(resolvedWebAppSourceDirectory) {
+            File webXml = new File(getWebAppSourceDirectory(), 'WEB-INF/web.xml')
+            webXml.exists()
+        }
+
+        false
     }
 
     /**
@@ -106,15 +126,16 @@ class TomcatRun extends AbstractTomcatRunTask {
      */
     private void setupClassesJarScanning() {
         getServer().context.jarScanner.scanAllDirectories = true
+        File resolvedClassesDirectory = getClassesDirectory()
 
-        if(getClassesDirectory()) {
-            File metaInfDir = new File(getClassesDirectory(), 'META-INF')
+        if(resolvedClassesDirectory) {
+            File metaInfDir = new File(resolvedClassesDirectory, 'META-INF')
 
             if(!metaInfDir.exists()) {
                 boolean success = metaInfDir.mkdir()
 
                 if(!success) {
-                    logger.warn "Failed to create META-INF directory in classes directory ${getClassesDirectory().absolutePath}"
+                    logger.warn "Failed to create META-INF directory in classes directory $resolvedClassesDirectory.absolutePath"
                 }
             }
         }

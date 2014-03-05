@@ -28,7 +28,7 @@ class TomcatPluginConvention {
     Integer httpsPort = 8443
     Integer stopPort = 8081
     Integer ajpPort = 8009
-    String stopKey
+    String stopKey = 'stopKey'
     Boolean enableSSL = false
     String httpProtocol = DEFAULT_PROTOCOL_HANDLER
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER

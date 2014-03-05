@@ -4,11 +4,13 @@ import org.gradle.tooling.BuildLauncher
 import org.gradle.tooling.GradleConnector
 import org.gradle.tooling.ProjectConnection
 import org.gradle.tooling.model.GradleProject
+import org.gradle.tooling.model.Task
+import org.gradle.util.AvailablePortFinder
 import spock.lang.Specification
 
 import static org.spockframework.util.Assert.fail
 
-abstract class GradleToolingApiIntegrationTest extends Specification {
+abstract class AbstractIntegrationTest extends Specification {
     File integTestDir
     File buildFile
 
@@ -25,9 +27,9 @@ abstract class GradleToolingApiIntegrationTest extends Specification {
             fail('Unable to create Gradle build script.')
         }
 
-        setupWebAppDirectories()
-        Integer httpPort = 8080
-        Integer stopPort = 8081
+        AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
+        Integer httpPort = availablePortFinder.nextAvailable
+        Integer stopPort = availablePortFinder.nextAvailable
 
         buildFile << """
 buildscript {
@@ -47,15 +49,10 @@ repositories {
     mavenCentral()
 }
 
-tomcatRun.daemon = true
-tomcatRun.httpPort = $httpPort
-[tomcatRun, tomcatStop]*.stopKey = 'stopKey'
-[tomcatRun, tomcatStop]*.stopPort = $stopPort
-
-task startAndStopTomcat {
-    dependsOn tomcatRun
-    finalizedBy tomcatStop
-}
+[tomcatRun, tomcatRunWar]*.daemon = true
+[tomcatRun, tomcatRunWar]*.httpPort = $httpPort
+[tomcatRun, tomcatRunWar, tomcatStop]*.stopKey = 'stopKey'
+[tomcatRun, tomcatRunWar, tomcatStop]*.stopPort = $stopPort
 """
     }
 
@@ -69,7 +66,11 @@ task startAndStopTomcat {
         }
     }
 
-    private void setupWebAppDirectories() {
+    protected Task findTask(GradleProject project, String name) {
+        project.tasks.find { task -> task.name == name }
+    }
+
+    protected void setupWebAppDirectory() {
         File webappDir = new File(integTestDir, 'src/main/webapp')
 
         if(!webappDir.mkdirs()) {

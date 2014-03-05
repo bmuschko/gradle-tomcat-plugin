@@ -16,7 +16,6 @@
 package org.gradle.api.plugins.tomcat
 
 import org.apache.tools.ant.AntClassLoader
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
@@ -24,10 +23,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.StoreType
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Optional
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 
 import java.util.logging.Level
 
@@ -38,36 +34,172 @@ import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileL
  *
  * @author Benjamin Muschko
  */
-abstract class AbstractTomcatRunTask extends DefaultTask {
+abstract class AbstractTomcatRun extends Tomcat {
     static final CONFIG_FILE = 'META-INF/context.xml'
-    boolean reloadable
+
+    /**
+     * Forces context scanning if you don't use a context file. Defaults to true.
+     */
+    @Input
+    Boolean reloadable = Boolean.TRUE
+
+    /**
+     * The URL context path under which the web application will be registered. Defaults to WAR name.
+     */
+    @Input
+    @Optional
     String contextPath
-    Integer httpPort
-    Integer httpsPort
-    Integer stopPort
-    String stopKey
-    String httpProtocol
-    String httpsProtocol
-    @InputFile @Optional File webDefaultXml
+
+    /**
+     * The TCP port which Tomcat should listen for HTTP requests. Defaults to 8080.
+     */
+    @Input
+    Integer httpPort = 8080
+
+    /**
+     * The TCP port which Tomcat should listen for HTTPS requests. Defaults to 8443.
+     */
+    Integer httpsPort = 8443
+
+    /**
+     * The TCP port which Tomcat should listen for admin requests. Defaults to 8081.
+     */
+    @Input
+    Integer stopPort = 8081
+
+    /**
+     * The key to pass to Tomcat when requesting it to stop. Defaults to "stopKey".
+     */
+    @Input
+    String stopKey = 'stopKey'
+
+    /**
+     * The HTTP protocol handler class name to be used. Defaults to "org.apache.coyote.http11.Http11Protocol".
+     */
+    @Input
+    String httpProtocol = 'org.apache.coyote.http11.Http11Protocol'
+
+    /**
+     * The HTTPS protocol handler class name to be used. Defaults to "org.apache.coyote.http11.Http11Protocol".
+     */
+    @Input
+    String httpsProtocol = 'org.apache.coyote.http11.Http11Protocol'
+
+    /**
+     * The default web.xml. If it doesn't get defined an instance of org.apache.catalina.servlets.DefaultServlet and
+     * org.apache.jasper.servlet.JspServlet will be set up.
+     */
+    @InputFile
+    @Optional
+    File webDefaultXml
+
+    /**
+     * Defines additional runtime JARs that are not provided by the web application.
+     */
+    @InputFiles
+    Iterable<File> additionalRuntimeJars = []
+
+    /**
+     * Specifies the character encoding used to decode the URI bytes by the HTTP Connector. Defaults to "UTF-8".
+     */
+    @Input
+    String URIEncoding = 'UTF-8'
+
+    /**
+     * Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
+     * server has started. When false, this task blocks until the Tomcat server is stopped. Defaults to false.
+     */
+    @Input
+    Boolean daemon = Boolean.FALSE
+
+    /**
+     * The build script's classpath.
+     */
+    @InputFiles
+    FileCollection buildscriptClasspath
+
+    /**
+     * Classpath for Tomcat libraries.
+     */
+    @InputFiles
+    FileCollection tomcatClasspath
+
+    /**
+     * The path to the Tomcat context XML file.
+     */
+    @InputFile
+    @Optional
+    File configFile
+
+    /**
+     * Determines whether the HTTPS connector should be created. Defaults to false.
+     */
+    @Input
+    Boolean enableSSL = Boolean.FALSE
+
+    /**
+     * Doesn't override existing SSL key. Defaults to false.
+     */
+    @Input
+    Boolean preserveSSLKey = Boolean.FALSE
+
+    /**
+     * The keystore file to use for SSL, if enabled (by default, a keystore will be generated).
+     */
+    @InputFile
+    @Optional
+    File keystoreFile
+
+    /**
+     * The keystore password to use for SSL, if enabled.
+     */
+    @Input
+    @Optional
+    String keystorePass
+
+    /**
+     * The truststore file to use for SSL, if enabled.
+     */
+    @InputFile
+    @Optional
+    File truststoreFile
+
+    /**
+     * The truststore password to use for SSL, if enabled.
+     */
+    @Input
+    @Optional
+    String truststorePass
+
+    /**
+     * The clientAuth setting to use, values may be: "true", "false" or "want".  Defaults to "false".
+     */
+    @Input
+    @Optional
+    String clientAuth = 'false'
+
+    /**
+     * The file to write Tomcat log messages to. If the file already exists new messages will be appended.
+     */
+    @OutputFile
+    @Optional
+    File outputFile
+
+    /**
+     * The TCP port which Tomcat should listen for AJP requests. Defaults to 8009.
+     */
+    @Input
+    Integer ajpPort = 8009
+
+    /**
+     * The AJP protocol handler class name to be used. Defaults to "org.apache.coyote.ajp.AjpProtocol".
+     */
+    @Input
+    String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
+
     def server
     def realm
-    @InputFiles Iterable<File> additionalRuntimeJars = []
-    @Optional String URIEncoding
-    boolean daemon
-    FileCollection buildscriptClasspath
-    FileCollection tomcatClasspath
-    @InputFile @Optional File configFile
     URL resolvedConfigFile
-    Boolean enableSSL
-    Boolean preserveSSLKey
-    @InputFile @Optional File keystoreFile
-    String keystorePass
-    @InputFile @Optional File truststoreFile
-    String truststorePass
-    String clientAuth
-    File outputFile
-    Integer ajpPort
-    String ajpProtocol
 
     abstract void setWebApplicationContext()
 
@@ -357,50 +489,5 @@ abstract class AbstractTomcatRunTask extends DefaultTask {
 
     def createServer() {
         TomcatServerFactory.instance.tomcatServer
-    }
-
-    Integer getHttpPort() {
-        Integer httpPortSystemProperty = TomcatSystemProperty.httpPort
-        httpPortSystemProperty ?: httpPort
-    }
-
-    Integer getHttpsPort() {
-        Integer httpsPortSystemProperty = TomcatSystemProperty.httpsPort
-        httpsPortSystemProperty ?: httpsPort
-    }
-
-    Integer getStopPort() {
-        Integer stopPortSystemProperty = TomcatSystemProperty.stopPort
-        stopPortSystemProperty ?: stopPort
-    }
-
-    String getStopKey() {
-        String stopKeySystemProperty = TomcatSystemProperty.stopKey
-        stopKeySystemProperty ?: stopKey
-    }
-
-    Boolean getEnableSSL() {
-        Boolean enableSSLSystemProperty = TomcatSystemProperty.enableSSL
-        enableSSLSystemProperty ?: enableSSL
-    }
-    
-    String getHttpProtocol() {
-        String httpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.httpProtocolHandlerClassName
-        httpProtocolHandlerClassNameSystemProperty ?: httpProtocol
-    }
-
-    String getHttpsProtocol() {
-        String httpsProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.httpsProtocolHandlerClassName
-        httpsProtocolHandlerClassNameSystemProperty ?: httpsProtocol
-    }
-    
-    Integer getAjpPort() {
-        Integer ajpPortSystemProperty = TomcatSystemProperty.ajpPort
-        ajpPortSystemProperty ?: ajpPort
-    }
-    
-    String getAjpProtocol() {
-        String ajpProtocolHandlerClassNameSystemProperty = TomcatSystemProperty.ajpProtocolHandlerClassName
-        ajpProtocolHandlerClassNameSystemProperty ?: ajpProtocol
     }
 }

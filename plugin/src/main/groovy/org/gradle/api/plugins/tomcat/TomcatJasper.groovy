@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 
@@ -24,23 +23,70 @@ import org.gradle.api.tasks.*
  *
  * @author Benjamin Muschko
  */
-class TomcatJasper extends DefaultTask {
-    @InputFiles FileCollection classpath
+class TomcatJasper extends Tomcat {
+    @InputFiles
+    FileCollection classpath
+
+    @Input
+    @Optional
     Boolean validateXml
-    @InputDirectory File uriroot
-    @OutputFile @Optional File webXmlFragment
-    @OutputDirectory File outputDir
+
+    @InputDirectory
+    File uriroot
+
+    @OutputFile
+    @Optional
+    File webXmlFragment
+
+    @OutputDirectory
+    File outputDir
+
+    @Input
+    @Optional
     Boolean classdebuginfo
+
+    @Input
+    @Optional
     String compiler
+
+    @Input
+    @Optional
     String compilerSourceVM
+
+    @Input
+    @Optional
     String compilerTargetVM
+
+    @Input
+    @Optional
     Boolean poolingEnabled
+
+    @Input
+    @Optional
     Boolean errorOnUseBeanInvalidClassAttribute
+
+    @Input
+    @Optional
     Boolean genStringAsCharArray
+
+    @Input
+    @Optional
     String ieClassId
+
+    @Input
+    @Optional
     String javaEncoding
+
+    @Input
+    @Optional
     Boolean trimSpaces
+
+    @Input
+    @Optional
     Boolean xpoweredBy
+
+    @Input
+    @Optional
     Boolean addWebXmlMappings
 
     @TaskAction

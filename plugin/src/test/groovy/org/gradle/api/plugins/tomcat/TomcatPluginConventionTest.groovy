@@ -15,50 +15,24 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import spock.lang.Specification
 
 /**
  * Test case for TomcatPluginConvention.
  *
  * @author Benjamin Muschko
  */
-class TomcatPluginConventionTest {
-    private TomcatPluginConvention pluginConvention
+class TomcatPluginConventionTest extends Specification {
+    TomcatPluginConvention pluginConvention = new TomcatPluginConvention()
 
-    @Before
-    void setUp() {
-        pluginConvention = new TomcatPluginConvention()
-    }
-
-    @After
-    void tearDown() {
-        pluginConvention = null  
-    }
-
-    @Test
-    void testGetHttpPortForDefaultValue() {
-        assert pluginConvention.httpPort == 8080
-    }
-
-    @Test
-    void testGetAjpProtocolForDefaultValue() {
-      assert pluginConvention.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
-    }
-
-    @Test
-    void testGetAjpPortForDefaultValue() {
-      assert pluginConvention.ajpPort == 8009
-    }
-
-    @Test
-    void testGetStopPortForDefaultValue() {
-        assert pluginConvention.stopPort == 8081
-    }
-
-    @Test
-    void testGetStopKeyForDefaultValue() {
-        assert pluginConvention.stopKey == null
+    def "Verify default convention values"() {
+        pluginConvention.httpPort == 8080
+        pluginConvention.httpsPort == 8443
+        pluginConvention.stopPort == 8081
+        pluginConvention.ajpPort == 8009
+        pluginConvention.stopKey == 'stopKey'
+        pluginConvention.httpProtocol == TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        pluginConvention.httpsProtocol == TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        pluginConvention.ajpProtocol == TomcatPluginConvention.DEFAULT_AJP_PROTOCOL_HANDLER
     }
 }

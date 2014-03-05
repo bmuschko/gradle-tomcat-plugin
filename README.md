@@ -175,20 +175,6 @@ jasper {
 }
 ```
 
-## System properties
-
-The convention properties can be overridden by system properties:
-
-* `tomcat.http.port`: Overrides the convention property `httpPort`.
-* `tomcat.https.port`: Overrides the convention property `httpsPort`.
-* `tomcat.ajp.port`: Overrides the convention property `ajpPort`.
-* `tomcat.stop.port`: Overrides the convention property `stopPort`.
-* `tomcat.stop.key`: Overrides the convention property `stopKey`.
-* `tomcat.enable.ssl`: Overrides the convention property `enableSSL`.
-* `tomcat.http.protocol`: Overrides the convention property `httpProtocol`.
-* `tomcat.https.protocol`: Overrides the convention property `httpsProtocol`.
-* `tomcat.ajp.protocol`: Overrides the convention property `ajpProtocol`.
-
 ## FAQ
 
 **I get a compile exception when calling a JSP. Is there something I am missing?**

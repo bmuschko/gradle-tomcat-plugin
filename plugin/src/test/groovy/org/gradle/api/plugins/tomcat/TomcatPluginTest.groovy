@@ -18,87 +18,105 @@ package org.gradle.api.plugins.tomcat
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.WarPlugin
-import org.gradle.api.plugins.WarPluginConvention
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import spock.lang.Specification
 
 /**
  * Test case for Tomcat plugin.
  *
  * @author Benjamin Muschko
  */
-class TomcatPluginTest {
+class TomcatPluginTest extends Specification {
     private final File testDir = new File("build/tmp/tests")
     private Project project
     private TomcatPlugin tomcatPlugin
 
-    @Before
-    void setUp() {
+    def setup() {
         project = ProjectBuilder.builder().withProjectDir(testDir).build()
         tomcatPlugin = new TomcatPlugin().apply(project)
     }
 
-    @After
-    void tearDown() {
-        tomcatPlugin = null
-
+    def cleanup() {
         if(testDir.exists()) {
             testDir.deleteDir()
         }
     }
 
-    @Test
-    public void testApplyBasicSetup() {
-        assert project.plugins.hasPlugin(WarPlugin)
-        assert project.convention.plugins.tomcat instanceof TomcatPluginConvention
+    def "Apply basic setup"() {
+        expect:
+            project.plugins.hasPlugin(WarPlugin)
+            project.convention.plugins.tomcat instanceof TomcatPluginConvention
     }
 
-    @Test
-    public void testApplyTomcatRunTask() {
-        Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_TASK_NAME]
-        assert task instanceof TomcatRun
-        assert task.description == "Uses your files as and where they are and deploys them to Tomcat."
-        assert task.group == WarPlugin.WEB_APP_GROUP
-        assert task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
-        assert task.httpPort == project.httpPort
-        assert task.httpsPort == project.httpsPort
-        assert task.stopPort == project.stopPort
-        assert task.stopKey == project.stopKey
-        assert task.enableSSL == project.enableSSL
-        assert !task.daemon
-        assert task.reloadable
-        assert task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
-        assert task.webAppSourceDirectory == project.convention.getPlugin(WarPluginConvention.class).webAppDir
-        assert task.ajpPort == 8009
-        assert task.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
+    def "Apply tomcatRun task"() {
+        expect:
+            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
+            task instanceof TomcatRun
+            task.description == 'Uses your files as and where they are and deploys them to Tomcat.'
+            task.group == WarPlugin.WEB_APP_GROUP
+            task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
+            task.httpPort == project.httpPort
+            task.httpsPort == project.httpsPort
+            task.stopPort == project.stopPort
+            task.stopKey == project.stopKey
+            task.enableSSL == project.enableSSL
+            !task.daemon
+            task.reloadable
+            task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
+            !task.webAppSourceDirectory
+            task.ajpPort == 8009
+            task.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
     }
 
-    @Test
-    public void testApplyTomcatRunWarTask() {
-        Task task = project.tasks[TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME]
-        assert task instanceof TomcatRunWar
-        assert task.description == "Assembles the webapp into a war and deploys it to Tomcat."
-        assert task.group == WarPlugin.WEB_APP_GROUP
-        assert task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
-        assert task.httpPort == project.httpPort
-        assert task.httpsPort == project.httpsPort
-        assert task.stopPort == project.stopPort
-        assert task.stopKey == project.stopKey
-        assert task.enableSSL == project.enableSSL
-        assert !task.daemon
-        assert task.reloadable
-        assert task.webApp == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath
+    def "Apply tomcatRunWar task"() {
+        expect:
+            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
+            task instanceof TomcatRunWar
+            task.description == 'Assembles the webapp into a war and deploys it to Tomcat.'
+            task.group == WarPlugin.WEB_APP_GROUP
+            task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
+            task.httpPort == project.httpPort
+            task.httpsPort == project.httpsPort
+            task.stopPort == project.stopPort
+            task.stopKey == project.stopKey
+            task.enableSSL == project.enableSSL
+            !task.daemon
+            task.reloadable
+            task.webApp == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath
     }
 
-    @Test
-    public void testApplyTomcatStopTask() {
-        Task task = project.tasks[TomcatPlugin.TOMCAT_STOP_TASK_NAME]
-        assert task instanceof TomcatStop
-        assert task.description == "Stops Tomcat."
-        assert task.group == WarPlugin.WEB_APP_GROUP
-        assert task.stopPort == project.stopPort
-        assert task.stopKey == project.stopKey
+    def "Apply tomcatStop task"() {
+        expect:
+            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+            task instanceof TomcatStop
+            task.description == 'Stops Tomcat.'
+            task.group == WarPlugin.WEB_APP_GROUP
+            task.stopPort == project.stopPort
+            task.stopKey == project.stopKey
+    }
+
+    def "Apply tomcatJasper task"() {
+        expect:
+            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+            task instanceof TomcatJasper
+            task.description == 'Runs the JSP compiler and turns JSP pages into Java source.'
+            task.group == WarPlugin.WEB_APP_GROUP
+            task.classpath
+            !task.validateXml
+            task.uriroot == project.webAppDir
+            !task.webXmlFragment
+            !task.addWebXmlMappings
+            task.outputDir == new File(project.buildDir, 'jasper')
+            task.classdebuginfo
+            !task.compiler
+            task.compilerSourceVM == '1.6'
+            task.compilerTargetVM == '1.6'
+            task.poolingEnabled
+            task.errorOnUseBeanInvalidClassAttribute
+            !task.genStringAsCharArray
+            task.ieClassId == 'clsid:8AD9C840-044E-11D1-B3E9-00805F499D93'
+            task.javaEncoding == 'UTF8'
+            !task.trimSpaces
+            !task.xpoweredBy
     }
 }

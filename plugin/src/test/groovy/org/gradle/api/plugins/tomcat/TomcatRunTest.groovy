@@ -23,6 +23,7 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
 import static org.junit.Assert.fail
 
 /**
@@ -48,17 +49,6 @@ class TomcatRunTest {
         if(testDir.exists()) {
             testDir.deleteDir()
         }
-    }
-
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForInvalidWebAppSourceDirectory() {
-        tomcatRun.validateConfiguration()
-    }
-
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForNonExistentWebAppSourceDirectory() {
-        tomcatRun.setWebAppSourceDirectory new File(testDir, "webapp")
-        tomcatRun.validateConfiguration()
     }
 
     @Test

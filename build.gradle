@@ -15,7 +15,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'org.gradle.api.plugins'
-    version = '1.0'
+    version = '1.1'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
@@ -45,7 +45,7 @@ subprojects {
         }
     }
 
-    task integrationTest(type: Test, dependsOn: test) {
+    task integrationTest(type: Test) {
         description = 'Runs the integration tests.'
         group = 'verification'
         testClassesDir = sourceSets.integrationTest.output.classesDir
@@ -124,7 +124,7 @@ task aggregateTestReports(type: TestReport) {
 check.dependsOn aggregateTestReports
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.9'
+    gradleVersion = '1.11'
 }
 
 artifacts {

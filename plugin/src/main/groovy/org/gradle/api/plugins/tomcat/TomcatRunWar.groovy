@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.tasks.InputFile
 
 import java.util.jar.JarEntry
@@ -26,27 +25,30 @@ import java.util.jar.JarFile
  *
  * @author Benjamin Muschko
  */
-class TomcatRunWar extends AbstractTomcatRunTask {
-    @InputFile File webApp
+class TomcatRunWar extends AbstractTomcatRun {
+    /**
+     * The web archive file used for deployment.
+     */
+    @InputFile
+    File webApp
 
     @Override
     void validateConfiguration() {
         super.validateConfiguration()
+        validateConfigFile()
+    }
 
-        if(!getWebApp() || !getWebApp().exists()) {
-            throw new InvalidUserDataException('Web application WAR '
-                    + (getWebApp() == null ? 'null' : getWebApp().canonicalPath)
-                    + ' does not exist')
-        }
-        else {
-            logger.info "Web application WAR = ${getWebApp().canonicalPath}"
-        }
+    /**
+     * Validate the configuration file.
+     */
+    private void validateConfigFile() {
+        logger.info "Web application WAR = ${getWebApp().canonicalPath}"
 
         JarFile war = new JarFile(getWebApp())
         JarEntry defaultConfigFileEntry = war.getJarEntry(CONFIG_FILE)
 
-        // If context.xml wasn't provided check the default location
-        if(!getConfigFile() && defaultConfigFileEntry){
+        // If context.xml wasn't provided, check the default location
+        if(!getConfigFile() && defaultConfigFileEntry) {
             setResolvedConfigFile(new URL("jar:${getWebApp().toURI().toString()}!/${CONFIG_FILE}"))
             logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }

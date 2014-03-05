@@ -60,4 +60,10 @@ enum TomcatVersion {
 
         TOMCAT_VERSIONS[specVersion]
     }
+
+
+    @Override
+    String toString() {
+        description
+    }
 }
