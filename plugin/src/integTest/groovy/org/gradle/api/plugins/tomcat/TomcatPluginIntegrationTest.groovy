@@ -58,6 +58,26 @@ class TomcatPluginIntegrationTest extends AbstractIntegrationTest {
             TomcatVersion.VERSION_7X  | 'tomcatRunWar'
     }
 
+    @Unroll
+    def "Running #taskName task redirecting logs to file cleans up resources after stopping Tomcat in daemon mode"() {
+        expect:
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName)
+        buildFile << """
+[tomcatRun, tomcatRunWar]*.outputFile = file('logs/tomcat.log')
+"""
+        runTasks(integTestDir, 'startAndStopTomcat')
+        new File(integTestDir, 'logs/tomcat.log').exists()
+        !new File(integTestDir, 'logs/tomcat.log.lck').exists()
+
+        where:
+        tomcatVersion             | taskName
+        TomcatVersion.VERSION_6X  | 'tomcatRun'
+        TomcatVersion.VERSION_6X  | 'tomcatRunWar'
+        TomcatVersion.VERSION_7X  | 'tomcatRun'
+        TomcatVersion.VERSION_7X  | 'tomcatRunWar'
+    }
+
     @Ignore
     def "Start and stop Tomcat 8x with tomcatRun task supporting default web app directory"() {
         setup:

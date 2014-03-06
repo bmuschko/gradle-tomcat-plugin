@@ -43,8 +43,12 @@ class LoggingHandler {
                 c()
             }
             finally {
-                if(logger && fileHandler) {
-                    logger.removeHandler(fileHandler)
+                try {
+                    fileHandler?.close()
+                    logger?.removeHandler(fileHandler)
+                }
+                catch(SecurityException e) {
+                    // do nothing
                 }
             }
         }
