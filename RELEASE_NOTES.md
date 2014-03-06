@@ -1,3 +1,10 @@
+### Version 1.1 (March 5, 2014)
+
+* Removed "magic" system properties - [Issue 84](https://github.com/bmuschko/gradle-tomcat-plugin/issues/84).
+* Allow non-existent `classes` directory - [Issue 51](https://github.com/bmuschko/gradle-tomcat-plugin/issues/51).
+* Allow non-existent `webapp` directory - [Issue 80](https://github.com/bmuschko/gradle-tomcat-plugin/issues/80).
+* Upgrade to Gradle Wrapper 1.7.
+
 ### Version 1.0 (October 19, 2013)
 
 * Support for configuring AJP connector - [Pull Request 57](https://github.com/bmuschko/gradle-tomcat-plugin/pull/57).

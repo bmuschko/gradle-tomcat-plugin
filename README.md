@@ -4,7 +4,7 @@
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
 Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
-6.x, 7.x and 8.x are supported.
+6.x and 7.x are supported.
 
 ## Usage
 
@@ -25,13 +25,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.1'
     }
 }
 ```
 
 Additionally, the Tomcat runtime libraries need to be added to the configuration `tomcat`. At the moment the Tomcat
-versions 6.x, 7.x and 8.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
+versions 6.x and 7.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
 versions.
 
 **Tomcat 6.x:**
@@ -58,23 +58,6 @@ repositories {
 
 dependencies {
     def tomcatVersion = '7.0.11'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-    }
-}
-```
-
-**Tomcat 8.x:**
-
-```groovy
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    def tomcatVersion = '8.0.0-RC5'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
