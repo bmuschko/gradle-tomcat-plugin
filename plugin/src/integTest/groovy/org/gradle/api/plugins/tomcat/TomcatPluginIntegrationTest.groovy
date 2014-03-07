@@ -56,7 +56,7 @@ apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
         expect:
             buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
             buildFile << getTaskStartAndStopProperties()
-            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             runTasks(integTestDir, 'startAndStopTomcat')
 
         where:
@@ -72,7 +72,7 @@ apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
         expect:
             buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
             buildFile << getTaskStartAndStopProperties()
-            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             runTasks(integTestDir, 'startAndStopTomcat')
 
         where:
@@ -87,7 +87,7 @@ apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
     def "Start and stop #tomcatVersion with #taskName configured by extension"() {
         expect:
         buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
         buildFile << """
 tomcat {
     httpPort = $httpPort
@@ -110,7 +110,7 @@ tomcat {
         expect:
         buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
         buildFile << getTaskStartAndStopProperties()
-        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
         buildFile << """
 [tomcatRun, tomcatRunWar]*.outputFile = file('logs/tomcat.log')
 """
