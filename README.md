@@ -178,6 +178,8 @@ tomcat {
 }
 ```
 
+## Task properties
+
 Furthermore, you can set the following optional task properties:
 
 * `contextPath`: The URL context path your web application will be registered under (defaults to WAR name).
