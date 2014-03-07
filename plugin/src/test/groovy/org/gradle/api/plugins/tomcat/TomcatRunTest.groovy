@@ -19,6 +19,8 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
 import org.gradle.api.plugins.tomcat.embedded.TomcatServer
+import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
+import org.gradle.api.plugins.tomcat.tasks.TomcatRun
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
@@ -55,8 +57,8 @@ class TomcatRunTest {
     public void testValidateConfigurationForExistentWebAppSourceDirectory() {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getConfigFile() == null
@@ -75,8 +77,8 @@ class TomcatRunTest {
         File webDefaultXml = createWebDefaultXml()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setWebDefaultXml webDefaultXml
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == webDefaultXml
         assert tomcatRun.getConfigFile() == null
@@ -95,8 +97,8 @@ class TomcatRunTest {
         File configFile = createConfigFile()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setConfigFile configFile
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getConfigFile() == configFile
@@ -108,8 +110,8 @@ class TomcatRunTest {
         File webAppSourceDir = createWebAppSourceDirectory()
         File defaultConfigFile = createDefaultConfigFile(webAppSourceDir)
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.validateConfiguration()
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getResolvedConfigFile().path == defaultConfigFile.toURI().toURL().path
@@ -120,8 +122,8 @@ class TomcatRunTest {
     void testValidateConfigurationForEnabledSSLButNoKeystoreConfigured() {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
         assert tomcatRun.getEnableSSL() == true
@@ -134,8 +136,8 @@ class TomcatRunTest {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setKeystoreFile createFile(testDir, "keystore.jks")
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
     }
@@ -145,8 +147,8 @@ class TomcatRunTest {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setKeystorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
     }
@@ -157,8 +159,8 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setKeystoreFile createFile(testDir, "keystore.jks")
         tomcatRun.setKeystorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
         assert tomcatRun.getEnableSSL() == true
@@ -170,8 +172,8 @@ class TomcatRunTest {
     void testValidateConfigurationForEnabledSSLButNoTruststoreConfigured() {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
         assert tomcatRun.getEnableSSL() == true
@@ -184,8 +186,8 @@ class TomcatRunTest {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststoreFile createFile(testDir, "truststore.jks")
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
     }
@@ -195,8 +197,8 @@ class TomcatRunTest {
         File webAppSourceDir = createWebAppSourceDirectory()
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
     }
@@ -207,8 +209,8 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststoreFile createFile(testDir, "truststore.jks")
         tomcatRun.setTruststorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.validateConfiguration()
         assert tomcatRun.getEnableSSL() == true
@@ -222,8 +224,8 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststoreFile createFile(testDir, "truststore.jks")
         tomcatRun.setTruststorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.clientAuth = "This is not a valid clientAuth value"
         tomcatRun.validateConfiguration()
@@ -235,8 +237,8 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststoreFile createFile(testDir, "truststore.jks")
         tomcatRun.setTruststorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.clientAuth = "false"
         tomcatRun.validateConfiguration()
@@ -252,8 +254,8 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststoreFile createFile(testDir, "truststore.jks")
         tomcatRun.setTruststorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.clientAuth = "true"
         tomcatRun.validateConfiguration()
@@ -269,8 +271,8 @@ class TomcatRunTest {
         tomcatRun.setWebAppSourceDirectory webAppSourceDir
         tomcatRun.setTruststoreFile createFile(testDir, "truststore.jks")
         tomcatRun.setTruststorePass 'pwd'
-        tomcatRun.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRun.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRun.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRun.enableSSL = true
         tomcatRun.clientAuth = "want"
         tomcatRun.validateConfiguration()

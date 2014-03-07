@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gradle.api.plugins.tomcat
+package org.gradle.api.plugins.tomcat.tasks
 
 import org.apache.tools.ant.AntClassLoader
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.tomcat.SSLKeystore
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.StoreType
@@ -308,7 +309,7 @@ abstract class AbstractTomcatRun extends Tomcat {
             validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
             validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
-            if(clientAuth && (!validClientAuthPhrases.contains(clientAuth))) {
+            if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
               throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
         }
@@ -325,7 +326,7 @@ abstract class AbstractTomcatRun extends Tomcat {
             getServer().context.loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
         }
 
-        getServer().context.reloadable = reloadable
+        getServer().context.reloadable = getReloadable()
         getServer().configureDefaultWebXml(getWebDefaultXml())
 
         if(getResolvedConfigFile()) {
@@ -373,7 +374,7 @@ abstract class AbstractTomcatRun extends Tomcat {
             Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
             shutdownMonitor.start()
 
-            if(!daemon) {
+            if(!getDaemon()) {
                 shutdownMonitor.join()
             }
         }
@@ -381,7 +382,7 @@ abstract class AbstractTomcatRun extends Tomcat {
             throw new GradleException('An error occurred starting the Tomcat server.', e)
         }
         finally {
-            if(!daemon) {
+            if(!getDaemon()) {
                 logger.info 'Tomcat server exiting.'
             }
         }

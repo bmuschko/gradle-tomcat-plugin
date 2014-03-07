@@ -19,6 +19,8 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
 import org.gradle.api.plugins.tomcat.embedded.TomcatServer
+import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
+import org.gradle.api.plugins.tomcat.tasks.TomcatRunWar
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.After
 import org.junit.Before
@@ -59,8 +61,8 @@ class TomcatRunWarTest {
         File webAppDir = createWebAppDir()
         File war = createWar(webAppDir)
         tomcatRunWar.setWebApp war
-        tomcatRunWar.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRunWar.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRunWar.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRunWar.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRunWar.validateConfiguration()
         assert tomcatRunWar.getWebDefaultXml() == null
         assert tomcatRunWar.getConfigFile() == null
@@ -80,8 +82,8 @@ class TomcatRunWarTest {
         File webDefaultXml = createWebDefaultXml()
         tomcatRunWar.setWebApp war
         tomcatRunWar.setWebDefaultXml webDefaultXml
-        tomcatRunWar.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRunWar.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRunWar.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRunWar.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRunWar.validateConfiguration()
         assert tomcatRunWar.getWebDefaultXml() == webDefaultXml
         assert tomcatRunWar.getConfigFile() == null
@@ -101,8 +103,8 @@ class TomcatRunWarTest {
         File configFile = createConfigFile()
         tomcatRunWar.setWebApp war
         tomcatRunWar.setConfigFile configFile
-        tomcatRunWar.setHttpProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        tomcatRunWar.setHttpsProtocol TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
+        tomcatRunWar.setHttpProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        tomcatRunWar.setHttpsProtocol TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         tomcatRunWar.validateConfiguration()
         assert tomcatRunWar.getWebDefaultXml() == null
         assert tomcatRunWar.getConfigFile() == configFile

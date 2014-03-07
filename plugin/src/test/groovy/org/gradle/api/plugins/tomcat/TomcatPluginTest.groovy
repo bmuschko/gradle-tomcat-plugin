@@ -18,6 +18,11 @@ package org.gradle.api.plugins.tomcat
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.WarPlugin
+import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
+import org.gradle.api.plugins.tomcat.tasks.TomcatJasper
+import org.gradle.api.plugins.tomcat.tasks.TomcatRun
+import org.gradle.api.plugins.tomcat.tasks.TomcatRunWar
+import org.gradle.api.plugins.tomcat.tasks.TomcatStop
 import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
@@ -27,39 +32,33 @@ import spock.lang.Specification
  * @author Benjamin Muschko
  */
 class TomcatPluginTest extends Specification {
-    private final File testDir = new File("build/tmp/tests")
     private Project project
-    private TomcatPlugin tomcatPlugin
 
     def setup() {
-        project = ProjectBuilder.builder().withProjectDir(testDir).build()
-        tomcatPlugin = new TomcatPlugin().apply(project)
+        project = ProjectBuilder.builder().build()
+        project.apply(plugin: TomcatPlugin)
     }
 
-    def cleanup() {
-        if(testDir.exists()) {
-            testDir.deleteDir()
-        }
-    }
-
-    def "Apply basic setup"() {
+    def "Creates basic setup"() {
         expect:
             project.plugins.hasPlugin(WarPlugin)
-            project.convention.plugins.tomcat instanceof TomcatPluginConvention
+            project.plugins.hasPlugin(TomcatBasePlugin)
+            project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME) instanceof TomcatPluginExtension
     }
 
-    def "Apply tomcatRun task"() {
+    def "Creates and preconfigures tomcatRun task"() {
         expect:
+            TomcatPluginExtension extension = project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME)
             Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
             task instanceof TomcatRun
             task.description == 'Uses your files as and where they are and deploys them to Tomcat.'
             task.group == WarPlugin.WEB_APP_GROUP
             task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
-            task.httpPort == project.httpPort
-            task.httpsPort == project.httpsPort
-            task.stopPort == project.stopPort
-            task.stopKey == project.stopKey
-            task.enableSSL == project.enableSSL
+            task.httpPort == extension.httpPort
+            task.httpsPort == extension.httpsPort
+            task.stopPort == extension.stopPort
+            task.stopKey == extension.stopKey
+            task.enableSSL == extension.enableSSL
             !task.daemon
             task.reloadable
             task.webAppClasspath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath
@@ -68,34 +67,37 @@ class TomcatPluginTest extends Specification {
             task.ajpProtocol == 'org.apache.coyote.ajp.AjpProtocol'
     }
 
-    def "Apply tomcatRunWar task"() {
+    def "Creates and preconfigures tomcatRunWar task"() {
         expect:
+            TomcatPluginExtension extension = project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME)
             Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
             task instanceof TomcatRunWar
             task.description == 'Assembles the webapp into a war and deploys it to Tomcat.'
             task.group == WarPlugin.WEB_APP_GROUP
+
             task.contextPath == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName
-            task.httpPort == project.httpPort
-            task.httpsPort == project.httpsPort
-            task.stopPort == project.stopPort
-            task.stopKey == project.stopKey
-            task.enableSSL == project.enableSSL
+            task.httpPort == extension.httpPort
+            task.httpsPort == extension.httpsPort
+            task.stopPort == extension.stopPort
+            task.stopKey == extension.stopKey
+            task.enableSSL == extension.enableSSL
             !task.daemon
             task.reloadable
             task.webApp == project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath
     }
 
-    def "Apply tomcatStop task"() {
+    def "Creates and preconfigures tomcatStop task"() {
         expect:
+            TomcatPluginExtension extension = project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME)
             Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             task instanceof TomcatStop
             task.description == 'Stops Tomcat.'
             task.group == WarPlugin.WEB_APP_GROUP
-            task.stopPort == project.stopPort
-            task.stopKey == project.stopKey
+            task.stopPort == extension.stopPort
+            task.stopKey == extension.stopKey
     }
 
-    def "Apply tomcatJasper task"() {
+    def "Creates and preconfigures tomcatJasper task"() {
         expect:
             Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
             task instanceof TomcatJasper
@@ -118,5 +120,44 @@ class TomcatPluginTest extends Specification {
             task.javaEncoding == 'UTF8'
             !task.trimSpaces
             !task.xpoweredBy
+    }
+
+    def "Can configure tasks with extension"() {
+        when:
+            project.tomcat {
+                httpPort = 9090
+                httpsPort = 9443
+                stopPort = 9081
+                ajpPort = 9009
+                stopKey = 'myStopKey'
+                enableSSL = true
+                httpProtocol = 'org.apache.coyote.http11.Http11NioProtocol'
+                httpsProtocol = 'org.apache.coyote.http11.Http11AprProtocol'
+                ajpProtocol = 'org.apache.coyote.ajp.RandomAjpProtocol'
+            }
+        then:
+            Task tomcatRunTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
+            tomcatRunTask.httpPort == 9090
+            tomcatRunTask.httpsPort == 9443
+            tomcatRunTask.stopPort == 9081
+            tomcatRunTask.ajpPort == 9009
+            tomcatRunTask.stopKey == 'myStopKey'
+            tomcatRunTask.enableSSL == true
+            tomcatRunTask.httpProtocol == 'org.apache.coyote.http11.Http11NioProtocol'
+            tomcatRunTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
+            tomcatRunTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
+            Task tomcatRunWarTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
+            tomcatRunWarTask.httpPort == 9090
+            tomcatRunWarTask.httpsPort == 9443
+            tomcatRunWarTask.stopPort == 9081
+            tomcatRunWarTask.ajpPort == 9009
+            tomcatRunWarTask.stopKey == 'myStopKey'
+            tomcatRunWarTask.enableSSL == true
+            tomcatRunWarTask.httpProtocol == 'org.apache.coyote.http11.Http11NioProtocol'
+            tomcatRunWarTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
+            tomcatRunWarTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
+            Task tomcatStopTask = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+            tomcatStopTask.stopPort == 9081
+            tomcatStopTask.stopKey == 'myStopKey'
     }
 }

@@ -1,9 +1,17 @@
+### Version 1.2 (March 7, 2014)
+
+* Broke out Tomcat base plugin.
+* Moved tasks into subpackage `org.gradle.api.plugins.tomcat.tasks`.
+* Updated documentation.
+* Logging lock file isn't closed if container is stopped in daemon mode - [Issue 48](https://github.com/bmuschko/gradle-tomcat-plugin/issues/48).
+* Preconfigure property `webAppClasspath` for custom task with type TomcatRun - [Issue 86](https://github.com/bmuschko/gradle-tomcat-plugin/issues/86).
+
 ### Version 1.1 (March 5, 2014)
 
 * Removed "magic" system properties - [Issue 84](https://github.com/bmuschko/gradle-tomcat-plugin/issues/84).
 * Allow non-existent `classes` directory - [Issue 51](https://github.com/bmuschko/gradle-tomcat-plugin/issues/51).
 * Allow non-existent `webapp` directory - [Issue 80](https://github.com/bmuschko/gradle-tomcat-plugin/issues/80).
-* Upgrade to Gradle Wrapper 1.7.
+* Upgrade to Gradle Wrapper 1.11.
 
 ### Version 1.0 (October 19, 2013)
 

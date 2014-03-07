@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gradle.api.plugins.tomcat
+package org.gradle.api.plugins.tomcat.tasks
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*

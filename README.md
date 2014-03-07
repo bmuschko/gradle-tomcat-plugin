@@ -6,13 +6,17 @@ The plugin provides deployment capabilities of web applications to an embedded T
 Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
 6.x and 7.x are supported.
 
+The typical use case for this plugin is to support deployment during development. The plugin allows for rapid web application
+development due to the container's fast startup times. Gradle starts the embedded container in the same JVM. Currently,
+the container cannot be forked as a separate process. This plugin also can't deploy a WAR file to a remote container. If
+you are looking for this capability, please have a look at the [Cargo plugin](https://github.com/bmuschko/gradle-cargo-plugin)
+instead.
+
 ## Usage
 
-To use the Tomcat plugin, include in your build script:
+To use the plugin's functionality, you will need to add the its binary artifact to your build script's classpath and apply the plugin.
 
-```groovy
-apply plugin: 'tomcat'
-```
+### Adding the plugin binary to the build
 
 The plugin JAR needs to be defined in the classpath of your build script. It is directly available on
 [Bintray](https://bintray.com/bmuschko/gradle-plugins/gradle-tomcat-plugin).
@@ -25,10 +29,50 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.1'
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.2'
     }
 }
 ```
+
+### Provided plugins
+
+The JAR file comes with two plugins:
+
+<table>
+    <tr>
+        <th>Plugin Identifier</th>
+        <th>Depends On</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>tomcat-base</td>
+        <td>-</td>
+        <td>TomcatBasePlugin</td>
+        <td>Provides Tomcat custom task types, pre-configures classpath.</td>
+    </tr>
+    <tr>
+        <td>tomcat</td>
+        <td>tomcat-base</td>
+        <td>TomcatPlugin</td>
+        <td>Provides tasks for starting and stopping an embedded Tomcat container and exposes extension named `tomcat`.</td>
+    </tr>
+</table>
+
+The `tomcat` plugin helps you get started quickly. If you are OK if the preconfigured tasks, this is the
+preferrable option. Most plugin users will go with this option. To use the Tomcat plugin, include the following code snippet
+in your build script:
+
+    apply plugin: 'tomcat'
+
+If you need full control over your tasks or don't want to go with the preconfigured tasks, you will want to use the `tomcat-base`
+plugin. That might be the case if you want to set up the container solely for functional testing. The downside is that each task
+has to be configured individually in your build script. To use the Tomcat base plugin, include the following code snippet
+in your build script:
+
+    apply plugin: 'tomcat-base'
+
+### Assigning the Tomcat libraries
 
 Additionally, the Tomcat runtime libraries need to be added to the configuration `tomcat`. At the moment the Tomcat
 versions 6.x and 7.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
@@ -68,20 +112,48 @@ dependencies {
 
 ## Tasks
 
-The Tomcat plugin defines the following tasks:
+The `tomcat` plugin pre-defines the following tasks out-of-the-box:
 
-* `tomcatRun`: Starts a Tomcat instance and deploys the exploded web application to it.
-* `tomcatRunWar`: Starts a Tomcat instance and deploys the WAR to it.
-* `tomcatStop`: Stops the Tomcat instance.
-* `tomcatJasper`: Runs the JSP compiler and turns JSP pages into Java source using [Jasper](http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html).
+<table>
+    <tr>
+        <th>Task Name</th>
+        <th>Depends On</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>tomcatRun</td>
+        <td>-</td>
+        <td>TomcatRun</td>
+        <td>Starts a Tomcat instance and deploys the exploded web application to it.</td>
+    </tr>
+    <tr>
+        <td>tomcatRunWar</td>
+        <td>-</td>
+        <td>TomcatRunWar</td>
+        <td>Starts a Tomcat instance and deploys the WAR to it.</td>
+    </tr>
+    <tr>
+        <td>tomcatStop</td>
+        <td>-</td>
+        <td>TomcatStop</td>
+        <td>Stops the Tomcat instance.</td>
+    </tr>
+    <tr>
+        <td>tomcatJasper</td>
+        <td>-</td>
+        <td>TomcatJasper</td>
+        <td>Runs the JSP compiler and turns JSP pages into Java source using [Jasper](http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html).</td>
+    </tr>
+</table>
 
 ## Project layout
 
 The Tomcat plugin uses the same layout as the War plugin.
 
-## Convention properties
+## Extension properties
 
-The Tomcat plugin defines the following convention properties:
+The Tomcat plugin exposes the following properties through the extension named `tomcat`:
 
 * `httpPort`: The TCP port which Tomcat should listen for HTTP requests on (defaults to `8080`).
 * `httpsPort`: The TCP port which Tomcat should listen for HTTPS requests on (defaults to `8443`).
@@ -90,18 +162,23 @@ The Tomcat plugin defines the following convention properties:
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to `null`).
 * `enableSSL`: Determines whether the HTTPS connector should be created (defaults to `false`).
 * `keystoreFile`: The keystore file to use for SSL, if enabled (by default, a keystore will be generated).
-* `keystorePass`: The keystore password to use for SSL, if enabled.
-* `truststoreFile`: The truststore file to use for SSL, if enabled.
-* `truststorePass`: The truststore password to use for SSL, if enabled.
-* `clientAuth`: The clientAuth setting to use, values may be: `true`, `false` or `want` (defaults to `false`).
 * `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `ajpProtocol`: The AJP protocol handler class name to be used (defaults to `org.apache.coyote.ajp.AjpProtocol`).
 
-Note: `keystoreFile` and `truststoreFile` each require an instance of a `File` object e.g. `file("/path/my.file")`
+### Example
 
-These properties are provided by a TomcatPluginConvention convention object. Furthermore, you can define the following
-optional properties:
+The following example code shows how to change the default HTTP/HTTPS ports. To enable SSL we set the property `enableSSL` to `true`.
+
+```groovy
+tomcat {
+    httpPort = 8090
+    httpsPort = 8091
+    enableSSL = true
+}
+```
+
+Furthermore, you can set the following optional task properties:
 
 * `contextPath`: The URL context path your web application will be registered under (defaults to WAR name).
 * `webDefaultXml`: The default web.xml. If it doesn't get defined an instance of `org.apache.catalina.servlets.DefaultServlet`
@@ -114,22 +191,23 @@ server has started. When false, this task blocks until the Tomcat server is stop
 defaults to `META-INF/context.xml` within the WAR for `tomcatRunWar`).
 * `outputFile`: The file to write Tomcat log messages to. If the file already exists new messages will be appended.
 * `reloadable`: Forces context scanning if you don't use a context file (defaults to `true`).
+* `keystorePass`: The keystore password to use for SSL, if enabled.
+* `truststoreFile`: The truststore file to use for SSL, if enabled.
+* `truststorePass`: The truststore password to use for SSL, if enabled.
+* `clientAuth`: The clientAuth setting to use, values may be: `true`, `false` or `want` (defaults to `false`).
 
-The following example shows how to change the default HTTP/HTTPS ports for the task `tomcatRun`. To enable SSL we set the
-convention property `enableSSL` to `true`. Furthermore, we declare a custom context file.
+Note: `keystoreFile` and `truststoreFile` each require an instance of a `File` object e.g. `file("/path/my.file")`
 
 ### Example
 
+In the following example code, wes declare a custom context file for the task `tomcatRun`.
+
 ```groovy
-tomcatRun {
-    httpPort = 8090
-    httpsPort = 8091
-    enableSSL = true
-    configFile = file('context.xml')
-}
+tomcatRun.configFile = file('context.xml')
 ```
 
-To configure the Jasper compiler task you can choose to set the following properties within the `jasper` closure:
+To configure the Jasper compiler task you can choose to set the following properties within the `jasper` closure of the
+`tomcat` extension:
 
 * `validateXml`: Determines whether `web.xml` should be validated (defaults to `false`).
 * `uriroot`: The web application root directory (defaults to `src/main/webapp`).
@@ -151,10 +229,12 @@ To configure the Jasper compiler task you can choose to set the following proper
 ### Example
 
 ```groovy
-jasper {
-    validateXml = true
-    webXmlFragment = file("$webAppDir/WEB-INF/generated_web.xml")
-    outputDir = file("$webAppDir/WEB-INF/src")
+tomcat {
+    jasper {
+        validateXml = true
+        webXmlFragment = file("$webAppDir/WEB-INF/generated_web.xml")
+        outputDir = file("$webAppDir/WEB-INF/src")
+    }
 }
 ```
 
@@ -333,18 +413,20 @@ thread and shut it down once your tests are done. The following example demonstr
 functionality. Of course this is only one way of doing it. The following example requires Gradle >= 1.7:
 
 ```groovy
+apply plugin: 'tomcat-base'
+
 ext {
     tomcatStopPort = 8081
     tomcatStopKey = 'stopKey'
 }
 
-task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.TomcatRun) {
+task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.tasks.TomcatRun) {
     stopPort = tomcatStopPort
     stopKey = tomcatStopKey
     daemon = true
 }
 
-task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.TomcatStop) {
+task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.tasks.TomcatStop) {
     stopPort = tomcatStopPort
     stopKey = tomcatStopKey
 }

@@ -19,15 +19,17 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.WarPluginConvention
+import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
+import org.gradle.api.plugins.tomcat.tasks.*
 
 /**
- * <p>A {@link Plugin} which extends the {@link WarPlugin} to add tasks which run the web application using an embedded
- * Tomcat web container.</p>
+ * <p>A {@link Plugin} which applies the {@link TomcatBasePlugin} and creates preconfigured tasks which run the web
+ * application using an embedded Tomcat web container.</p>
  *
  * @author Benjamin Muschko
  */
 class TomcatPlugin implements Plugin<Project> {
-    static final String TOMCAT_CONFIGURATION_NAME = 'tomcat'
+    static final String TOMCAT_EXTENSION_NAME = 'tomcat'
     static final String TOMCAT_RUN_TASK_NAME = 'tomcatRun'
     static final String TOMCAT_RUN_WAR_TASK_NAME = 'tomcatRunWar'
     static final String TOMCAT_STOP_TASK_NAME = 'tomcatStop'
@@ -37,42 +39,37 @@ class TomcatPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        project.plugins.apply(WarPlugin)
+        project.plugins.apply(TomcatBasePlugin)
+        TomcatPluginExtension tomcatPluginExtension = project.extensions.create(TOMCAT_EXTENSION_NAME, TomcatPluginExtension)
 
-        project.configurations.create(TOMCAT_CONFIGURATION_NAME).setVisible(false).setTransitive(true)
-               .setDescription('The Tomcat libraries to be used for this project.')
-
-        TomcatPluginConvention tomcatConvention = new TomcatPluginConvention()
-        project.convention.plugins.tomcat = tomcatConvention
-
-        configureAbstractTomcatTask(project, tomcatConvention)
+        configureAbstractTomcatTask(project, tomcatPluginExtension)
         configureTomcatRun(project)
         configureTomcatRunWar(project)
-        configureTomcatStop(project, tomcatConvention)
-        configureJasper(project, tomcatConvention)
+        configureTomcatStop(project, tomcatPluginExtension)
+        configureJasper(project, tomcatPluginExtension)
     }
 
-    private void configureAbstractTomcatTask(final Project project, final TomcatPluginConvention tomcatConvention) {
+    private void configureAbstractTomcatTask(Project project, TomcatPluginExtension tomcatPluginExtension) {
         project.tasks.withType(AbstractTomcatRun) {
             conventionMapping.map('buildscriptClasspath') { project.buildscript.configurations.getByName('classpath').asFileTree }
-            conventionMapping.map('tomcatClasspath') { project.configurations.getByName(TOMCAT_CONFIGURATION_NAME).asFileTree }
+            conventionMapping.map('tomcatClasspath') { project.configurations.getByName(TomcatBasePlugin.TOMCAT_CONFIGURATION_NAME).asFileTree }
             conventionMapping.map('contextPath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
-            conventionMapping.map('httpPort') { tomcatConvention.httpPort }
-            conventionMapping.map('httpsPort') { tomcatConvention.httpsPort }
-            conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
-            conventionMapping.map(STOP_KEY_CONVENTION) { tomcatConvention.stopKey }
-            conventionMapping.map('enableSSL') { tomcatConvention.enableSSL }
-            conventionMapping.map('httpProtocol') { tomcatConvention.httpProtocol }
-            conventionMapping.map('httpsProtocol') { tomcatConvention.httpsProtocol }
-            conventionMapping.map('ajpPort') { tomcatConvention.ajpPort }
-            conventionMapping.map('ajpProtocol') { tomcatConvention.ajpProtocol }
+            conventionMapping.map('httpPort') { tomcatPluginExtension.httpPort }
+            conventionMapping.map('httpsPort') { tomcatPluginExtension.httpsPort }
+            conventionMapping.map(STOP_PORT_CONVENTION) { tomcatPluginExtension.stopPort }
+            conventionMapping.map(STOP_KEY_CONVENTION) { tomcatPluginExtension.stopKey }
+            conventionMapping.map('enableSSL') { tomcatPluginExtension.enableSSL }
+            conventionMapping.map('httpProtocol') { tomcatPluginExtension.httpProtocol }
+            conventionMapping.map('httpsProtocol') { tomcatPluginExtension.httpsProtocol }
+            conventionMapping.map('ajpPort') { tomcatPluginExtension.ajpPort }
+            conventionMapping.map('ajpProtocol') { tomcatPluginExtension.ajpProtocol }
         }
     }
 
-    private void configureTomcatRun(final Project project) {
+
+    private void configureTomcatRun(Project project) {
         project.tasks.create(TOMCAT_RUN_TASK_NAME, TomcatRun) {
             description = 'Uses your files as and where they are and deploys them to Tomcat.'
-            conventionMapping.map('webAppClasspath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
             conventionMapping.map('webAppSourceDirectory') {
                 File webAppDir = getWarConvention(project).webAppDir
                 webAppDir.exists() ? webAppDir : null
@@ -81,42 +78,39 @@ class TomcatPlugin implements Plugin<Project> {
         }
     }
 
-    private void configureTomcatRunWar(final Project project) {
+    private void configureTomcatRunWar(Project project) {
         project.tasks.create(TOMCAT_RUN_WAR_TASK_NAME, TomcatRunWar) {
             description = 'Assembles the webapp into a war and deploys it to Tomcat.'
-            dependsOn WarPlugin.WAR_TASK_NAME
-            conventionMapping.map('webApp') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).archivePath }
         }
     }
 
-    private void configureTomcatStop(final Project project, final TomcatPluginConvention tomcatConvention) {
+    private void configureTomcatStop(Project project, TomcatPluginExtension tomcatPluginExtension) {
         project.tasks.create(TOMCAT_STOP_TASK_NAME, TomcatStop) {
             description = 'Stops Tomcat.'
-            conventionMapping.map(STOP_PORT_CONVENTION) { tomcatConvention.stopPort }
-            conventionMapping.map(STOP_KEY_CONVENTION) { tomcatConvention.stopKey }
+            conventionMapping.map(STOP_PORT_CONVENTION) { tomcatPluginExtension.stopPort }
+            conventionMapping.map(STOP_KEY_CONVENTION) { tomcatPluginExtension.stopKey }
         }
     }
 
-    private void configureJasper(final Project project, final TomcatPluginConvention tomcatConvention) {
+    private void configureJasper(Project project, TomcatPluginExtension tomcatPluginExtension) {
         project.tasks.create(TOMCAT_JASPER_TASK_NAME, TomcatJasper) {
             description = 'Runs the JSP compiler and turns JSP pages into Java source.'
-            conventionMapping.map('classpath') { project.configurations.getByName(TOMCAT_CONFIGURATION_NAME).asFileTree + project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
-            conventionMapping.map('validateXml') { tomcatConvention.jasper.validateXml ?: false }
-            conventionMapping.map('uriroot') { tomcatConvention.jasper.uriroot ?: project.webAppDir }
-            conventionMapping.map('webXmlFragment') { tomcatConvention.jasper.webXmlFragment }
-            conventionMapping.map('addWebXmlMappings') { tomcatConvention.jasper.addWebXmlMappings }
-            conventionMapping.map('outputDir') { tomcatConvention.jasper.outputDir ?: new File(project.buildDir, 'jasper') }
-            conventionMapping.map('classdebuginfo') { tomcatConvention.jasper.classdebuginfo ?: true }
-            conventionMapping.map('compiler') { tomcatConvention.jasper.compiler }
-            conventionMapping.map('compilerSourceVM') { tomcatConvention.jasper.compilerSourceVM ?: '1.6' }
-            conventionMapping.map('compilerTargetVM') { tomcatConvention.jasper.compilerTargetVM ?: '1.6' }
-            conventionMapping.map('poolingEnabled') { tomcatConvention.jasper.poolingEnabled ?: true }
-            conventionMapping.map('errorOnUseBeanInvalidClassAttribute') { tomcatConvention.jasper.errorOnUseBeanInvalidClassAttribute ?: true }
-            conventionMapping.map('genStringAsCharArray') { tomcatConvention.jasper.genStringAsCharArray ?: false }
-            conventionMapping.map('ieClassId') { tomcatConvention.jasper.ieClassId ?: 'clsid:8AD9C840-044E-11D1-B3E9-00805F499D93' }
-            conventionMapping.map('javaEncoding') { tomcatConvention.jasper.javaEncoding ?: 'UTF8' }
-            conventionMapping.map('trimSpaces') { tomcatConvention.jasper.trimSpaces ?: false }
-            conventionMapping.map('xpoweredBy') { tomcatConvention.jasper.xpoweredBy ?: false }
+            conventionMapping.map('validateXml') { tomcatPluginExtension.jasper.validateXml ?: false }
+            conventionMapping.map('uriroot') { tomcatPluginExtension.jasper.uriroot ?: project.webAppDir }
+            conventionMapping.map('webXmlFragment') { tomcatPluginExtension.jasper.webXmlFragment }
+            conventionMapping.map('addWebXmlMappings') { tomcatPluginExtension.jasper.addWebXmlMappings }
+            conventionMapping.map('outputDir') { tomcatPluginExtension.jasper.outputDir ?: new File(project.buildDir, 'jasper') }
+            conventionMapping.map('classdebuginfo') { tomcatPluginExtension.jasper.classdebuginfo ?: true }
+            conventionMapping.map('compiler') { tomcatPluginExtension.jasper.compiler }
+            conventionMapping.map('compilerSourceVM') { tomcatPluginExtension.jasper.compilerSourceVM ?: '1.6' }
+            conventionMapping.map('compilerTargetVM') { tomcatPluginExtension.jasper.compilerTargetVM ?: '1.6' }
+            conventionMapping.map('poolingEnabled') { tomcatPluginExtension.jasper.poolingEnabled ?: true }
+            conventionMapping.map('errorOnUseBeanInvalidClassAttribute') { tomcatPluginExtension.jasper.errorOnUseBeanInvalidClassAttribute ?: true }
+            conventionMapping.map('genStringAsCharArray') { tomcatPluginExtension.jasper.genStringAsCharArray ?: false }
+            conventionMapping.map('ieClassId') { tomcatPluginExtension.jasper.ieClassId ?: 'clsid:8AD9C840-044E-11D1-B3E9-00805F499D93' }
+            conventionMapping.map('javaEncoding') { tomcatPluginExtension.jasper.javaEncoding ?: 'UTF8' }
+            conventionMapping.map('trimSpaces') { tomcatPluginExtension.jasper.trimSpaces ?: false }
+            conventionMapping.map('xpoweredBy') { tomcatPluginExtension.jasper.xpoweredBy ?: false }
         }
     }
 

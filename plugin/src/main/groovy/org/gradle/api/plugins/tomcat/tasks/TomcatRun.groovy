@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gradle.api.plugins.tomcat
+package org.gradle.api.plugins.tomcat.tasks
 
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
@@ -65,7 +65,7 @@ class TomcatRun extends AbstractTomcatRun {
         logger.info "Webapp source directory = ${resolvedWebAppSourceDirectory?.canonicalPath}"
 
         if(resolvedWebAppSourceDirectory) {
-            File defaultConfigFile = new File(getWebAppSourceDirectory(), "/${CONFIG_FILE}")
+            File defaultConfigFile = new File(getWebAppSourceDirectory(), "/${org.gradle.api.plugins.tomcat.tasks.AbstractTomcatRun.CONFIG_FILE}")
 
             // If context.xml wasn't provided, check the default location
             if(!getConfigFile() && defaultConfigFile.exists()){

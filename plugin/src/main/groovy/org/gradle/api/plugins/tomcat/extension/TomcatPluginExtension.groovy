@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gradle.api.plugins.tomcat
-
+package org.gradle.api.plugins.tomcat.extension
 /**
- * Defines Tomcat plugin convention.
+ * Defines Tomcat plugin extension.
  *
  * @author Benjamin Muschko
  */
-class TomcatPluginConvention {
+class TomcatPluginExtension {
     final static String DEFAULT_PROTOCOL_HANDLER = 'org.apache.coyote.http11.Http11Protocol'
     final static String DEFAULT_AJP_PROTOCOL_HANDLER = 'org.apache.coyote.ajp.AjpProtocol'
 

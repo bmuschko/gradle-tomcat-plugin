@@ -1,3 +1,18 @@
+/*
+ * Copyright 2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
@@ -7,6 +22,14 @@ import spock.lang.Ignore
 import spock.lang.Unroll
 
 class TomcatPluginIntegrationTest extends AbstractIntegrationTest {
+    def setup() {
+        buildFile << """
+apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
+
+[tomcatRun, tomcatRunWar]*.daemon = true
+"""
+    }
+
     def "Adds default Tomcat tasks for Java project"() {
         when:
             GradleProject project = runTasks(integTestDir, 'tasks')
@@ -32,37 +55,62 @@ class TomcatPluginIntegrationTest extends AbstractIntegrationTest {
 
         expect:
             buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName)
+            buildFile << getTaskStartAndStopProperties()
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
             runTasks(integTestDir, 'startAndStopTomcat')
 
         where:
             tomcatVersion             | taskName
-            TomcatVersion.VERSION_6X  | 'tomcatRun'
-            TomcatVersion.VERSION_6X  | 'tomcatRunWar'
-            TomcatVersion.VERSION_7X  | 'tomcatRun'
-            TomcatVersion.VERSION_7X  | 'tomcatRunWar'
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
     def "Start and stop #tomcatVersion with #taskName without supporting web app directory"() {
         expect:
             buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName)
+            buildFile << getTaskStartAndStopProperties()
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
             runTasks(integTestDir, 'startAndStopTomcat')
 
         where:
             tomcatVersion             | taskName
-            TomcatVersion.VERSION_6X  | 'tomcatRun'
-            TomcatVersion.VERSION_6X  | 'tomcatRunWar'
-            TomcatVersion.VERSION_7X  | 'tomcatRun'
-            TomcatVersion.VERSION_7X  | 'tomcatRunWar'
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
-    def "Running #taskName task redirecting logs to file cleans up resources after stopping Tomcat in daemon mode"() {
+    def "Start and stop #tomcatVersion with #taskName configured by extension"() {
         expect:
         buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName)
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
+        buildFile << """
+tomcat {
+    httpPort = $httpPort
+    stopKey = 'stopThis'
+    stopPort = $stopPort
+}
+"""
+        runTasks(integTestDir, 'startAndStopTomcat')
+
+        where:
+            tomcatVersion             | taskName
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+    }
+
+    @Unroll
+    def "Running #taskName task redirecting logs to file and cleans up resources after stopping Tomcat in daemon mode"() {
+        expect:
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << getTaskStartAndStopProperties()
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, 'tomcatStop')
         buildFile << """
 [tomcatRun, tomcatRunWar]*.outputFile = file('logs/tomcat.log')
 """
@@ -71,11 +119,11 @@ class TomcatPluginIntegrationTest extends AbstractIntegrationTest {
         !new File(integTestDir, 'logs/tomcat.log.lck').exists()
 
         where:
-        tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | 'tomcatRun'
-        TomcatVersion.VERSION_6X  | 'tomcatRunWar'
-        TomcatVersion.VERSION_7X  | 'tomcatRun'
-        TomcatVersion.VERSION_7X  | 'tomcatRunWar'
+            tomcatVersion             | taskName
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Ignore
@@ -85,62 +133,16 @@ class TomcatPluginIntegrationTest extends AbstractIntegrationTest {
 
         expect:
             buildFile << getBasicTomcatBuildFileContent(TomcatVersion.VERSION_8X)
-            buildFile << getTomcatContainerLifecycleManagementBuildFileContent('tomcatRun')
+            buildFile << getTaskStartAndStopProperties()
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             runTasks(integTestDir, 'startAndStopTomcat')
     }
 
-    private String getBasicTomcatBuildFileContent(TomcatVersion tomcatVersion) {
-        switch(tomcatVersion) {
-            case TomcatVersion.VERSION_6X: return getBasicTomcat6xBuildFileContent()
-            case TomcatVersion.VERSION_7X: return getBasicTomcat7xBuildFileContent()
-            case TomcatVersion.VERSION_8X: return getBasicTomcat8xBuildFileContent()
-            default: throw new IllegalArgumentException("Unknown Tomcat version $tomcatVersion")
-        }
-    }
-
-    private String getBasicTomcat6xBuildFileContent() {
-        """
-dependencies {
-    def tomcatVersion = '6.0.29'
-    tomcat "org.apache.tomcat:catalina:\${tomcatVersion}",
-           "org.apache.tomcat:coyote:\${tomcatVersion}",
-           "org.apache.tomcat:jasper:\${tomcatVersion}"
-}
-"""
-    }
-
-    private String getBasicTomcat7xBuildFileContent() {
-        """
-dependencies {
-    def tomcatVersion = '7.0.11'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
-           "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-    }
-}
-"""
-    }
-
-    private String getBasicTomcat8xBuildFileContent() {
-        """
-dependencies {
-    def tomcatVersion = '8.0.0-RC5'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
-           "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-    }
-}
-"""
-    }
-
-    private String getTomcatContainerLifecycleManagementBuildFileContent(String tomcatStartTask) {
-        """
-task startAndStopTomcat {
-    dependsOn $tomcatStartTask
-    finalizedBy tomcatStop
-}
+    private void getTaskStartAndStopProperties() {
+        buildFile << """
+[tomcatRun, tomcatRunWar]*.httpPort = $httpPort
+[tomcatRun, tomcatRunWar, tomcatStop]*.stopKey = 'stopKey'
+[tomcatRun, tomcatRunWar, tomcatStop]*.stopPort = $stopPort
 """
     }
 }

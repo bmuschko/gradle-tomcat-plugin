@@ -15,24 +15,25 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
 import spock.lang.Specification
 
 /**
- * Test case for TomcatPluginConvention.
+ * Test case for Tomcat plugin extension.
  *
  * @author Benjamin Muschko
  */
-class TomcatPluginConventionTest extends Specification {
-    TomcatPluginConvention pluginConvention = new TomcatPluginConvention()
+class TomcatPluginExtensionTest extends Specification {
+    TomcatPluginExtension pluginExtension = new TomcatPluginExtension()
 
     def "Verify default convention values"() {
-        pluginConvention.httpPort == 8080
-        pluginConvention.httpsPort == 8443
-        pluginConvention.stopPort == 8081
-        pluginConvention.ajpPort == 8009
-        pluginConvention.stopKey == 'stopKey'
-        pluginConvention.httpProtocol == TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        pluginConvention.httpsProtocol == TomcatPluginConvention.DEFAULT_PROTOCOL_HANDLER
-        pluginConvention.ajpProtocol == TomcatPluginConvention.DEFAULT_AJP_PROTOCOL_HANDLER
+        pluginExtension.httpPort == 8080
+        pluginExtension.httpsPort == 8443
+        pluginExtension.stopPort == 8081
+        pluginExtension.ajpPort == 8009
+        pluginExtension.stopKey == 'stopKey'
+        pluginExtension.httpProtocol == TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        pluginExtension.httpsProtocol == TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
+        pluginExtension.ajpProtocol == TomcatPluginExtension.DEFAULT_AJP_PROTOCOL_HANDLER
     }
 }
