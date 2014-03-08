@@ -17,7 +17,6 @@ package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.WarPluginConvention
 import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
 import org.gradle.api.plugins.tomcat.tasks.*
@@ -51,9 +50,6 @@ class TomcatPlugin implements Plugin<Project> {
 
     private void configureAbstractTomcatTask(Project project, TomcatPluginExtension tomcatPluginExtension) {
         project.tasks.withType(AbstractTomcatRun) {
-            conventionMapping.map('buildscriptClasspath') { project.buildscript.configurations.getByName('classpath').asFileTree }
-            conventionMapping.map('tomcatClasspath') { project.configurations.getByName(TomcatBasePlugin.TOMCAT_CONFIGURATION_NAME).asFileTree }
-            conventionMapping.map('contextPath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
             conventionMapping.map('httpPort') { tomcatPluginExtension.httpPort }
             conventionMapping.map('httpsPort') { tomcatPluginExtension.httpsPort }
             conventionMapping.map(STOP_PORT_CONVENTION) { tomcatPluginExtension.stopPort }
