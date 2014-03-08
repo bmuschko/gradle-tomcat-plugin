@@ -55,7 +55,7 @@ The JAR file comes with two plugins:
         <td>tomcat</td>
         <td>tomcat-base</td>
         <td>TomcatPlugin</td>
-        <td>Provides tasks for starting and stopping an embedded Tomcat container and exposes extension named `tomcat`.</td>
+        <td>Provides tasks for starting and stopping an embedded Tomcat container and exposes extension named <code>tomcat</code>.</td>
     </tr>
 </table>
 
@@ -143,7 +143,7 @@ The `tomcat` plugin pre-defines the following tasks out-of-the-box:
         <td>tomcatJasper</td>
         <td>-</td>
         <td>TomcatJasper</td>
-        <td>Runs the JSP compiler and turns JSP pages into Java source using [Jasper](http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html).</td>
+        <td>Runs the JSP compiler and turns JSP pages into Java source using <a href="http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html">Jasper</a>.</td>
     </tr>
 </table>
 
