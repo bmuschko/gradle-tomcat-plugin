@@ -22,6 +22,7 @@ import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.SSLKeystore
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
+import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.StoreType
 import org.gradle.api.tasks.*
@@ -310,8 +311,66 @@ abstract class AbstractTomcatRun extends Tomcat {
             validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
             if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
-              throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
+                throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
+        }
+    }
+
+
+    /**
+     * Checks if used Tomcat version is 8.x.
+     *
+     * @return Flag
+     */
+    protected boolean isTomcat8x() {
+        getServer().version == TomcatVersion.VERSION_8X
+    }
+
+    /**
+     * Checks if used Tomcat version is 7.x.
+     *
+     * @return Flag
+     */
+    protected boolean isTomcat7x() {
+        getServer().version == TomcatVersion.VERSION_7X
+    }
+
+    protected def getResourceSetType(String name) {
+        ClassLoader loader = Thread.currentThread().contextClassLoader
+        Class resourceSetTypeClass = loader.loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
+        def type = resourceSetTypeClass.enumConstants.find { it.name() == name }
+
+        type
+    }
+
+    protected boolean isJarFile(File file) {
+        if (file.isFile()) {
+            String fileName = file.name
+            int index = fileName.lastIndexOf('.')
+            if (index > -1) {
+                String fileExtension = fileName.substring(index + 1)
+
+                return fileExtension.equalsIgnoreCase('jar')
+            }
+        }
+
+        false
+    }
+
+    protected void addWebappResource(File resource) {
+        if(isTomcat8x()) {
+            if (resource.exists()) {
+                def type = getResourceSetType('POST')
+                if (isJarFile(resource)) {
+                    getServer().context.resources.createWebResourceSet(type, '/WEB-INF/libs', resource.toURI().toURL(), '/')
+                }
+                else {
+                    getServer().context.resources.createWebResourceSet(type, '/WEB-INF/classes', resource.toURI().toURL(), '/')
+                }
+            }
+        }
+        else {
+            getServer().context.loader.addRepository(resource.toURI().toURL().toString())
         }
     }
 
@@ -323,7 +382,7 @@ abstract class AbstractTomcatRun extends Tomcat {
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
         getAdditionalRuntimeJars().each { additionalRuntimeJar ->
-            getServer().context.loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
+            addWebappResource(additionalRuntimeJar)
         }
 
         getServer().context.reloadable = getReloadable()

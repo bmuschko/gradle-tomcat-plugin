@@ -15,6 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
+import java.lang.reflect.Constructor
+
 /**
  * Tomcat 8x server implementation.
  *
@@ -30,5 +32,14 @@ class Tomcat8xServer extends BaseTomcat7xPlusImpl {
     @Override
     void setRealm(realm) {
         tomcat.engine.realm = realm
+    }
+
+    @Override
+    void createContext(String fullContextPath, String webAppPath) {
+        super.createContext(fullContextPath, webAppPath)
+        Class standardRootClass = loadClass('org.apache.catalina.webresources.StandardRoot')
+        Class contextClass = loadClass('org.apache.catalina.Context')
+        Constructor constructor = standardRootClass.getConstructor(contextClass)
+        context.resources = constructor.newInstance(context)
     }
 }
