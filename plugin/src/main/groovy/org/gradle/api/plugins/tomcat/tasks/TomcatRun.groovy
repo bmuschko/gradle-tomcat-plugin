@@ -94,15 +94,6 @@ class TomcatRun extends AbstractTomcatRun {
     }
 
     /**
-     * Checks if used Tomcat version is 7.x.
-     *
-     * @return Flag
-     */
-    private boolean isTomcat7x() {
-        getServer().version == TomcatVersion.VERSION_7X
-    }
-
-    /**
      * Checks if web.xml exists in web application source directory.
      *
      * @return Flag
@@ -148,7 +139,7 @@ class TomcatRun extends AbstractTomcatRun {
         logger.info "web app loader classpath = ${getWebAppClasspath().asPath}"
       
         getWebAppClasspath().each { file ->
-            getServer().context.loader.addRepository(file.toURI().toURL().toString())
+            addWebappResource(file)
         }
     }
 }

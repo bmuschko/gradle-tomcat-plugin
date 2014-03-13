@@ -135,7 +135,7 @@ dependencies {
     private String getBasicTomcat8xBuildFileContent() {
         """
 dependencies {
-    def tomcatVersion = '8.0.0-RC5'
+    def tomcatVersion = '8.0.3'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
            "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {
