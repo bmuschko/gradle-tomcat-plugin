@@ -360,7 +360,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     protected void addWebappResource(File resource) {
         if(isTomcat8x()) {
             if (resource.exists()) {
-                def type = getResourceSetType('POST')
+                def type = getResourceSetType('CLASSES_JAR')
                 if (isJarFile(resource)) {
                     getServer().context.resources.createWebResourceSet(type, '/WEB-INF/libs', resource.toURI().toURL(), '/')
                 }
