@@ -31,6 +31,13 @@ class TomcatJasper extends Tomcat {
     @Optional
     Boolean validateXml
 
+    /**
+     * @since 1.2.1
+     */
+    @Input
+    @Optional
+    Boolean validateTld
+
     @InputDirectory
     File uriroot
 
@@ -99,12 +106,19 @@ class TomcatJasper extends Tomcat {
     }
 
     private getJasperAttributes() {
-        def jasperAttributes = ['validateXml': getValidateXml(), 'uriroot': getUriroot(), 'outputDir': getOutputDir(),
+        def jasperAttributes = ['uriroot': getUriroot(), 'outputDir': getOutputDir(),
                                 'classdebuginfo': getClassdebuginfo(), 'compilerSourceVM': getCompilerSourceVM(),
                                 'compilerTargetVM': getCompilerTargetVM(), 'poolingEnabled': getPoolingEnabled(),
                                 'errorOnUseBeanInvalidClassAttribute': getErrorOnUseBeanInvalidClassAttribute(),
                                 'genStringAsCharArray': getGenStringAsCharArray(), 'ieClassId': getIeClassId(),
                                 'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces(), 'xpoweredBy': getXpoweredBy()]
+        if(getValidateXml()) {
+            jasperAttributes['validateXml'] = getValidateXml()
+        }
+
+        if(getValidateTld()) {
+            jasperAttributes['validateTld'] = getValidateTld()
+        }
 
         if(getWebXmlFragment()) {
             jasperAttributes['webXmlFragment'] = getWebXmlFragment()

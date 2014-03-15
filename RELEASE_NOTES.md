@@ -1,3 +1,7 @@
+### Version 1.2.1 (March 15, 2014)
+
+* Allow Jasper task to use attribute `validateXml` or `validateTld` - [Issue 87](https://github.com/bmuschko/gradle-tomcat-plugin/issues/87).
+
 ### Version 1.2 (March 7, 2014)
 
 * Broke out Tomcat base plugin.

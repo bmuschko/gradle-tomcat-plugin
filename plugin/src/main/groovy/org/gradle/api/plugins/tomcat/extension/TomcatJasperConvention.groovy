@@ -22,6 +22,7 @@ package org.gradle.api.plugins.tomcat.extension
  */
 class TomcatJasperConvention {
     Boolean validateXml
+    Boolean validateTld
     File uriroot
     File webXmlFragment
     File outputDir

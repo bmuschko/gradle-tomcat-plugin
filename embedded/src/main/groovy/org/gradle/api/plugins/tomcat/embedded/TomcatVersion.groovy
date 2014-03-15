@@ -61,6 +61,19 @@ enum TomcatVersion {
         TOMCAT_VERSIONS[specVersion]
     }
 
+    static TomcatVersion getTomcatVersionForString(String version) {
+        if(version.startsWith('6')) {
+            return VERSION_6X
+        }
+        else if(version.startsWith('7')) {
+            return VERSION_7X
+        }
+        else if(version.startsWith('8')) {
+            return VERSION_8X
+        }
+
+        throw new IllegalArgumentException("Unsupported Tomcat version $version")
+    }
 
     @Override
     String toString() {

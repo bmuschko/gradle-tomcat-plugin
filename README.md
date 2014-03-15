@@ -29,7 +29,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.2'
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.2.1'
     }
 }
 ```
@@ -211,7 +211,8 @@ tomcatRun.configFile = file('context.xml')
 To configure the Jasper compiler task you can choose to set the following properties within the `jasper` closure of the
 `tomcat` extension:
 
-* `validateXml`: Determines whether `web.xml` should be validated (defaults to `false`).
+* `validateXml`: Determines whether `web.xml` should be validated (defaults to `null`).
+* `validateTld`: Determines whether `web.xml` should be validated (defaults to `null`).
 * `uriroot`: The web application root directory (defaults to `src/main/webapp`).
 * `webXmlFragment`: The generated web XML fragment file to be referenced by your `web.xml` file.
 * `addWebXmlMappings`: Automatically add the generated web XML fragment to the `web.xml` file.  Caution: this will modify the `web.xml` file in the project, not the build directory.

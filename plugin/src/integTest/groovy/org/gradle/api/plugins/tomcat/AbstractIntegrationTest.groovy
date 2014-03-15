@@ -33,15 +33,9 @@ abstract class AbstractIntegrationTest extends Specification {
     Integer stopPort
 
     def setup() {
-        if(!integTestDir.exists() && !integTestDir.mkdirs()) {
-            fail('Unable to create integration test directory.')
-        }
-
-        buildFile = new File(integTestDir, 'build.gradle')
-
-        if(!buildFile.createNewFile()) {
-            fail('Unable to create Gradle build script.')
-        }
+        deleteDir(integTestDir)
+        createDir(integTestDir)
+        buildFile = createFile(integTestDir, 'build.gradle')
 
         AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
         httpPort = availablePortFinder.nextAvailable
@@ -67,9 +61,33 @@ repositories {
     }
 
     def cleanup() {
-        if(!integTestDir.deleteDir()) {
-            fail('Unable to delete integration test directory.')
+        deleteDir(integTestDir)
+    }
+
+    protected void deleteDir(File dir) {
+         if(dir.exists()) {
+             if(!integTestDir.deleteDir()) {
+                 fail("Unable to delete directory '$dir.canonicalPath'.")
+             }
+         }
+    }
+
+    protected void createDir(File dir) {
+        if(!dir.exists()) {
+            if(!integTestDir.mkdirs()) {
+                fail("Unable to create directory '$dir.canonicalPath'.")
+            }
         }
+    }
+
+    protected File createFile(File parent, String filename) {
+        File file = new File(parent, filename)
+
+        if(!file.createNewFile()) {
+            fail("Unable to create file '${file.canonicalPath}'.")
+        }
+
+        file
     }
 
     protected Task findTask(GradleProject project, String name) {
@@ -108,10 +126,21 @@ repositories {
         }
     }
 
-    private String getBasicTomcat6xBuildFileContent() {
+    protected String getBasicTomcatBuildFileContent(String tomcatVersion) {
+        TomcatVersion identifiedTomcatVersion = TomcatVersion.getTomcatVersionForString(tomcatVersion)
+
+        switch(identifiedTomcatVersion) {
+            case TomcatVersion.VERSION_6X: return getBasicTomcat6xBuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_7X: return getBasicTomcat7xBuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_8X: return getBasicTomcat8xBuildFileContent(tomcatVersion)
+            default: throw new IllegalArgumentException("Unknown Tomcat version $tomcatVersion")
+        }
+    }
+
+    protected String getBasicTomcat6xBuildFileContent(String version = '6.0.29') {
         """
 dependencies {
-    def tomcatVersion = '6.0.29'
+    def tomcatVersion = '$version'
     tomcat "org.apache.tomcat:catalina:\${tomcatVersion}",
            "org.apache.tomcat:coyote:\${tomcatVersion}",
            "org.apache.tomcat:jasper:\${tomcatVersion}"
@@ -119,10 +148,10 @@ dependencies {
 """
     }
 
-    private String getBasicTomcat7xBuildFileContent() {
+    protected String getBasicTomcat7xBuildFileContent(String version = '7.0.11') {
         """
 dependencies {
-    def tomcatVersion = '7.0.11'
+    def tomcatVersion = '$version'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
            "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {
@@ -132,10 +161,10 @@ dependencies {
 """
     }
 
-    private String getBasicTomcat8xBuildFileContent() {
+    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.0-RC5') {
         """
 dependencies {
-    def tomcatVersion = '8.0.0-RC5'
+    def tomcatVersion = '$version'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
            "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
     tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {

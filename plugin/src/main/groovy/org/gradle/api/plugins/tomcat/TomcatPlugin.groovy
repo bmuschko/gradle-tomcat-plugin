@@ -91,7 +91,8 @@ class TomcatPlugin implements Plugin<Project> {
     private void configureJasper(Project project, TomcatPluginExtension tomcatPluginExtension) {
         project.tasks.create(TOMCAT_JASPER_TASK_NAME, TomcatJasper) {
             description = 'Runs the JSP compiler and turns JSP pages into Java source.'
-            conventionMapping.map('validateXml') { tomcatPluginExtension.jasper.validateXml ?: false }
+            conventionMapping.map('validateXml') { tomcatPluginExtension.jasper.validateXml }
+            conventionMapping.map('validateTld') { tomcatPluginExtension.jasper.validateTld }
             conventionMapping.map('uriroot') { tomcatPluginExtension.jasper.uriroot ?: project.webAppDir }
             conventionMapping.map('webXmlFragment') { tomcatPluginExtension.jasper.webXmlFragment }
             conventionMapping.map('addWebXmlMappings') { tomcatPluginExtension.jasper.addWebXmlMappings }
