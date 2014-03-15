@@ -262,55 +262,35 @@ abstract class AbstractTomcatRun extends Tomcat {
     void validateConfiguration() {
         // Check existence of default web.xml if provided
         if(getWebDefaultXml()) {
-            if(!getWebDefaultXml().exists()) {
-                throw new InvalidUserDataException('The provided default web.xml file does not exist')
-            }
-            else {
-                logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
-            }
+            logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
         }
 
         // Check the location of context.xml if it was provided.
         if(getConfigFile()) {
-            if(!getConfigFile().exists()) {
-                throw new InvalidUserDataException("context.xml file does not exist at location ${getConfigFile().canonicalPath}")
-            }
-            else {
-                setResolvedConfigFile(getConfigFile().toURI().toURL())
-                logger.info "context.xml = ${getResolvedConfigFile().toString()}"
-            }
+            setResolvedConfigFile(getConfigFile().toURI().toURL())
+            logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
 
         // Check HTTP(S) protocol handler class names
-        if(!getHttpProtocol() || getHttpProtocol() == '') {
-            throw new InvalidUserDataException('The provided HTTP protocol handler classname may not be null or blank')
-        }
-        else {
+        if(getHttpProtocol()) {
             logger.info "HTTP protocol handler classname = ${getHttpProtocol()}"
         }
 
-        if(!getHttpsProtocol() || getHttpsProtocol() == '') {
-            throw new InvalidUserDataException('The provided HTTPS protocol handler classname may not be null or blank')
-        }
-        else {
+        if(getHttpsProtocol()) {
             logger.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
         }
 
         if(getOutputFile()) {
-            if(getOutputFile().path == '') {
-                throw new InvalidUserDataException('The provided output file may not be blank')
-            }
-            else {
-                logger.info "Output file = ${getOutputFile().canonicalPath}"
-            }
+            logger.info "Output file = ${getOutputFile().canonicalPath}"
         }
 
         if(getEnableSSL()) {
             validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
             validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
+
             if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
-              throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
+                throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
         }
     }

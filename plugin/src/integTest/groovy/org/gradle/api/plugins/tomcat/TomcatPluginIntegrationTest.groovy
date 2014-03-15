@@ -15,7 +15,9 @@
  */
 package org.gradle.api.plugins.tomcat
 
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.gradle.api.plugins.tomcat.embedded.TomcatVersion
+import org.gradle.tooling.BuildException
 import org.gradle.tooling.model.GradleProject
 import org.gradle.tooling.model.Task
 import spock.lang.Ignore
@@ -144,5 +146,71 @@ tomcat {
 [tomcatRun, tomcatRunWar, tomcatStop]*.stopKey = 'stopKey'
 [tomcatRun, tomcatRunWar, tomcatStop]*.stopPort = $stopPort
 """
+    }
+
+    @Unroll
+    def "Fails to execute tomcatRun with #tomcatVersion for non-existent config file"() {
+        setup:
+            setupWebAppDirectory()
+
+        when:
+            buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+            buildFile << getTaskStartAndStopProperties()
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+            File configFile = new File(integTestDir, 'config/myconfig.xml')
+            buildFile << """
+tomcatRun.configFile = new File('$configFile.canonicalPath')
+"""
+            runTasks(integTestDir, 'startAndStopTomcat')
+
+        then:
+            Throwable t = thrown(BuildException)
+            ExceptionUtils.getRootCause(t).message == "File '$configFile.canonicalPath' specified for property 'configFile' does not exist."
+
+        where:
+            tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X]
+    }
+
+    @Unroll
+    def "Resolves config file for tomcatRun with Tomcat #tomcatVersion"() {
+        setup:
+            setupWebAppDirectory()
+            File configFile = createConfigFile()
+            File staticFile = createStaticFile()
+
+        expect:
+            buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+            buildFile << getTaskStartAndStopProperties()
+            buildFile << """
+tomcatRun.configFile = new File('$configFile.canonicalPath')
+
+startAndStopTomcat.doLast {
+    assert 'http://localhost:$httpPort/integTest/alt/$staticFile.name'.toURL().text == 'This is a test!'
+}
+"""
+            runTasks(integTestDir, 'startAndStopTomcat')
+
+        where:
+            tomcatVersion << ['7.0.52']
+    }
+
+    private File createConfigFile() {
+        File configDir = new File(integTestDir, 'config')
+        createDir(configDir)
+        File configFile = createFile(configDir, 'myconfig.xml')
+        configFile << """<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resources className="org.apache.naming.resources.VirtualDirContext" extraResourcePaths="/alt=$integTestDir.canonicalPath/static" />
+</Context>
+"""
+        configFile
+    }
+
+    private File createStaticFile() {
+        File staticDir = new File(integTestDir, 'static')
+        createDir(staticDir)
+        File testHtmlFile = createFile(staticDir, 'test.html')
+        testHtmlFile << 'This is a test!'
     }
 }

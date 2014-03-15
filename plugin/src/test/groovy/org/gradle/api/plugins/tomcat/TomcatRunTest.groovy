@@ -65,12 +65,6 @@ class TomcatRunTest {
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
     }
 
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForNonExistentWebDefaultXml() {
-        tomcatRun.setWebDefaultXml new File(testDir, "web.xml")
-        tomcatRun.validateConfiguration()
-    }
-
     @Test
     public void testValidateConfigurationForExistentWebDefaultXml() {
         File webAppSourceDir = createWebAppSourceDirectory()
@@ -83,12 +77,6 @@ class TomcatRunTest {
         assert tomcatRun.getWebDefaultXml() == webDefaultXml
         assert tomcatRun.getConfigFile() == null
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
-    }
-
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForNonExistentConfigFile() {
-        tomcatRun.setConfigFile new File(testDir, "context.xml")
-        tomcatRun.validateConfiguration()
     }
 
     @Test

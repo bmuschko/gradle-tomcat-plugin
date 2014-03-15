@@ -74,7 +74,7 @@ repositories {
 
     protected void createDir(File dir) {
         if(!dir.exists()) {
-            if(!integTestDir.mkdirs()) {
+            if(!dir.mkdirs()) {
                 fail("Unable to create directory '$dir.canonicalPath'.")
             }
         }

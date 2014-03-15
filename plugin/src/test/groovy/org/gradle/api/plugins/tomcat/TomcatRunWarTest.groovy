@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.plugins.tomcat.embedded.Tomcat6xServer
 import org.gradle.api.plugins.tomcat.embedded.TomcatServer
@@ -69,12 +68,6 @@ class TomcatRunWarTest {
         assert tomcatRunWar.getWebApp() == war
     }
 
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForNonExistentWebDefaultXml() {
-        tomcatRunWar.setWebDefaultXml new File(testDir, "web.xml")
-        tomcatRunWar.validateConfiguration()
-    }
-
     @Test
     public void testValidateConfigurationForExistentWebDefaultXml() {
         File webAppDir = createWebAppDir()
@@ -88,12 +81,6 @@ class TomcatRunWarTest {
         assert tomcatRunWar.getWebDefaultXml() == webDefaultXml
         assert tomcatRunWar.getConfigFile() == null
         assert tomcatRunWar.getWebApp() == war
-    }
-
-    @Test(expected = InvalidUserDataException.class)
-    public void testValidateConfigurationForNonExistentConfigFile() {
-        tomcatRunWar.setConfigFile new File(testDir, "context.xml")
-        tomcatRunWar.validateConfiguration()
     }
 
     @Test
