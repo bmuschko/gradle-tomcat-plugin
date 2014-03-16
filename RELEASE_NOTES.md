@@ -1,3 +1,7 @@
+### Version 1.2.2 (March 15, 2014)
+
+* Tomcat doesn't seem to shutdown gracefully when exiting after `tomcatRun` - [Issue 21](https://github.com/bmuschko/gradle-tomcat-plugin/issues/21).
+
 ### Version 1.2.1 (March 15, 2014)
 
 * Allow Jasper task to use attribute `validateXml` or `validateTld` - [Issue 87](https://github.com/bmuschko/gradle-tomcat-plugin/issues/87).
