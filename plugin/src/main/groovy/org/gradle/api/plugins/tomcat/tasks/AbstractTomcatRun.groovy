@@ -348,6 +348,8 @@ abstract class AbstractTomcatRun extends Tomcat {
             // Start server
             getServer().start()
 
+            registerShutdownHook()
+
             logger.quiet 'Started Tomcat Server'
             logger.quiet "The Server is running at http://localhost:${getHttpPort()}${getServer().context.path}"
 
@@ -470,5 +472,19 @@ abstract class AbstractTomcatRun extends Tomcat {
 
     def createServer() {
         TomcatServerFactory.instance.tomcatServer
+    }
+
+    /**
+     * Registers shutdown hook that stops Tomcat's context lifecycle when triggered.
+     */
+    void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            void run() {
+                if(!getServer().stopped) {
+                    getServer().stop()
+                }
+            }
+        })
     }
 }
