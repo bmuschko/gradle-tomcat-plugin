@@ -9,6 +9,8 @@ import java.lang.reflect.Constructor
  * @author Andrey Bloschetsov
  */
 abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
+    String home
+
     @Override
     String getServerClassName() {
         'org.apache.catalina.startup.Tomcat'
@@ -16,14 +18,28 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
 
     @Override
     void setHome(String home) {
+        this.home = home
         tomcat.baseDir = home
     }
 
     @Override
     void createContext(String fullContextPath, String webAppPath) {
-        def context = tomcat.addWebapp(null, fullContextPath, webAppPath)
+        def context = createContextInternal(fullContextPath, webAppPath)
         context.unpackWAR = false
         this.context = context
+    }
+
+    private createContextInternal(String fullContextPath, String webAppPath) {
+        def context
+
+        if(webAppPath) {
+            context = tomcat.addWebapp(null, fullContextPath, webAppPath)
+        }
+        else {
+            context = tomcat.addContext(fullContextPath, home)
+        }
+
+        context
     }
 
     @Override

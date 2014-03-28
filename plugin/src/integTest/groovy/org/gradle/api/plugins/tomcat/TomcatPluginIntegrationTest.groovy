@@ -34,7 +34,7 @@ apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
 
     def "Adds default Tomcat tasks for Java project"() {
         when:
-            GradleProject project = runTasks(integTestDir, 'tasks')
+            GradleProject project = runTasks(integTestDir, 'tasks').project
         then:
             Task tomcatRunTask = findTask(project, TomcatPlugin.TOMCAT_RUN_TASK_NAME)
             tomcatRunTask
@@ -53,20 +53,20 @@ apply plugin: org.gradle.api.plugins.tomcat.TomcatPlugin
     @Unroll
     def "Start and stop #tomcatVersion with #taskName supporting default web app directory"() {
         setup:
-            setupWebAppDirectory()
+        setupWebAppDirectory()
 
         expect:
-            buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-            buildFile << getTaskStartAndStopProperties()
-            buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
-            runTasks(integTestDir, 'startAndStopTomcat')
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << getTaskStartAndStopProperties()
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+        runTasks(integTestDir, 'startAndStopTomcat')
 
         where:
-            tomcatVersion             | taskName
-            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-            TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
-            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-            TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        tomcatVersion             | taskName
+        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
@@ -143,6 +143,7 @@ tomcat {
     private void getTaskStartAndStopProperties() {
         buildFile << """
 [tomcatRun, tomcatRunWar]*.httpPort = $httpPort
+[tomcatRun, tomcatRunWar]*.ajpPort = $ajpPort
 [tomcatRun, tomcatRunWar, tomcatStop]*.stopKey = 'stopKey'
 [tomcatRun, tomcatRunWar, tomcatStop]*.stopPort = $stopPort
 """

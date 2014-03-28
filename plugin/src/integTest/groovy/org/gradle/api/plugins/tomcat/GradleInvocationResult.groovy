@@ -13,23 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gradle.api.plugins.tomcat.tasks
+package org.gradle.api.plugins.tomcat
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.plugins.WarPlugin
+import org.gradle.tooling.model.GradleProject
 
-/**
- * Parent class for all Tomcat tasks.
- *
- * @author Benjamin Muschko
- */
-class Tomcat extends DefaultTask {
-    Tomcat() {
-        group = WarPlugin.WEB_APP_GROUP
-
-        // No matter what the inputs and outputs make sure that run tasks are never up-to-date
-        outputs.upToDateWhen {
-            false
-        }
-    }
+class GradleInvocationResult {
+    GradleProject project
+    String output
 }

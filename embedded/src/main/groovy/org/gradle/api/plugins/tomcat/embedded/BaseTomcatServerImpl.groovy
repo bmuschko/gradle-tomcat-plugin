@@ -40,6 +40,8 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     @Override
     void stop() {
         stopped = true
+        context?.stop()
+        context?.destroy()
         tomcat.stop()
         tomcat.destroy()
     }

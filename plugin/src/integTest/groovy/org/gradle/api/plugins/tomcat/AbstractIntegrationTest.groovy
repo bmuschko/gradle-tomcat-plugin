@@ -31,6 +31,7 @@ abstract class AbstractIntegrationTest extends Specification {
     File buildFile
     Integer httpPort
     Integer stopPort
+    Integer ajpPort
 
     def setup() {
         deleteDir(integTestDir)
@@ -40,6 +41,7 @@ abstract class AbstractIntegrationTest extends Specification {
         AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
         httpPort = availablePortFinder.nextAvailable
         stopPort = availablePortFinder.nextAvailable
+        ajpPort = availablePortFinder.nextAvailable
 
         buildFile << """
 buildscript {
@@ -102,15 +104,18 @@ repositories {
         }
     }
 
-    protected GradleProject runTasks(File projectDir, String... tasks) {
+    protected GradleInvocationResult runTasks(File projectDir, String... tasks) {
         GradleConnector gradleConnector = GradleConnector.newConnector()
         gradleConnector.forProjectDirectory(projectDir)
         ProjectConnection connection = gradleConnector.connect()
 
         try {
             BuildLauncher builder = connection.newBuild()
+            OutputStream outputStream = new ByteArrayOutputStream()
+            builder.setStandardOutput(outputStream)
             builder.forTasks(tasks).run()
-            return connection.getModel(GradleProject)
+            GradleProject gradleProject = connection.getModel(GradleProject)
+            return new GradleInvocationResult(project: gradleProject, output: new String(outputStream.toByteArray(), 'UTF-8'))
         }
         finally {
             connection?.close()
