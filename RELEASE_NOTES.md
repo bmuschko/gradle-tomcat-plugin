@@ -1,3 +1,7 @@
+### Version 1.2.3 (March 29, 2014)
+
+* Tasks should never be up-to-date - [Issue 90](https://github.com/bmuschko/gradle-tomcat-plugin/issues/90).
+
 ### Version 1.2.2 (March 15, 2014)
 
 * Tomcat doesn't seem to shutdown gracefully when exiting after `tomcatRun` - [Issue 21](https://github.com/bmuschko/gradle-tomcat-plugin/issues/21).
