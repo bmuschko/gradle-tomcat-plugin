@@ -335,6 +335,15 @@ abstract class AbstractTomcatRun extends Tomcat {
         getServer().version == TomcatVersion.VERSION_7X
     }
 
+    /**
+     * Checks if used Tomcat version is 6.x.
+     *
+     * @return Flag
+     */
+    protected boolean isTomcat6x() {
+        getServer().version == TomcatVersion.VERSION_6X
+    }
+
     protected def getResourceSetType(String name) {
         ClassLoader loader = Thread.currentThread().contextClassLoader
         Class resourceSetTypeClass = loader.loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
@@ -343,30 +352,10 @@ abstract class AbstractTomcatRun extends Tomcat {
         type
     }
 
-    protected boolean isJarFile(File file) {
-        if (file.isFile()) {
-            String fileName = file.name
-            int index = fileName.lastIndexOf('.')
-            if (index > -1) {
-                String fileExtension = fileName.substring(index + 1)
-
-                return fileExtension.equalsIgnoreCase('jar')
-            }
-        }
-
-        false
-    }
-
     protected void addWebappResource(File resource) {
         if(isTomcat8x()) {
             if (resource.exists()) {
-                def type = getResourceSetType('CLASSES_JAR')
-                if (isJarFile(resource)) {
-                    getServer().context.resources.createWebResourceSet(type, '/WEB-INF/libs', resource.toURI().toURL(), '/')
-                }
-                else {
-                    getServer().context.resources.createWebResourceSet(type, '/WEB-INF/classes', resource.toURI().toURL(), '/')
-                }
+                getServer().context.resources.createWebResourceSet(getResourceSetType('PRE'), '/WEB-INF/classes', resource.toURI().toURL(), '/')
             }
         }
         else {

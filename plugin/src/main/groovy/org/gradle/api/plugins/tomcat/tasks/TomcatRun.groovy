@@ -90,7 +90,7 @@ class TomcatRun extends AbstractTomcatRun {
      * @return Flag
      */
     private boolean isClassesJarScanningRequired() {
-        isTomcat7x() && !existsWebXml()
+        !isTomcat6x() && !existsWebXml()
     }
 
     /**
