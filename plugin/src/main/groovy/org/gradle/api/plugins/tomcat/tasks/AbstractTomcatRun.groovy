@@ -285,8 +285,8 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
 
         if(getEnableSSL()) {
-            validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
-            validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
+            SSLKeystore.validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
+            SSLKeystore.validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
 
             if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
@@ -330,8 +330,8 @@ abstract class AbstractTomcatRun extends Tomcat {
 
             if(getEnableSSL()) {
                 if(!getKeystoreFile()) {
-                    SSLKeystore sslKeystore = initSSLKeystore()
-                    createSSLCertificate(sslKeystore)
+                    SSLKeystore sslKeystore = SSLKeystore.createSSLKeystore()
+                    sslKeystore.createSSLCertificate(sslKeystore)
                     keystoreFile = sslKeystore.keystore
                     keystorePass = sslKeystore.keyPassword
                 }
@@ -366,98 +366,6 @@ abstract class AbstractTomcatRun extends Tomcat {
         finally {
             if(!getDaemon()) {
                 logger.info 'Tomcat server exiting.'
-            }
-        }
-    }
-
-    /**
-     * Initializes SSL keystore parameters.
-     *
-     * @return SSL keystore parameters
-     */
-    private SSLKeystore initSSLKeystore() {
-        logger.info 'Generating temporary SSL keystore'
-        final File keystore = new File("$project.buildDir/tmp/ssl/keystore")
-        final String keyPassword = 'gradleTomcat'
-        new SSLKeystore(keystore: keystore, keyPassword: keyPassword)
-    }
-
-    /**
-     * Creates SSL certificate.
-     *
-     * @param sslKeystore SSL keystore parameters
-     */
-    private void createSSLCertificate(SSLKeystore sslKeystore) {
-        logger.info 'Creating SSL certificate'
-
-        prepareKeystoreDirectory(sslKeystore)
-
-        if(sslKeystore.keystore.exists()) {
-            if(getPreserveSSLKey()) {
-                return
-            }
-
-            sslKeystore.keystore.delete()
-        }
-
-        invokeKeyTool(sslKeystore)
-
-        logger.info 'Created SSL certificate'
-    }
-
-    /**
-     * Prepares keystore directory.
-     *
-     * @param sslKeystore SSL keystore
-     */
-    private void prepareKeystoreDirectory(SSLKeystore sslKeystore) {
-        final File keystoreFile = sslKeystore.keystore
-
-        if(!keystoreFile.parentFile.exists() && !keystoreFile.parentFile.mkdirs()) {
-            throw new GradleException("Unable to create keystore directory: $keystoreFile.parentFile.canonicalPath")
-        }
-    }
-
-    /**
-     * Invokes keytool to create SSL certificate.
-     *
-     * @param sslKeystore SSL keystore
-     */
-    private void invokeKeyTool(SSLKeystore sslKeystore) {
-        String[] keytoolArgs = ["-genkey", "-alias", "localhost", "-dname",
-                "CN=localhost,OU=Test,O=Test,C=US", "-keyalg", "RSA",
-                "-validity", "365", "-storepass", "key", "-keystore",
-                sslKeystore.keystore, "-storepass", sslKeystore.keyPassword,
-                "-keypass", sslKeystore.keyPassword]
-        Class<?> keyToolClass
-
-        try {
-            keyToolClass = Class.forName('sun.security.tools.KeyTool')
-        }
-        catch(ClassNotFoundException e) {
-            keyToolClass = Class.forName('com.ibm.crypto.tools.KeyTool')
-        }
-
-        keyToolClass.main(keytoolArgs)
-    }
-    
-    /**
-     * Validates that the necessary parameters have been provided for the specified key/trust store.
-     *
-     * @param file The file representing the store
-     * @param password The password to the store
-     * @param storeType identifies whether the store is a KeyStore or TrustStore
-     */
-    private void validateStore(File file, String password, StoreType storeType) {
-        if(!file ^ !password) {
-            throw new InvalidUserDataException('If you want to provide a ${storeType.description} then password and file may not be null or blank')
-        }
-        else if(file && password) {
-            if(!file.exists()) {
-                throw new InvalidUserDataException("${storeType.description} file does not exist at location ${file.canonicalPath}")
-            }
-            else {
-                logger.info "${storeType.description} file = ${file}"
             }
         }
     }
