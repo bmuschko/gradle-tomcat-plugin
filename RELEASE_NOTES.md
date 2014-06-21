@@ -1,3 +1,8 @@
+### Version 1.2.4 (June 21, 2014)
+
+* Configure classes directory and web app source directory in base plugin. This will reduce the amount of configuration required by plugin consumers - [Issue 86](https://github.com/bmuschko/gradle-tomcat-plugin/issues/86).
+* Support for creating SSL keystore with Java 8 - [Issue 98](https://github.com/bmuschko/gradle-tomcat-plugin/issues/98).
+
 ### Version 1.2.3 (March 29, 2014)
 
 * Tasks should never be up-to-date - [Issue 90](https://github.com/bmuschko/gradle-tomcat-plugin/issues/90).
