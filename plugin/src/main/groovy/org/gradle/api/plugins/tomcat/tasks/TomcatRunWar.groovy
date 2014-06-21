@@ -33,7 +33,7 @@ class TomcatRunWar extends AbstractTomcatRun {
     File webApp
 
     @Override
-    void validateConfiguration() {
+    protected void validateConfiguration() {
         super.validateConfiguration()
         validateConfigFile()
     }

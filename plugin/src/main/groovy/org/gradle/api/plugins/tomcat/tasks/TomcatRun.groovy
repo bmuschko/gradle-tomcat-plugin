@@ -52,7 +52,7 @@ class TomcatRun extends AbstractTomcatRun {
     File classesDirectory
 
     @Override
-    void validateConfiguration() {
+    protected void validateConfiguration() {
         super.validateConfiguration()
         validateConfigFile()
     }
@@ -142,7 +142,7 @@ class TomcatRun extends AbstractTomcatRun {
     }
 
     @Override
-    void configureWebApplication() {
+    protected void configureWebApplication() {
         super.configureWebApplication()
 
         logger.info "web app loader classpath = ${getWebAppClasspath().asPath}"

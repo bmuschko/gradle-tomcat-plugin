@@ -15,15 +15,16 @@
  */
 package org.gradle.api.plugins.tomcat.tasks
 
-import org.apache.tools.ant.AntClassLoader
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
-import org.gradle.api.UncheckedIOException
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.tomcat.SSLKeystore
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
-import org.gradle.api.plugins.tomcat.internal.StoreType
+import org.gradle.api.plugins.tomcat.internal.ssl.SSLKeyStore
+import org.gradle.api.plugins.tomcat.internal.ssl.SSLKeyStoreImpl
+import org.gradle.api.plugins.tomcat.internal.ssl.StoreType
+import org.gradle.api.plugins.tomcat.internal.utils.ThreadContextClassLoader
+import org.gradle.api.plugins.tomcat.internal.utils.TomcatThreadContextClassLoader
 import org.gradle.api.tasks.*
 
 import java.util.logging.Level
@@ -202,53 +203,21 @@ abstract class AbstractTomcatRun extends Tomcat {
     def realm
     URL resolvedConfigFile
 
+    private final ThreadContextClassLoader threadContextClassLoader = new TomcatThreadContextClassLoader()
+    private final SSLKeyStore sslKeyStore = new SSLKeyStoreImpl()
+
     abstract void setWebApplicationContext()
 
     @TaskAction
     protected void start() {
         logger.info "Configuring Tomcat for ${getProject()}"
 
-        ClassLoader originalClassLoader = getClass().classLoader
-        URLClassLoader tomcatClassloader = createTomcatClassLoader()
-
-        try {
-            Thread.currentThread().contextClassLoader = tomcatClassloader
+        threadContextClassLoader.withClasspath(getBuildscriptClasspath().files, getTomcatClasspath().files) {
             validateConfigurationAndStartTomcat()
         }
-        finally {
-            Thread.currentThread().contextClassLoader = originalClassLoader
-        }
     }
 
-    /**
-     * Creates Tomcat ClassLoader which consists of the Gradle runtime, Tomcat server and plugin classpath. The ClassLoader
-     * is using a parent last strategy to make sure that the provided Gradle libraries get loaded only if they can't be
-     * found in the application classpath.
-     *
-     * @return Tomcat ClassLoader
-     */
-    private URLClassLoader createTomcatClassLoader() {
-        ClassLoader rootClassLoader = new AntClassLoader(getClass().classLoader, false)
-        URLClassLoader pluginClassloader = new URLClassLoader(toURLArray(getBuildscriptClasspath().files), rootClassLoader)
-        new URLClassLoader(toURLArray(getTomcatClasspath().files), pluginClassloader)
-    }
-
-    private URL[] toURLArray(Collection<File> files) {
-        List<URL> urls = new ArrayList<URL>(files.size())
-
-        for(File file : files) {
-            try {
-                urls.add(file.toURI().toURL())
-            }
-            catch(MalformedURLException e) {
-                throw new UncheckedIOException(e)
-            }
-        }
-
-        urls.toArray(new URL[urls.size()]);
-    }
-
-    private void validateConfigurationAndStartTomcat() {
+    void validateConfigurationAndStartTomcat() {
         validateConfiguration()
 
         withJdkFileLogger(getOutputFile(), true, Level.INFO) {
@@ -259,7 +228,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     /**
      * Validates configuration and throws an exception if
      */
-    void validateConfiguration() {
+    protected void validateConfiguration() {
         // Check existence of default web.xml if provided
         if(getWebDefaultXml()) {
             logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
@@ -285,8 +254,8 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
 
         if(getEnableSSL()) {
-            SSLKeystore.validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
-            SSLKeystore.validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
+            validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
+            validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
 
             if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
@@ -296,9 +265,30 @@ abstract class AbstractTomcatRun extends Tomcat {
     }
 
     /**
+     * Validates that the necessary parameters have been provided for the specified key/trust store.
+     *
+     * @param storeFile The file representing the store
+     * @param keyStorePassword The password to the store
+     * @param storeType identifies whether the store is a KeyStore or TrustStore
+     */
+    private void validateStore(File storeFile, String keyStorePassword, StoreType storeType) {
+        if(!storeFile ^ !keyStorePassword) {
+            throw new InvalidUserDataException("If you want to provide a $storeType.description then password and file may not be null or blank")
+        }
+        else if(storeFile && keyStorePassword) {
+            if(!storeFile.exists()) {
+                throw new InvalidUserDataException("$storeType.description file does not exist at location $storeFile.canonicalPath")
+            }
+            else {
+                logger.info "$storeType.description file = ${storeFile}"
+            }
+        }
+    }
+
+    /**
      * Configures web application
      */
-    void configureWebApplication() {
+    protected void configureWebApplication() {
         setWebApplicationContext()
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
@@ -330,10 +320,11 @@ abstract class AbstractTomcatRun extends Tomcat {
 
             if(getEnableSSL()) {
                 if(!getKeystoreFile()) {
-                    SSLKeystore sslKeystore = SSLKeystore.createSSLKeystore()
-                    sslKeystore.createSSLCertificate(sslKeystore)
-                    keystoreFile = sslKeystore.keystore
-                    keystorePass = sslKeystore.keyPassword
+                    final File keystore = project.file("$project.buildDir/tmp/ssl/keystore")
+                    final String keyPassword = 'gradleTomcat'
+                    sslKeyStore.createSSLCertificate(keystore, keyPassword, getPreserveSSLKey())
+                    keystoreFile = keystore
+                    keystorePass = keyPassword
                 }
 
                 if(getTruststoreFile()) {
@@ -370,7 +361,7 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
     }
 
-    String getFullContextPath() {
+    protected String getFullContextPath() {
         if(getContextPath() == '/' || getContextPath() == '') {
             return ''
         }
