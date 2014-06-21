@@ -17,7 +17,6 @@ package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.WarPluginConvention
 import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
 import org.gradle.api.plugins.tomcat.tasks.*
 
@@ -66,11 +65,6 @@ class TomcatPlugin implements Plugin<Project> {
     private void configureTomcatRun(Project project) {
         project.tasks.create(TOMCAT_RUN_TASK_NAME, TomcatRun) {
             description = 'Uses your files as and where they are and deploys them to Tomcat.'
-            conventionMapping.map('webAppSourceDirectory') {
-                File webAppDir = getWarConvention(project).webAppDir
-                webAppDir.exists() ? webAppDir : null
-            }
-            conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir.exists() ? project.sourceSets.main.output.classesDir : null }
         }
     }
 
@@ -109,9 +103,5 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('trimSpaces') { tomcatPluginExtension.jasper.trimSpaces ?: false }
             conventionMapping.map('xpoweredBy') { tomcatPluginExtension.jasper.xpoweredBy ?: false }
         }
-    }
-
-    private WarPluginConvention getWarConvention(Project project) {
-        project.convention.getPlugin(WarPluginConvention)
     }
 }

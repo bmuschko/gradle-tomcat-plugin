@@ -18,6 +18,7 @@ package org.gradle.api.plugins.tomcat
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.WarPlugin
+import org.gradle.api.plugins.WarPluginConvention
 import org.gradle.api.plugins.tomcat.tasks.AbstractTomcatRun
 import org.gradle.api.plugins.tomcat.tasks.TomcatJasper
 import org.gradle.api.plugins.tomcat.tasks.TomcatRun
@@ -55,6 +56,11 @@ class TomcatBasePlugin implements Plugin<Project> {
     private void configureTomcatRunTask(Project project) {
         project.tasks.withType(TomcatRun) {
             conventionMapping.map('webAppClasspath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
+            conventionMapping.map('webAppSourceDirectory') {
+                File webAppDir = getWarConvention(project).webAppDir
+                webAppDir.exists() ? webAppDir : null
+            }
+            conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir.exists() ? project.sourceSets.main.output.classesDir : null }
         }
     }
 
@@ -69,5 +75,9 @@ class TomcatBasePlugin implements Plugin<Project> {
         project.tasks.withType(TomcatJasper) {
             conventionMapping.map('classpath') { project.configurations.getByName(TOMCAT_CONFIGURATION_NAME).asFileTree + project.tasks.getByName(WarPlugin.WAR_TASK_NAME).classpath }
         }
+    }
+
+    private WarPluginConvention getWarConvention(Project project) {
+        project.convention.getPlugin(WarPluginConvention)
     }
 }
