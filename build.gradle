@@ -15,7 +15,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'org.gradle.api.plugins'
-    version = '1.2.3'
+    version = '1.2.4'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
@@ -125,7 +125,7 @@ task aggregateTestReports(type: TestReport) {
 check.dependsOn aggregateTestReports
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
+    gradleVersion = '1.12'
 }
 
 artifacts {
