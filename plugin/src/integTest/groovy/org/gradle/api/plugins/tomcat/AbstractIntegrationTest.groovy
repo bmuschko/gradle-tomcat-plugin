@@ -166,7 +166,7 @@ dependencies {
 """
     }
 
-    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.0-RC5') {
+    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.8') {
         """
 dependencies {
     def tomcatVersion = '$version'

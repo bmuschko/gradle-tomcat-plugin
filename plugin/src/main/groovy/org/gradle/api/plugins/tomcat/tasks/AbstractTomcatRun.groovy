@@ -285,6 +285,10 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
     }
 
+    protected void addWebappResource(File resource) {
+        getServer().addWebappResource(resource)
+    }
+
     /**
      * Configures web application
      */
@@ -292,8 +296,8 @@ abstract class AbstractTomcatRun extends Tomcat {
         setWebApplicationContext()
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
-        getAdditionalRuntimeJars().each { additionalRuntimeJar ->
-            getServer().context.loader.addRepository(additionalRuntimeJar.toURI().toURL().toString())
+        getAdditionalRuntimeJars().each { File additionalRuntimeJar ->
+            addWebappResource(additionalRuntimeJar)
         }
 
         getServer().context.reloadable = getReloadable()

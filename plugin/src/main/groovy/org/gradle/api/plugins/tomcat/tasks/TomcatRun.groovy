@@ -85,21 +85,21 @@ class TomcatRun extends AbstractTomcatRun {
     }
 
     /**
+     * Checks if used Tomcat version is 6.x.
+     *
+     * @return Flag
+     */
+    protected boolean isTomcat6x() {
+        getServer().version == TomcatVersion.VERSION_6X
+    }
+
+    /**
      * Checks to see if classes JAR scanning is required.
      *
      * @return Flag
      */
     private boolean isClassesJarScanningRequired() {
-        isTomcat7x() && !existsWebXml()
-    }
-
-    /**
-     * Checks if used Tomcat version is 7.x.
-     *
-     * @return Flag
-     */
-    private boolean isTomcat7x() {
-        getServer().version == TomcatVersion.VERSION_7X
+        !isTomcat6x() && !existsWebXml()
     }
 
     /**
@@ -119,7 +119,7 @@ class TomcatRun extends AbstractTomcatRun {
     }
 
     /**
-     * For web applications without web.xml running in Tomcat 7.x we need to enable directory scanning and create
+     * For web applications without web.xml running in Tomcat 7.x/8.x we need to enable directory scanning and create
      * a META-INF to recognize it as exploded JAR directory.
      *
      * @see <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=52853#c19">Tomcat Bugzilla ticket</a>
@@ -148,7 +148,7 @@ class TomcatRun extends AbstractTomcatRun {
         logger.info "web app loader classpath = ${getWebAppClasspath().asPath}"
       
         getWebAppClasspath().each { file ->
-            getServer().context.loader.addRepository(file.toURI().toURL().toString())
+            addWebappResource(file)
         }
     }
 }
