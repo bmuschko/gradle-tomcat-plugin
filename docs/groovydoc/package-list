@@ -1,0 +1,7 @@
+org.gradle.api.plugins.tomcat
+org.gradle.api.plugins.tomcat.embedded
+org.gradle.api.plugins.tomcat.extension
+org.gradle.api.plugins.tomcat.internal
+org.gradle.api.plugins.tomcat.internal.ssl
+org.gradle.api.plugins.tomcat.internal.utils
+org.gradle.api.plugins.tomcat.tasks
