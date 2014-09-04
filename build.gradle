@@ -5,11 +5,13 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
+        classpath 'org.ajoberstar:gradle-git:0.3.0'
     }
 }
 
 apply plugin: 'maven-publish'
 apply plugin: 'bintray'
+apply plugin: 'github-pages'
 
 allprojects {
     apply plugin: 'groovy'
@@ -179,6 +181,17 @@ bintray {
         licenses = ['Apache-2.0']
     }
 }
+
+githubPages {
+    repoUri = 'git@github.com:bmuschko/gradle-tomcat-plugin.git'
+
+    pages {
+        from(aggregateGroovydocs.outputs.files) {
+            into 'docs/groovydoc'
+        }
+    }
+}
+
 
 idea.project {
     jdkName = '1.6'

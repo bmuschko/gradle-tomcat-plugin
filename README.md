@@ -48,13 +48,13 @@ The JAR file comes with two plugins:
     <tr>
         <td>tomcat-base</td>
         <td>-</td>
-        <td>TomcatBasePlugin</td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/TomcatBasePlugin.html">TomcatBasePlugin</a></td>
         <td>Provides Tomcat custom task types, pre-configures classpath.</td>
     </tr>
     <tr>
         <td>tomcat</td>
         <td>tomcat-base</td>
-        <td>TomcatPlugin</td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/TomcatPlugin.html">TomcatPlugin</a></td>
         <td>Provides tasks for starting and stopping an embedded Tomcat container and exposes extension named <code>tomcat</code>.</td>
     </tr>
 </table>
@@ -124,25 +124,25 @@ The `tomcat` plugin pre-defines the following tasks out-of-the-box:
     <tr>
         <td>tomcatRun</td>
         <td>-</td>
-        <td>TomcatRun</td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatRun.html">TomcatRun</a></td>
         <td>Starts a Tomcat instance and deploys the exploded web application to it.</td>
     </tr>
     <tr>
         <td>tomcatRunWar</td>
         <td>-</td>
-        <td>TomcatRunWar</td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatRunWar.html">TomcatRunWar</a></td>
         <td>Starts a Tomcat instance and deploys the WAR to it.</td>
     </tr>
     <tr>
         <td>tomcatStop</td>
         <td>-</td>
-        <td>TomcatStop</td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatStop.html">TomcatStop</a></td>
         <td>Stops the Tomcat instance.</td>
     </tr>
     <tr>
         <td>tomcatJasper</td>
         <td>-</td>
-        <td>TomcatJasper</td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatJasper.html">TomcatJasper</a></td>
         <td>Runs the JSP compiler and turns JSP pages into Java source using <a href="http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html">Jasper</a>.</td>
     </tr>
 </table>
