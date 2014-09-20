@@ -165,6 +165,8 @@ The Tomcat plugin exposes the following properties through the extension named `
 * `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `ajpProtocol`: The AJP protocol handler class name to be used (defaults to `org.apache.coyote.ajp.AjpProtocol`).
+* `user`: User clojure with `username`, `password` and `group`. Used to
+  configure tomcat with basic authentication with this user
 
 ### Example
 
@@ -175,6 +177,11 @@ tomcat {
     httpPort = 8090
     httpsPort = 8091
     enableSSL = true
+    user {
+      username = 'user'
+      password = '123456'
+      group = 'developers'
+    }
 }
 ```
 
