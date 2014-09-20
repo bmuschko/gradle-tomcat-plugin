@@ -55,4 +55,10 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     boolean isStopped() {
         stopped
     }
+    
+    @Override
+    void configureUser(String username, String password, String group) {
+	tomcat.addUser(username, password);
+	tomcat.addRole(username, group);
+    } 
 }

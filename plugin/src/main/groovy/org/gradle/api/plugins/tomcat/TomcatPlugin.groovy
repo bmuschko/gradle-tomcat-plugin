@@ -58,9 +58,11 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('httpsProtocol') { tomcatPluginExtension.httpsProtocol }
             conventionMapping.map('ajpPort') { tomcatPluginExtension.ajpPort }
             conventionMapping.map('ajpProtocol') { tomcatPluginExtension.ajpProtocol }
+	    conventionMapping.map('username') { tomcatPluginExtension.user.username }
+	    conventionMapping.map('userPassword') { tomcatPluginExtension.user.password }
+	    conventionMapping.map('userGroup') { tomcatPluginExtension.user.group }
         }
     }
-
 
     private void configureTomcatRun(Project project) {
         project.tasks.create(TOMCAT_RUN_TASK_NAME, TomcatRun) {

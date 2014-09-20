@@ -15,6 +15,10 @@
  */
 package org.gradle.api.plugins.tomcat.tasks
 
+import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileLogger
+
+import java.util.logging.Level
+
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
@@ -26,10 +30,6 @@ import org.gradle.api.plugins.tomcat.internal.ssl.StoreType
 import org.gradle.api.plugins.tomcat.internal.utils.ThreadContextClassLoader
 import org.gradle.api.plugins.tomcat.internal.utils.TomcatThreadContextClassLoader
 import org.gradle.api.tasks.*
-
-import java.util.logging.Level
-
-import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileLogger
 
 /**
  * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
@@ -198,6 +198,18 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     @Input
     String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
+    
+    @Input
+    @Optional
+    String username;
+    
+    @Input
+    @Optional
+    String userPassword;
+    
+    @Input
+    @Optional
+    String userGroup;
 
     def server
     def realm
@@ -321,6 +333,9 @@ abstract class AbstractTomcatRun extends Tomcat {
             getServer().configureContainer()
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
             getServer().configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
+	    if(getUsername() && getUserPassword() && getUserGroup()) {
+		getServer().configureUser(getUsername(), getUserPassword(), getUserGroup())
+	    }
 
             if(getEnableSSL()) {
                 if(!getKeystoreFile()) {

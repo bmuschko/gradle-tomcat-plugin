@@ -21,6 +21,7 @@ import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
 import org.gradle.api.plugins.tomcat.tasks.*
 import org.gradle.testfixtures.ProjectBuilder
+
 import spock.lang.Specification
 
 /**

@@ -24,6 +24,7 @@ import org.gradle.api.plugins.tomcat.tasks.TomcatRun
 import org.gradle.api.plugins.tomcat.tasks.TomcatRunWar
 import org.gradle.api.plugins.tomcat.tasks.TomcatStop
 import org.gradle.testfixtures.ProjectBuilder
+
 import spock.lang.Specification
 
 /**
@@ -134,6 +135,11 @@ class TomcatPluginTest extends Specification {
                 httpProtocol = 'org.apache.coyote.http11.Http11NioProtocol'
                 httpsProtocol = 'org.apache.coyote.http11.Http11AprProtocol'
                 ajpProtocol = 'org.apache.coyote.ajp.RandomAjpProtocol'
+		user {
+		    username = 'nykolaslima'
+		    password = 'nykolaslima'
+		    group = 'developer'
+		}
             }
         then:
             Task tomcatRunTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
@@ -146,6 +152,9 @@ class TomcatPluginTest extends Specification {
             tomcatRunTask.httpProtocol == 'org.apache.coyote.http11.Http11NioProtocol'
             tomcatRunTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
             tomcatRunTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
+	    tomcatRunTask.username == 'nykolaslima'
+	    tomcatRunTask.userPassword == 'nykolaslima'
+	    tomcatRunTask.userGroup == 'developer'
             Task tomcatRunWarTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
             tomcatRunWarTask.httpPort == 9090
             tomcatRunWarTask.httpsPort == 9443
