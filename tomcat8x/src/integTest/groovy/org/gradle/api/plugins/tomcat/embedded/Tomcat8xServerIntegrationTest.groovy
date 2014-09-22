@@ -15,9 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import spock.lang.Specification
-
 import static org.spockframework.util.Assert.fail
+import spock.lang.Specification
 
 /**
  * Tomcat 8x server test.
@@ -53,5 +52,26 @@ class Tomcat8xServerIntegrationTest extends Specification {
             new Socket(InetAddress.getByName('localhost'), port)
         cleanup:
             tomcatServer.stop()
+    }
+    
+    def "Can start server with authentication user"() {
+	setup:
+	    Integer port = 8080
+	expect:
+	    try {
+		new Socket(InetAddress.getByName('localhost'), port)
+		fail("The port $port is already in use.")
+	    }
+	    catch(ConnectException e) {}
+	when:
+	    tomcatServer.embedded.getHost()
+	    tomcatServer.embedded.port = port
+	    tomcatServer.embedded.addUser("nykolaslima", "123456");
+	    tomcatServer.embedded.addRole("nykolaslima", "role");
+	    tomcatServer.start()
+	then:
+	    new Socket(InetAddress.getByName('localhost'), port)
+	cleanup:
+	    tomcatServer.stop()
     }
 }

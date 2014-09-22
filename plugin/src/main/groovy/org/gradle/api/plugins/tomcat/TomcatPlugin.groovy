@@ -58,9 +58,7 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('httpsProtocol') { tomcatPluginExtension.httpsProtocol }
             conventionMapping.map('ajpPort') { tomcatPluginExtension.ajpPort }
             conventionMapping.map('ajpProtocol') { tomcatPluginExtension.ajpProtocol }
-	    conventionMapping.map('username') { tomcatPluginExtension.user.username }
-	    conventionMapping.map('userPassword') { tomcatPluginExtension.user.password }
-	    conventionMapping.map('userRole') { tomcatPluginExtension.user.role }
+	    conventionMapping.map('users') { tomcatPluginExtension.users }
         }
     }
 
