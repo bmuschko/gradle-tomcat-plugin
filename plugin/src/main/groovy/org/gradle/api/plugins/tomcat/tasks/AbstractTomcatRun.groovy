@@ -326,7 +326,7 @@ abstract class AbstractTomcatRun extends Tomcat {
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
             getServer().configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
 	    for(user in users) {
-		getServer().configureUser(user.getUsername, user.getUserPassword(), user.getUserRole())
+		getServer().configureUser(user.getUsername, user.getPassword(), user.getRoles())
 	    }
 
             if(getEnableSSL()) {

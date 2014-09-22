@@ -9,6 +9,6 @@ class TomcatUser {
 
     String username;
     String password;
-    String role;
+    def roles = [];
     
 }

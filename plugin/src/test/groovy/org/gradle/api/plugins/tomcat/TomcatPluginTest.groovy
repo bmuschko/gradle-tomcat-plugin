@@ -139,7 +139,7 @@ class TomcatPluginTest extends Specification {
 		    user {
 			username = 'nykolaslima'
 			password = 'nykolaslima'
-			role = 'developer'
+			roles = ['developer', 'admin']
 		    }
                 }
             }
@@ -156,7 +156,8 @@ class TomcatPluginTest extends Specification {
             tomcatRunTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
 	    tomcatRunTask.users.getAt(0).username == 'nykolaslima'
 	    tomcatRunTask.users.getAt(0).password == 'nykolaslima'
-	    tomcatRunTask.users.getAt(0).role == 'developer'
+	    tomcatRunTask.users.getAt(0).roles[0] == 'developer'
+	    tomcatRunTask.users.getAt(0).roles[1] == 'admin'
             Task tomcatRunWarTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
             tomcatRunWarTask.httpPort == 9090
             tomcatRunWarTask.httpsPort == 9443
