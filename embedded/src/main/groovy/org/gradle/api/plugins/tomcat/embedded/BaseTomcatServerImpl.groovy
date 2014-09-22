@@ -57,8 +57,8 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     }
     
     @Override
-    void configureUser(String username, String password, String group) {
+    void configureUser(String username, String password, String role) {
 	tomcat.addUser(username, password);
-	tomcat.addRole(username, group);
+	tomcat.addRole(username, role);
     } 
 }

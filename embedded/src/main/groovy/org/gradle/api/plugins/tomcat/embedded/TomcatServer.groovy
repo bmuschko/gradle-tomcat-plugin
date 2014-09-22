@@ -40,5 +40,5 @@ interface TomcatServer {
     void start()
     void stop()
     boolean isStopped()
-    void configureUser(String username, String password, String group)
+    void configureUser(String username, String password, String role)
 }

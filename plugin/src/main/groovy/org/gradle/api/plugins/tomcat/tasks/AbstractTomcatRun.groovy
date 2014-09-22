@@ -209,7 +209,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     
     @Input
     @Optional
-    String userGroup;
+    String userRole;
 
     def server
     def realm
@@ -333,8 +333,8 @@ abstract class AbstractTomcatRun extends Tomcat {
             getServer().configureContainer()
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
             getServer().configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
-	    if(getUsername() && getUserPassword() && getUserGroup()) {
-		getServer().configureUser(getUsername(), getUserPassword(), getUserGroup())
+	    if(getUsername() && getUserPassword() && getUserRole()) {
+		getServer().configureUser(getUsername(), getUserPassword(), getUserRole())
 	    }
 
             if(getEnableSSL()) {
