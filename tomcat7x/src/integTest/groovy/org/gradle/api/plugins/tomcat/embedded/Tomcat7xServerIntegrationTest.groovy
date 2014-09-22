@@ -66,8 +66,9 @@ class Tomcat7xServerIntegrationTest extends Specification {
 	when:
 	    tomcatServer.embedded.getHost()
 	    tomcatServer.embedded.port = port
-	    tomcatServer.embedded.addUser("nykolaslima", "123456");
-	    tomcatServer.embedded.addRole("nykolaslima", "role");
+	    def roles = []
+	    roles << "developers"
+	    tomcatServer.configureUser("nykolaslima", "123456", roles)
 	    tomcatServer.start()
 	then:
 	    new Socket(InetAddress.getByName('localhost'), port)
