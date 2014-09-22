@@ -15,6 +15,7 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
+
 /**
  * Tomcat 6x server implementation.
  *
@@ -88,7 +89,15 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
         httpsConnector.setAttribute('clientAuth', clientAuth)
         tomcat.addConnector httpsConnector
     }
-
+    
+    @Override
+    void configureUser(String username, String password, List<String> roles) {
+	CustomRealm realm = new CustomRealm()
+	realm.createUser(username, password)
+	realm.createRoles(username, roles)
+	tomcat.setRealm(realm)
+    }
+    
     private createHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystore, String keyPassword) {
         def httpsConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
         httpsConnector.scheme = 'https'

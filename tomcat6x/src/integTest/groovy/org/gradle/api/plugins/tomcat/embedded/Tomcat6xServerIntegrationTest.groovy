@@ -15,9 +15,8 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import spock.lang.Specification
-
 import static org.spockframework.util.Assert.fail
+import spock.lang.Specification
 
 /**
  * Tomcat 6x server test.
@@ -54,5 +53,28 @@ class Tomcat6xServerIntegrationTest extends Specification {
             new Socket(InetAddress.getByName('localhost'), port)
         cleanup:
             tomcatServer.stop()
+    }
+    
+    def "Can start server with authentication user"() {
+	setup:
+	    Integer port = 8080
+	expect:
+	    try {
+		new Socket(InetAddress.getByName('localhost'), port)
+		fail("The port $port is already in use.")
+	    }
+	    catch(ConnectException e) {}
+	when:
+	    def localHost = tomcatServer.embedded.createHost('localHost', new File('.').absolutePath)
+	    tomcatServer.addEngineToServer(localHost)
+	    tomcatServer.configureHttpConnector(port, null, 'org.apache.coyote.http11.Http11Protocol')
+	    def roles = []
+	    roles << "developer"
+	    tomcatServer.configureUser("developer", "123456", roles)
+	    tomcatServer.start()
+	then:
+	    new Socket(InetAddress.getByName('localhost'), port)
+	cleanup:
+	    tomcatServer.stop()
     }
 }
