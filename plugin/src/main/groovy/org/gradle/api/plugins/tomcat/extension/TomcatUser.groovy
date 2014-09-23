@@ -5,10 +5,10 @@ package org.gradle.api.plugins.tomcat.extension
  *
  * @author Nykolas Lima
  */
-class TomcatUser {
+class TomcatUser implements Serializable {
 
-    String username;
-    String password;
-    def roles = [];
+    String username
+    String password
+    def roles = [] as String[]
     
 }

@@ -23,6 +23,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
+import org.gradle.api.plugins.tomcat.extension.TomcatUser
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.ssl.SSLKeyStore
 import org.gradle.api.plugins.tomcat.internal.ssl.SSLKeyStoreImpl
@@ -201,7 +202,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     
     @Input
     @Optional
-    def users = []
+    def users = [] as TomcatUser[]
     
     def server
     def realm

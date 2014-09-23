@@ -33,7 +33,7 @@ class TomcatPluginExtension {
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
     TomcatJasperConvention jasper = new TomcatJasperConvention()
-    def users = []
+    def users = [] as TomcatUser[]
 
     def jasper(Closure closure) {
         closure.resolveStrategy = Closure.DELEGATE_FIRST

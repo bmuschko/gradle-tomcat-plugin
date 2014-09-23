@@ -16,6 +16,9 @@
 package org.gradle.api.plugins.tomcat.embedded
 
 import static org.spockframework.util.Assert.fail
+
+import org.gradle.util.AvailablePortFinder
+
 import spock.lang.Specification
 
 /**
@@ -37,7 +40,8 @@ class Tomcat8xServerIntegrationTest extends Specification {
 
     def "Can start server"() {
         setup:
-            Integer port = 8080
+	    AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
+            Integer port = availablePortFinder.nextAvailable
         expect:
             try {
                 new Socket(InetAddress.getByName('localhost'), port)
@@ -56,7 +60,8 @@ class Tomcat8xServerIntegrationTest extends Specification {
     
     def "Can start server with authentication user"() {
 	setup:
-	    Integer port = 8080
+	    AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
+	    Integer port = availablePortFinder.nextAvailable
 	expect:
 	    try {
 		new Socket(InetAddress.getByName('localhost'), port)
@@ -68,7 +73,9 @@ class Tomcat8xServerIntegrationTest extends Specification {
 	    tomcatServer.embedded.port = port
 	    def roles = []
 	    roles << "developers"
+	    roles << "admin"
 	    tomcatServer.configureUser("nykolaslima", "123456", roles)
+	    tomcatServer.configureUser("bmuschko", "123456", roles)
 	    tomcatServer.start()
 	then:
 	    new Socket(InetAddress.getByName('localhost'), port)

@@ -3,6 +3,7 @@ package org.gradle.api.plugins.tomcat.embedded
 import org.apache.catalina.realm.UserDatabaseRealm
 import org.apache.catalina.users.MemoryUserDatabase
 
+
 class CustomRealm extends UserDatabaseRealm {
 
     public CustomRealm() {
