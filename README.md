@@ -29,7 +29,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.2.4'
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.2.5'
     }
 }
 ```
@@ -165,8 +165,8 @@ The Tomcat plugin exposes the following properties through the extension named `
 * `httpProtocol`: The HTTP protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `httpsProtocol`: The HTTPS protocol handler class name to be used (defaults to `org.apache.coyote.http11.Http11Protocol`).
 * `ajpProtocol`: The AJP protocol handler class name to be used (defaults to `org.apache.coyote.ajp.AjpProtocol`).
-* `users`: List of User's Clojure with `username`, `password` and `roles`. Used to
-  configure tomcat with basic authentication with this users
+* `users`: List of users with `username`, `password` and `roles`. Used to configure tomcat with basic authentication 
+with these users.
 
 ### Example
 
@@ -177,11 +177,18 @@ tomcat {
     httpPort = 8090
     httpsPort = 8091
     enableSSL = true
+    
     users {
         user {
-          username = 'user'
-          password = '123456'
-          roles = ['developers', 'admin']
+            username = 'user1'
+            password = '123456'
+            roles = ['developers', 'admin']
+        }
+
+        user {
+            username = 'user2'
+            password = 'abcdef'
+            roles = ['manager']
         }
     }
 }

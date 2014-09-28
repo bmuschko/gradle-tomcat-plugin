@@ -16,15 +16,14 @@
 package org.gradle.api.plugins.tomcat
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.tomcat.extension.TomcatPluginExtension
+import org.gradle.api.plugins.tomcat.embedded.TomcatUser
 import org.gradle.api.plugins.tomcat.tasks.TomcatJasper
 import org.gradle.api.plugins.tomcat.tasks.TomcatRun
 import org.gradle.api.plugins.tomcat.tasks.TomcatRunWar
 import org.gradle.api.plugins.tomcat.tasks.TomcatStop
 import org.gradle.testfixtures.ProjectBuilder
-
 import spock.lang.Specification
 
 /**
@@ -50,7 +49,7 @@ class TomcatPluginTest extends Specification {
     def "Creates and preconfigures tomcatRun task"() {
         expect:
             TomcatPluginExtension extension = project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME)
-            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
+            TomcatRun task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
             task instanceof TomcatRun
             task.description == 'Uses your files as and where they are and deploys them to Tomcat.'
             task.group == WarPlugin.WEB_APP_GROUP
@@ -71,7 +70,7 @@ class TomcatPluginTest extends Specification {
     def "Creates and preconfigures tomcatRunWar task"() {
         expect:
             TomcatPluginExtension extension = project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME)
-            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
+            TomcatRunWar task = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
             task instanceof TomcatRunWar
             task.description == 'Assembles the webapp into a war and deploys it to Tomcat.'
             task.group == WarPlugin.WEB_APP_GROUP
@@ -90,7 +89,7 @@ class TomcatPluginTest extends Specification {
     def "Creates and preconfigures tomcatStop task"() {
         expect:
             TomcatPluginExtension extension = project.extensions.getByName(TomcatPlugin.TOMCAT_EXTENSION_NAME)
-            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+            TomcatStop task = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             task instanceof TomcatStop
             task.description == 'Stops Tomcat.'
             task.group == WarPlugin.WEB_APP_GROUP
@@ -100,7 +99,7 @@ class TomcatPluginTest extends Specification {
 
     def "Creates and preconfigures tomcatJasper task"() {
         expect:
-            Task task = project.tasks.getByName(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+            TomcatJasper task = project.tasks.getByName(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
             task instanceof TomcatJasper
             task.description == 'Runs the JSP compiler and turns JSP pages into Java source.'
             task.group == WarPlugin.WEB_APP_GROUP
@@ -135,16 +134,23 @@ class TomcatPluginTest extends Specification {
                 httpProtocol = 'org.apache.coyote.http11.Http11NioProtocol'
                 httpsProtocol = 'org.apache.coyote.http11.Http11AprProtocol'
                 ajpProtocol = 'org.apache.coyote.ajp.RandomAjpProtocol'
-		users {
-		    user {
-			username = 'nykolaslima'
-			password = 'nykolaslima'
-			roles = ['developer', 'admin']
-		    }
+
+                users {
+                    user {
+                        username = 'user1'
+                        password = 'pwd1'
+                        roles = ['developer', 'admin']
+                    }
+
+                    user {
+                        username = 'user2'
+                        password = 'pwd2'
+                        roles = ['manager']
+                    }
                 }
             }
         then:
-            Task tomcatRunTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
+            TomcatRun tomcatRunTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_TASK_NAME)
             tomcatRunTask.httpPort == 9090
             tomcatRunTask.httpsPort == 9443
             tomcatRunTask.stopPort == 9081
@@ -154,11 +160,17 @@ class TomcatPluginTest extends Specification {
             tomcatRunTask.httpProtocol == 'org.apache.coyote.http11.Http11NioProtocol'
             tomcatRunTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
             tomcatRunTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
-	    tomcatRunTask.users.getAt(0).username == 'nykolaslima'
-	    tomcatRunTask.users.getAt(0).password == 'nykolaslima'
-	    tomcatRunTask.users.getAt(0).roles[0] == 'developer'
-	    tomcatRunTask.users.getAt(0).roles[1] == 'admin'
-            Task tomcatRunWarTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
+            tomcatRunTask.users.size() == 2
+            TomcatUser tomcatUser1 = tomcatRunTask.users[0]
+            tomcatUser1.username == 'user1'
+            tomcatUser1.password == 'pwd1'
+            tomcatUser1.roles[0] == 'developer'
+            tomcatUser1.roles[1] == 'admin'
+            TomcatUser tomcatUser2 = tomcatRunTask.users[1]
+            tomcatUser2.username == 'user2'
+            tomcatUser2.password == 'pwd2'
+            tomcatUser2.roles[0] == 'manager'
+            TomcatRunWar tomcatRunWarTask = project.tasks.getByName(TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME)
             tomcatRunWarTask.httpPort == 9090
             tomcatRunWarTask.httpsPort == 9443
             tomcatRunWarTask.stopPort == 9081
@@ -168,7 +180,7 @@ class TomcatPluginTest extends Specification {
             tomcatRunWarTask.httpProtocol == 'org.apache.coyote.http11.Http11NioProtocol'
             tomcatRunWarTask.httpsProtocol == 'org.apache.coyote.http11.Http11AprProtocol'
             tomcatRunWarTask.ajpProtocol == 'org.apache.coyote.ajp.RandomAjpProtocol'
-            Task tomcatStopTask = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+            TomcatStop tomcatStopTask = project.tasks.getByName(TomcatPlugin.TOMCAT_STOP_TASK_NAME)
             tomcatStopTask.stopPort == 9081
             tomcatStopTask.stopKey == 'myStopKey'
     }

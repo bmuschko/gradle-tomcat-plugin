@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-
 /**
  * Tomcat 7x server implementation.
  *

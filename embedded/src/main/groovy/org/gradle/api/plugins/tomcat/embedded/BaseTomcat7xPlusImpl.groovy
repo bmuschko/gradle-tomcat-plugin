@@ -113,6 +113,15 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
     }
 
     @Override
+    void configureUser(TomcatUser user) {
+        tomcat.addUser(user.username, user.password)
+
+        user.roles.each { role ->
+            tomcat.addRole(user.username, role)
+        }
+    }
+
+    @Override
     void setConfigFile(URL configFile) {
         if(configFile) {
             context.configFile = configFile

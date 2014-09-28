@@ -35,10 +35,10 @@ interface TomcatServer {
     void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword)
     void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword, File truststoreFile, String trustPassword, String clientAuth)
     void configureDefaultWebXml(File webDefaultXml)
+    void configureUser(TomcatUser user)
     void setConfigFile(URL configFile)
     void addWebappResource(File resource)
     void start()
     void stop()
     boolean isStopped()
-    void configureUser(String username, String password, List<String> roles)
 }

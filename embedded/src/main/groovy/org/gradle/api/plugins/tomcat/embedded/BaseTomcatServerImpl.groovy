@@ -44,10 +44,14 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
 
     @Override
     void stop() {
-        stopped = true
         context?.stop()
         context?.destroy()
-        tomcat.stop()
+
+        if(!stopped) {
+            tomcat.stop()
+            stopped = true
+        }
+
         tomcat.destroy()
     }
 
@@ -55,12 +59,4 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     boolean isStopped() {
         stopped
     }
-    
-    @Override
-    void configureUser(String username, String password, List<String> roles) {
-	tomcat.addUser(username, password)
-	for(role in roles) {
-	    tomcat.addRole(username, role)
-	}
-    } 
 }

@@ -95,6 +95,20 @@ tomcat {
     httpPort = $httpPort
     stopKey = 'stopThis'
     stopPort = $stopPort
+
+    users {
+        user {
+            username = 'user1'
+            password = '123456'
+            roles = ['developers', 'admin']
+        }
+
+        user {
+            username = 'user2'
+            password = 'abcdef'
+            roles = ['manager']
+        }
+    }
 }
 """
         runTasks(integTestDir, 'startAndStopTomcat')

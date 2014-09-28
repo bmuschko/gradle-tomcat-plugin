@@ -15,15 +15,11 @@
  */
 package org.gradle.api.plugins.tomcat.tasks
 
-import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileLogger
-
-import java.util.logging.Level
-
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.tomcat.embedded.TomcatServerFactory
-import org.gradle.api.plugins.tomcat.extension.TomcatUser
+import org.gradle.api.plugins.tomcat.embedded.TomcatUser
 import org.gradle.api.plugins.tomcat.internal.ShutdownMonitor
 import org.gradle.api.plugins.tomcat.internal.ssl.SSLKeyStore
 import org.gradle.api.plugins.tomcat.internal.ssl.SSLKeyStoreImpl
@@ -31,6 +27,10 @@ import org.gradle.api.plugins.tomcat.internal.ssl.StoreType
 import org.gradle.api.plugins.tomcat.internal.utils.ThreadContextClassLoader
 import org.gradle.api.plugins.tomcat.internal.utils.TomcatThreadContextClassLoader
 import org.gradle.api.tasks.*
+
+import java.util.logging.Level
+
+import static org.gradle.api.plugins.tomcat.internal.LoggingHandler.withJdkFileLogger
 
 /**
  * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
@@ -199,10 +199,13 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     @Input
     String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
-    
+
+    /**
+     * The list of Tomcat users. Defaults to an empty list.
+     */
     @Input
     @Optional
-    def users = [] as TomcatUser[]
+    List<TomcatUser> users = []
     
     def server
     def realm
@@ -326,9 +329,10 @@ abstract class AbstractTomcatRun extends Tomcat {
             getServer().configureContainer()
             getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
             getServer().configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
-	    for(user in users) {
-		getServer().configureUser(user.getUsername, user.getPassword(), user.getRoles())
-	    }
+
+            getUsers().each { TomcatUser user ->
+                getServer().configureUser(user)
+            }
 
             if(getEnableSSL()) {
                 if(!getKeystoreFile()) {
@@ -397,5 +401,17 @@ abstract class AbstractTomcatRun extends Tomcat {
                 }
             }
         })
+    }
+
+    /**
+     * Adds a Tomcat user by providing required fields. Allows for adding users in enhanced tasks without having to
+     * know the plugin's API class representing a Tomcat user.
+     *
+     * @param username Username
+     * @param password Password
+     * @param roles Roles
+     */
+    void user(String username, String password, List<String> roles) {
+        users << new TomcatUser(username: username, password: password, roles: roles)
     }
 }

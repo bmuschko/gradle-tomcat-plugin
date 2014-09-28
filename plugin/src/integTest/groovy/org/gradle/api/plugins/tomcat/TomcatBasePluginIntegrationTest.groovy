@@ -33,12 +33,16 @@ task myTomcatRun(type: org.gradle.api.plugins.tomcat.tasks.TomcatRun) {
     httpPort = $httpPort
     stopPort = $stopPort
     daemon = true
+    user 'user1', '1234567', ['developer', 'admin']
+    user 'user2', 'abcdef', ['manager']
 }
 
 task myTomcatRunWar(type: org.gradle.api.plugins.tomcat.tasks.TomcatRunWar) {
     httpPort = $httpPort
     stopPort = $stopPort
     daemon = true
+    user 'user1', '1234567', ['developer', 'admin']
+    user 'user2', 'abcdef', ['manager']
 }
 
 task myTomcatStop(type: org.gradle.api.plugins.tomcat.tasks.TomcatStop) {

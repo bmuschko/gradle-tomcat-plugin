@@ -15,7 +15,6 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-
 /**
  * Tomcat 6x server implementation.
  *
@@ -91,11 +90,26 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
     }
     
     @Override
-    void configureUser(String username, String password, List<String> roles) {
-	CustomRealm realm = new CustomRealm()
-	realm.createUser(username, password)
-	realm.createRoles(username, roles)
-	tomcat.setRealm(realm)
+    void configureUser(TomcatUser user) {
+        def realm = createRealm(user)
+        tomcat.setRealm(realm)
+    }
+
+    private createRealm(TomcatUser user) {
+        Class userDatabaseRealmClass = loadClass('org.apache.catalina.realm.UserDatabaseRealm')
+        def userDatabaseRealm = userDatabaseRealmClass.newInstance()
+        Class memoryUserDatabaseClass = loadClass('org.apache.catalina.users.MemoryUserDatabase')
+        def memoryUserDatabase = memoryUserDatabaseClass.newInstance()
+
+        userDatabaseRealm.database = memoryUserDatabase
+        def createdUser = memoryUserDatabase.createUser(user.username, user.password, user.username)
+
+        user.roles.each { role ->
+            def createdRole = memoryUserDatabase.createRole(role, role)
+            createdUser.addRole(createdRole)
+        }
+
+        userDatabaseRealm
     }
     
     private createHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystore, String keyPassword) {

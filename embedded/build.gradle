@@ -1,3 +1,18 @@
 dependencies {
     compile gradleApi()
 }
+
+configurations {
+    integTestFixtures
+}
+
+task integTestFixturesJar(type: Jar) {
+    description = 'Creates integration test fixtures JAR.'
+    classifier = 'testfixtures'
+    from sourceSets.integrationTest.output
+    include '**/fixture/*.class'
+}
+
+artifacts {
+    integTestFixtures integTestFixturesJar
+}

@@ -1,5 +1,6 @@
-sourceCompatibility = '1.7'
-targetCompatibility = '1.7'
+def jdk7 = '1.7'
+sourceCompatibility = jdk7
+targetCompatibility = jdk7
 
 dependencies {
     def tomcatVersion = '8.0.8'
@@ -10,10 +11,11 @@ dependencies {
     compile("org.apache.tomcat:tomcat-jasper:${tomcatVersion}") {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
+    testCompile project(path: ':embedded', configuration: 'integTestFixtures')
 }
 
 idea {
     module {
-        jdkName = '1.7'
+        jdkName = jdk7
     }
 }

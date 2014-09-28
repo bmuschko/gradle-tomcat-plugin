@@ -15,71 +15,32 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import static org.spockframework.util.Assert.fail
-
-import org.gradle.util.AvailablePortFinder
-
-import spock.lang.Specification
+import org.gradle.api.plugins.tomcat.embedded.fixture.EmbeddedTomcatIntegrationTest
 
 /**
  * Tomcat 8x server test.
  *
  * @author Benjamin Muschko
  */
-class Tomcat8xServerIntegrationTest extends Specification {
-    TomcatServer tomcatServer = new Tomcat8xServer()
-
-    def setup() {
-        tomcatServer.home = new File(System.properties['user.home'], 'tmp/tomcat8xHome').canonicalPath
+class Tomcat8xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
+    @Override
+    protected TomcatServer createTomcatServer() {
+        new Tomcat8xServer()
     }
 
-    def "Indicates correct version"() {
-        expect:
-            tomcatServer.version == TomcatVersion.VERSION_8X
+    @Override
+    protected File getTomcatHomeDir() {
+        new File(System.properties['user.home'], 'tmp/tomcat8xHome')
     }
 
-    def "Can start server"() {
-        setup:
-	    AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
-            Integer port = availablePortFinder.nextAvailable
-        expect:
-            try {
-                new Socket(InetAddress.getByName('localhost'), port)
-                fail("The port $port is already in use.")
-            }
-            catch(ConnectException e) {}
-        when:
-            tomcatServer.embedded.getHost()
-            tomcatServer.embedded.port = port
-            tomcatServer.start()
-        then:
-            new Socket(InetAddress.getByName('localhost'), port)
-        cleanup:
-            tomcatServer.stop()
+    @Override
+    protected void configureTomcatServer() {
+        tomcatServer.embedded.getHost()
+        tomcatServer.embedded.port = port
     }
-    
-    def "Can start server with authentication user"() {
-	setup:
-	    AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
-	    Integer port = availablePortFinder.nextAvailable
-	expect:
-	    try {
-		new Socket(InetAddress.getByName('localhost'), port)
-		fail("The port $port is already in use.")
-	    }
-	    catch(ConnectException e) {}
-	when:
-	    tomcatServer.embedded.getHost()
-	    tomcatServer.embedded.port = port
-	    def roles = []
-	    roles << "developers"
-	    roles << "admin"
-	    tomcatServer.configureUser("nykolaslima", "123456", roles)
-	    tomcatServer.configureUser("bmuschko", "123456", roles)
-	    tomcatServer.start()
-	then:
-	    new Socket(InetAddress.getByName('localhost'), port)
-	cleanup:
-	    tomcatServer.stop()
+
+    @Override
+    protected TomcatVersion getTomcatVersion() {
+        TomcatVersion.VERSION_8X
     }
 }

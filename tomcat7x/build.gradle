@@ -7,4 +7,5 @@ dependencies {
     compile("org.apache.tomcat:tomcat-jasper:${tomcatVersion}") {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
+    testCompile project(path: ':embedded', configuration: 'integTestFixtures')
 }

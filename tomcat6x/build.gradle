@@ -5,4 +5,5 @@ dependencies {
             "org.apache.tomcat:catalina:${tomcatVersion}",
             "org.apache.tomcat:coyote:${tomcatVersion}",
             "org.apache.tomcat:jasper:${tomcatVersion}"
+    testCompile project(path: ':embedded', configuration: 'integTestFixtures')
 }

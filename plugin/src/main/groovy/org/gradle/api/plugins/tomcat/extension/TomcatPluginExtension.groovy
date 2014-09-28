@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 package org.gradle.api.plugins.tomcat.extension
+
+import org.gradle.api.plugins.tomcat.embedded.TomcatUser
+import org.gradle.util.ConfigureUtil
+
 /**
  * Defines Tomcat plugin extension.
  *
@@ -33,25 +37,21 @@ class TomcatPluginExtension {
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
     TomcatJasperConvention jasper = new TomcatJasperConvention()
-    def users = [] as TomcatUser[]
+    List<TomcatUser> users = []
 
     def jasper(Closure closure) {
-        closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.delegate = jasper
-        closure()
+        ConfigureUtil.configure(closure, jasper)
     }
     
     def users(Closure closure) {
-	closure.resolveStrategy = Closure.DELEGATE_FIRST
-        closure.delegate = users
-        closure()
+        ConfigureUtil.configure(closure, users)
     }
     
     def user(Closure closure) {
-	closure.resolveStrategy = Closure.DELEGATE_FIRST
-	TomcatUser user = new TomcatUser()
-	closure.delegate = user
-	users << user
-	closure()
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        TomcatUser user = new TomcatUser()
+        closure.delegate = user
+        users << user
+        closure()
     }
 }

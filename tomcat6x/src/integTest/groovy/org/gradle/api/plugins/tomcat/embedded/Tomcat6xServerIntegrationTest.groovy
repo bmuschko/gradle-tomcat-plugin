@@ -15,66 +15,33 @@
  */
 package org.gradle.api.plugins.tomcat.embedded
 
-import static org.spockframework.util.Assert.fail
-import spock.lang.Specification
+import org.gradle.api.plugins.tomcat.embedded.fixture.EmbeddedTomcatIntegrationTest
 
 /**
  * Tomcat 6x server test.
  *
  * @author Benjamin Muschko
  */
-class Tomcat6xServerIntegrationTest extends Specification {
-    TomcatServer tomcatServer = new Tomcat6xServer()
-
-    def setup() {
-        tomcatServer.home = new File(System.properties['user.home'], 'tmp/tomcat6xHome').canonicalPath
+class Tomcat6xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
+    @Override
+    protected TomcatServer createTomcatServer() {
+        new Tomcat6xServer()
     }
 
-    def "Indicates correct version"() {
-        expect:
-            tomcatServer.version == TomcatVersion.VERSION_6X
+    @Override
+    protected File getTomcatHomeDir() {
+        new File(System.properties['user.home'], 'tmp/tomcat6xHome')
     }
 
-    def "Can start server"() {
-        setup:
-            Integer port = 8080
-        expect:
-            try {
-                new Socket(InetAddress.getByName('localhost'), port)
-                fail("The port $port is already in use.")
-            }
-            catch(ConnectException e) {}
-        when:
-            def localHost = tomcatServer.embedded.createHost('localHost', new File('.').absolutePath)
-            tomcatServer.addEngineToServer(localHost)
-            tomcatServer.configureHttpConnector(port, null, 'org.apache.coyote.http11.Http11Protocol')
-            tomcatServer.start()
-        then:
-            new Socket(InetAddress.getByName('localhost'), port)
-        cleanup:
-            tomcatServer.stop()
+    @Override
+    protected void configureTomcatServer() {
+        def localHost = tomcatServer.embedded.createHost('localHost', new File('.').absolutePath)
+        tomcatServer.addEngineToServer(localHost)
+        tomcatServer.configureHttpConnector(port, null, 'org.apache.coyote.http11.Http11Protocol')
     }
-    
-    def "Can start server with authentication user"() {
-	setup:
-	    Integer port = 8080
-	expect:
-	    try {
-		new Socket(InetAddress.getByName('localhost'), port)
-		fail("The port $port is already in use.")
-	    }
-	    catch(ConnectException e) {}
-	when:
-	    def localHost = tomcatServer.embedded.createHost('localHost', new File('.').absolutePath)
-	    tomcatServer.addEngineToServer(localHost)
-	    tomcatServer.configureHttpConnector(port, null, 'org.apache.coyote.http11.Http11Protocol')
-	    def roles = []
-	    roles << "developer"
-	    tomcatServer.configureUser("developer", "123456", roles)
-	    tomcatServer.start()
-	then:
-	    new Socket(InetAddress.getByName('localhost'), port)
-	cleanup:
-	    tomcatServer.stop()
+
+    @Override
+    protected TomcatVersion getTomcatVersion() {
+        TomcatVersion.VERSION_6X
     }
 }
