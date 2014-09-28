@@ -104,7 +104,7 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
         userDatabaseRealm.database = memoryUserDatabase
         def createdUser = memoryUserDatabase.createUser(user.username, user.password, user.username)
 
-        user.roles.each { role ->
+        user.roles?.each { role ->
             def createdRole = memoryUserDatabase.createRole(role, role)
             createdUser.addRole(createdRole)
         }

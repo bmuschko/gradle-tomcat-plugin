@@ -57,8 +57,9 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
     }
 
     private void addUsers() {
-        def roles = ['developer', 'admin']
-        tomcatServer.configureUser(new TomcatUser(username: 'nykolaslima', password: '123456', roles: roles))
-        tomcatServer.configureUser(new TomcatUser(username: 'bmuschko', password: '123456', roles: roles))
+        tomcatServer.configureUser(new TomcatUser(username: 'nykolaslima', password: '123456', roles: ['developer', 'admin']))
+        tomcatServer.configureUser(new TomcatUser(username: 'bmuschko', password: 'abcdef', roles: ['manager']))
+        tomcatServer.configureUser(new TomcatUser(username: 'unprivileged', password: 'pwd'))
+        tomcatServer.configureUser(new TomcatUser(username: 'unprivileged', password: 'pwd', roles: null))
     }
 }

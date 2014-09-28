@@ -116,7 +116,7 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
     void configureUser(TomcatUser user) {
         tomcat.addUser(user.username, user.password)
 
-        user.roles.each { role ->
+        user.roles?.each { role ->
             tomcat.addRole(user.username, role)
         }
     }
