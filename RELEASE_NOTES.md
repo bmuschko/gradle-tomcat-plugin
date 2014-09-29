@@ -1,3 +1,7 @@
+### Version 1.2.5 (September 28, 2014)
+
+* Allow for declaring users - [Pull Request 109](https://github.com/bmuschko/gradle-tomcat-plugin/pull/109).
+
 ### Version 1.2.4 (June 21, 2014)
 
 * Configure classes directory and web app source directory in base plugin. This will reduce the amount of configuration required by plugin consumers - [Issue 86](https://github.com/bmuschko/gradle-tomcat-plugin/issues/86).
