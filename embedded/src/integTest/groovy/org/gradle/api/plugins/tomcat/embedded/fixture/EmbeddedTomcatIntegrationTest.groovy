@@ -25,6 +25,10 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
         new Socket(InetAddress.getByName('localhost'), port)
     }
 
+    protected File createTmpDir(String dir) {
+        new File(System.properties['java.io.tmpdir'], dir)
+    }
+
     protected abstract TomcatServer createTomcatServer()
     protected abstract File getTomcatHomeDir()
     protected abstract void configureTomcatServer()

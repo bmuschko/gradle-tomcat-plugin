@@ -30,7 +30,7 @@ class Tomcat8xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
 
     @Override
     protected File getTomcatHomeDir() {
-        new File(System.properties['user.home'], 'tmp/tomcat8xHome')
+        createTmpDir('tomcat8xHome')
     }
 
     @Override
