@@ -192,6 +192,11 @@ bintray {
             vcsTag = "v$project.version"
             attributes = ['gradle-plugin': ["com.bmuschko.tomcat:${project.group}:${project.name}",
                                             "com.bmuschko.tomcat-base:${project.group}:${project.name}"]]
+
+            gpg {
+                sign = true
+                passphrase = project.hasProperty('gpgPassphrase') ? project.getProperty('gpgPassphrase') : null
+            }
         }
     }
 }
