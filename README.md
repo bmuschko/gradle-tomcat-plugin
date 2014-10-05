@@ -46,14 +46,14 @@ The JAR file comes with two plugins:
         <th>Description</th>
     </tr>
     <tr>
-        <td>tomcat-base</td>
+        <td>com.bmuschko.tomcat-base</td>
         <td>-</td>
         <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/TomcatBasePlugin.html">TomcatBasePlugin</a></td>
         <td>Provides Tomcat custom task types, pre-configures classpath.</td>
     </tr>
     <tr>
-        <td>tomcat</td>
-        <td>tomcat-base</td>
+        <td>com.bmuschko.tomcat</td>
+        <td>com.bmuschko.tomcat-base</td>
         <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/TomcatPlugin.html">TomcatPlugin</a></td>
         <td>Provides tasks for starting and stopping an embedded Tomcat container and exposes extension named <code>tomcat</code>.</td>
     </tr>
