@@ -180,11 +180,18 @@ bintray {
     pkg {
         repo = 'gradle-plugins'
         name = 'gradle-tomcat-plugin'
+        desc = 'Gradle plugin supporting deployment of your web application to an embedded Tomcat web container.'
+        websiteUrl = "https://github.com/bmuschko/${project.name}"
+        issueTrackerUrl = "https://github.com/bmuschko/${project.name}/issues"
+        vcsUrl = "https://github.com/bmuschko/${project.name}.git"
         licenses = ['Apache-2.0']
+        labels = ['gradle', 'tomcat', 'web', 'container', 'embedded']
+        publicDownloadNumbers = true
 
         version {
-            attributes = ['gradle-plugin': ['com.bmuschko.tomcat:com.bmuschko:gradle-tomcat-plugin',
-                                            'com.bmuschko.tomcat-base:com.bmuschko:gradle-tomcat-plugin']]
+            vcsTag = "v$project.version"
+            attributes = ['gradle-plugin': ["com.bmuschko.tomcat:${project.group}:${project.name}",
+                                            "com.bmuschko.tomcat-base:${project.group}:${project.name}"]]
         }
     }
 }
