@@ -29,7 +29,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.2.5'
+        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:2.0'
     }
 }
 ```
@@ -48,13 +48,13 @@ The JAR file comes with two plugins:
     <tr>
         <td>tomcat-base</td>
         <td>-</td>
-        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/TomcatBasePlugin.html">TomcatBasePlugin</a></td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/TomcatBasePlugin.html">TomcatBasePlugin</a></td>
         <td>Provides Tomcat custom task types, pre-configures classpath.</td>
     </tr>
     <tr>
         <td>tomcat</td>
         <td>tomcat-base</td>
-        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/TomcatPlugin.html">TomcatPlugin</a></td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/TomcatPlugin.html">TomcatPlugin</a></td>
         <td>Provides tasks for starting and stopping an embedded Tomcat container and exposes extension named <code>tomcat</code>.</td>
     </tr>
 </table>
@@ -63,14 +63,14 @@ The `tomcat` plugin helps you get started quickly. If you are OK if the preconfi
 preferrable option. Most plugin users will go with this option. To use the Tomcat plugin, include the following code snippet
 in your build script:
 
-    apply plugin: 'tomcat'
+    apply plugin: 'com.bmuschko.tomcat'
 
 If you need full control over your tasks or don't want to go with the preconfigured tasks, you will want to use the `tomcat-base`
 plugin. That might be the case if you want to set up the container solely for functional testing. The downside is that each task
 has to be configured individually in your build script. To use the Tomcat base plugin, include the following code snippet
 in your build script:
 
-    apply plugin: 'tomcat-base'
+    apply plugin: 'com.bmuschko.tomcat-base'
 
 ### Assigning the Tomcat libraries
 
@@ -124,25 +124,25 @@ The `tomcat` plugin pre-defines the following tasks out-of-the-box:
     <tr>
         <td>tomcatRun</td>
         <td>-</td>
-        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatRun.html">TomcatRun</a></td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/tasks/TomcatRun.html">TomcatRun</a></td>
         <td>Starts a Tomcat instance and deploys the exploded web application to it.</td>
     </tr>
     <tr>
         <td>tomcatRunWar</td>
         <td>-</td>
-        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatRunWar.html">TomcatRunWar</a></td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/tasks/TomcatRunWar.html">TomcatRunWar</a></td>
         <td>Starts a Tomcat instance and deploys the WAR to it.</td>
     </tr>
     <tr>
         <td>tomcatStop</td>
         <td>-</td>
-        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatStop.html">TomcatStop</a></td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/tasks/TomcatStop.html">TomcatStop</a></td>
         <td>Stops the Tomcat instance.</td>
     </tr>
     <tr>
         <td>tomcatJasper</td>
         <td>-</td>
-        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/org/gradle/api/plugins/tomcat/tasks/TomcatJasper.html">TomcatJasper</a></td>
+        <td><a href="http://bmuschko.github.io/gradle-tomcat-plugin/docs/groovydoc/com/bmuschko/gradle/tomcat/tasks/TomcatJasper.html">TomcatJasper</a></td>
         <td>Runs the JSP compiler and turns JSP pages into Java source using <a href="http://tomcat.apache.org/tomcat-7.0-doc/jasper-howto.html">Jasper</a>.</td>
     </tr>
 </table>
@@ -432,20 +432,20 @@ thread and shut it down once your tests are done. The following example demonstr
 functionality. Of course this is only one way of doing it. The following example requires Gradle >= 1.7:
 
 ```groovy
-apply plugin: 'tomcat-base'
+apply plugin: 'com.bmuschko.tomcat-base'
 
 ext {
     tomcatStopPort = 8081
     tomcatStopKey = 'stopKey'
 }
 
-task integrationTomcatRun(type: org.gradle.api.plugins.tomcat.tasks.TomcatRun) {
+task integrationTomcatRun(type: com.bmuschko.gradle.tomcat.tasks.TomcatRun) {
     stopPort = tomcatStopPort
     stopKey = tomcatStopKey
     daemon = true
 }
 
-task integrationTomcatStop(type: org.gradle.api.plugins.tomcat.tasks.TomcatStop) {
+task integrationTomcatStop(type: com.bmuschko.gradle.tomcat.tasks.TomcatStop) {
     stopPort = tomcatStopPort
     stopKey = tomcatStopKey
 }

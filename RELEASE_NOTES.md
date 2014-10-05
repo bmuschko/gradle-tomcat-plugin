@@ -1,3 +1,10 @@
+### Version 2.0 (October 4, 2014)
+
+* Upgrade to Gradle Wrapper 2.1.
+* Changed package name to `com.bmuschko.gradle.tomcat`.
+* Changed group ID to `com.bmuschko`.
+* Adapted plugin IDs to be compatible with Gradle's plugin portal.
+
 ### Version 1.2.5 (September 28, 2014)
 
 * Allow for declaring users - [Pull Request 109](https://github.com/bmuschko/gradle-tomcat-plugin/pull/109).

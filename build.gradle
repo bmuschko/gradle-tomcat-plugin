@@ -4,27 +4,27 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
         classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
 }
 
 apply plugin: 'maven-publish'
-apply plugin: 'bintray'
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'github-pages'
 
 allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
-    group = 'org.gradle.api.plugins'
-    version = '1.2.5'
+    group = 'com.bmuschko'
+    version = '2.0'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
 subprojects {
     apply plugin: 'jacoco'
 
-    def compatibilityVersion = 1.5
+    def compatibilityVersion = 1.6
     sourceCompatibility = compatibilityVersion
     targetCompatibility = compatibilityVersion
 
@@ -35,7 +35,9 @@ subprojects {
     dependencies {
         compile localGroovy()
         testCompile 'junit:junit:4.11'
-        testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
+        testCompile('org.spockframework:spock-core:0.7-groovy-2.0') {
+            exclude group: 'org.codehaus.groovy'
+        }
         testCompile 'org.apache.commons:commons-lang3:3.3'
     }
 
@@ -127,7 +129,7 @@ task aggregateTestReports(type: TestReport) {
 check.dependsOn aggregateTestReports
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.1'
 }
 
 artifacts {
@@ -179,6 +181,10 @@ bintray {
         repo = 'gradle-plugins'
         name = 'gradle-tomcat-plugin'
         licenses = ['Apache-2.0']
+
+        version {
+            attributes = ['gradle-plugin': 'com.bmuschko.tomcat:com.bmuschko:gradle-tomcat-plugin,com.bmuschko.tomcat-base:com.bmuschko:gradle-tomcat-plugin']
+        }
     }
 }
 
