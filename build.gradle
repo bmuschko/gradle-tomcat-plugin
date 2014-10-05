@@ -183,7 +183,8 @@ bintray {
         licenses = ['Apache-2.0']
 
         version {
-            attributes = ['gradle-plugin': 'com.bmuschko.tomcat:com.bmuschko:gradle-tomcat-plugin,com.bmuschko.tomcat-base:com.bmuschko:gradle-tomcat-plugin']
+            attributes = ['gradle-plugin': ['com.bmuschko.tomcat:com.bmuschko:gradle-tomcat-plugin',
+                                            'com.bmuschko.tomcat-base:com.bmuschko:gradle-tomcat-plugin']]
         }
     }
 }
