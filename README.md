@@ -112,7 +112,7 @@ dependencies {
 
 ## Tasks
 
-The `tomcat` plugin pre-defines the following tasks out-of-the-box:
+The `com.bmuschko.tomcat` plugin pre-defines the following tasks out-of-the-box:
 
 <table>
     <tr>
