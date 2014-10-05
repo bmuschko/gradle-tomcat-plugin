@@ -59,13 +59,13 @@ The JAR file comes with two plugins:
     </tr>
 </table>
 
-The `tomcat` plugin helps you get started quickly. If you are OK if the preconfigured tasks, this is the
+The `com.bmuschko.tomcat` plugin helps you get started quickly. If you are OK if the preconfigured tasks, this is the
 preferrable option. Most plugin users will go with this option. To use the Tomcat plugin, include the following code snippet
 in your build script:
 
     apply plugin: 'com.bmuschko.tomcat'
 
-If you need full control over your tasks or don't want to go with the preconfigured tasks, you will want to use the `tomcat-base`
+If you need full control over your tasks or don't want to go with the preconfigured tasks, you will want to use the `com.bmuschko.tomcat-base`
 plugin. That might be the case if you want to set up the container solely for functional testing. The downside is that each task
 has to be configured individually in your build script. To use the Tomcat base plugin, include the following code snippet
 in your build script:
