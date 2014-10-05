@@ -1,7 +1,7 @@
-org.gradle.api.plugins.tomcat
-org.gradle.api.plugins.tomcat.embedded
-org.gradle.api.plugins.tomcat.extension
-org.gradle.api.plugins.tomcat.internal
-org.gradle.api.plugins.tomcat.internal.ssl
-org.gradle.api.plugins.tomcat.internal.utils
-org.gradle.api.plugins.tomcat.tasks
+com.bmuschko.gradle.tomcat
+com.bmuschko.gradle.tomcat.embedded
+com.bmuschko.gradle.tomcat.extension
+com.bmuschko.gradle.tomcat.internal
+com.bmuschko.gradle.tomcat.internal.ssl
+com.bmuschko.gradle.tomcat.internal.utils
+com.bmuschko.gradle.tomcat.tasks
