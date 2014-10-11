@@ -70,6 +70,36 @@ apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
     }
 
     @Unroll
+    def "Start and stop #tomcatVersion with #taskName for Servlet 2.x web app"() {
+        setup:
+        setupWebAppDirectory()
+        new WebComponentFixture().createServlet2xWebApp(integTestDir)
+
+        expect:
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << getTaskStartAndStopProperties()
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+        buildFile << """
+dependencies {
+    providedCompile 'javax.servlet:servlet-api:2.5'
+}
+
+startAndStopTomcat.doLast {
+    assert 'http://localhost:$httpPort/integTest/simple'.toURL().text == 'Hello World!'
+    assert 'http://localhost:$httpPort/integTest/forward'.toURL().text == 'Forward successful!'
+}
+"""
+        runTasks(integTestDir, 'startAndStopTomcat')
+
+        where:
+        tomcatVersion             | taskName
+        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+    }
+
+    @Unroll
     def "Start and stop #tomcatVersion with #taskName without supporting web app directory"() {
         expect:
             buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
