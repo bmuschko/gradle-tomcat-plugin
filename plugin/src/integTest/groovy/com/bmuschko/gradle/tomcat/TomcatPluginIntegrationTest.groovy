@@ -15,8 +15,8 @@
  */
 package com.bmuschko.gradle.tomcat
 
-import org.apache.commons.lang3.exception.ExceptionUtils
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.gradle.tooling.BuildException
 import org.gradle.tooling.model.GradleProject
 import org.gradle.tooling.model.Task
@@ -24,6 +24,8 @@ import spock.lang.Ignore
 import spock.lang.Unroll
 
 class TomcatPluginIntegrationTest extends AbstractIntegrationTest {
+    final WebComponentFixture webComponentFixture = new WebComponentFixture()
+
     def setup() {
         buildFile << """
 apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
@@ -73,7 +75,7 @@ apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
     def "Start and stop #tomcatVersion with #taskName for Servlet 2.x web app"() {
         setup:
         setupWebAppDirectory()
-        new WebComponentFixture().createServlet2xWebApp(integTestDir)
+        webComponentFixture.createServlet2xWebApp(integTestDir)
 
         expect:
         buildFile << getBasicTomcatBuildFileContent(tomcatVersion)

@@ -12,7 +12,7 @@ class WebComponentFixture {
     }
 
     private File createJavaSourceDirectory(File projectDir) {
-        File javaSrcDir = new File(projectDir, 'src/main/java/org/gradle/web')
+        File javaSrcDir = new File(projectDir, 'src/main/java/com/bmuschko/web')
         boolean success = javaSrcDir.mkdirs()
 
         if(!success) {
@@ -26,7 +26,7 @@ class WebComponentFixture {
     private void createSimpleServlet(File srcDir) {
         File servletFile = new File(srcDir, 'SimpleServlet.java')
         servletFile << """
-package org.gradle.web;
+package com.bmuschko.web;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,7 +46,7 @@ public class SimpleServlet extends HttpServlet {
     private void createForwardServlet(File srcDir) {
         File servletFile = new File(srcDir, 'ForwardServlet.java')
         servletFile << """
-package org.gradle.web;
+package com.bmuschko.web;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -58,7 +58,7 @@ import java.io.IOException;
 public class ForwardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jsp/helloworld.jsp");
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/jsp/forwarded.jsp");
         requestDispatcher.forward(request, response);
     }
 }
@@ -84,12 +84,12 @@ public class ForwardServlet extends HttpServlet {
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <servlet>
         <servlet-name>SimpleServlet</servlet-name>
-        <servlet-class>org.gradle.web.SimpleServlet</servlet-class>
+        <servlet-class>com.bmuschko.web.SimpleServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>ForwardServlet</servlet-name>
-        <servlet-class>org.gradle.web.ForwardServlet</servlet-class>
+        <servlet-class>com.bmuschko.web.ForwardServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
@@ -117,7 +117,7 @@ public class ForwardServlet extends HttpServlet {
     }
 
     private void createJsp(File jspDir) {
-        File jspFile = new File(jspDir, 'helloworld.jsp')
-        jspFile << 'Hello World!'
+        File jspFile = new File(jspDir, 'forwarded.jsp')
+        jspFile << 'Forward successful!'
     }
 }
