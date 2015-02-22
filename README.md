@@ -29,7 +29,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.1'
     }
 }
 ```
@@ -86,7 +86,7 @@ repositories {
 }
 
 dependencies {
-    def tomcatVersion = '6.0.29'
+    def tomcatVersion = '6.0.43'
     tomcat "org.apache.tomcat:catalina:${tomcatVersion}",
            "org.apache.tomcat:coyote:${tomcatVersion}",
            "org.apache.tomcat:jasper:${tomcatVersion}"
