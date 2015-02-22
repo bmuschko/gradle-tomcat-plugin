@@ -15,14 +15,14 @@
  */
 package com.bmuschko.gradle.tomcat
 
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.plugins.WarPlugin
-import org.gradle.api.plugins.WarPluginConvention
 import com.bmuschko.gradle.tomcat.tasks.AbstractTomcatRun
 import com.bmuschko.gradle.tomcat.tasks.TomcatJasper
 import com.bmuschko.gradle.tomcat.tasks.TomcatRun
 import com.bmuschko.gradle.tomcat.tasks.TomcatRunWar
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.plugins.WarPlugin
+import org.gradle.api.plugins.WarPluginConvention
 
 /**
  * <p>A {@link Plugin} which applies the {@link WarPlugin} and provides tasks for managing a web application using an embedded
@@ -47,7 +47,6 @@ class TomcatBasePlugin implements Plugin<Project> {
 
     private void configureAbstractTomcatTask(Project project) {
         project.tasks.withType(AbstractTomcatRun) {
-            conventionMapping.map('buildscriptClasspath') { project.buildscript.configurations.getByName('classpath').asFileTree }
             conventionMapping.map('tomcatClasspath') { project.configurations.getByName(TOMCAT_CONFIGURATION_NAME).asFileTree }
             conventionMapping.map('contextPath') { project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
         }

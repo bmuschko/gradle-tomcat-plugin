@@ -1,7 +1,7 @@
 package com.bmuschko.gradle.tomcat
 
-import org.apache.commons.lang3.exception.ExceptionUtils
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.gradle.tooling.BuildException
 import spock.lang.Unroll
 

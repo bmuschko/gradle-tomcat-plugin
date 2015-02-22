@@ -1,3 +1,7 @@
+### Version 2.1 (February 22, 2015)
+
+* Proper classloader isolation from Gradle core - [Issue 45](https://github.com/bmuschko/gradle-tomcat-plugin/issues/45).
+
 ### Version 2.0 (October 4, 2014)
 
 * Upgrade to Gradle Wrapper 2.1.

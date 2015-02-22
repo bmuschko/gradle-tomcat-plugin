@@ -15,19 +15,18 @@
  */
 package com.bmuschko.gradle.tomcat.internal.utils
 
-import org.apache.tools.ant.AntClassLoader
-import org.gradle.api.UncheckedIOException
-
 class TomcatThreadContextClassLoader implements ThreadContextClassLoader {
     /**
      * {@inheritDoc}
      */
     @Override
-    void withClasspath(Set<File> buildscriptClasspathFiles, Set<File> tomcatClasspathFiles, Closure closure) {
+    void withClasspath(Set<File> tomcatClasspathFiles, Closure closure) {
         ClassLoader originalClassLoader = getClass().classLoader
 
         try {
-            Thread.currentThread().contextClassLoader = createClassLoader(buildscriptClasspathFiles, tomcatClasspathFiles)
+            Thread.currentThread().contextClassLoader = createClassLoader(tomcatClasspathFiles)
+            closure.resolveStrategy = Closure.DELEGATE_FIRST
+            closure.delegate = this
             closure()
         }
         finally {
@@ -36,18 +35,13 @@ class TomcatThreadContextClassLoader implements ThreadContextClassLoader {
     }
 
     /**
-     * Creates Tomcat ClassLoader which consists of the Gradle runtime, Tomcat server and plugin classpath. The ClassLoader
-     * is using a parent last strategy to make sure that the provided Gradle libraries get loaded only if they can't be
-     * found in the application classpath.
+     * Creates the classloader with the given classpath files.
      *
-     * @param buildscriptClasspathFiles Buildscript classpath files
-     * @param tomcatClasspathFiles Tomcat classpath files
-     * @return Tomcat ClassLoader
+     * @param classpathFiles Classpath files
+     * @return URL classloader
      */
-    private URLClassLoader createClassLoader(Set<File> buildscriptClasspathFiles, Set<File> tomcatClasspathFiles) {
-        ClassLoader rootClassLoader = new AntClassLoader(getClass().classLoader, false)
-        URLClassLoader pluginClassloader = new URLClassLoader(toURLArray(buildscriptClasspathFiles), rootClassLoader)
-        new URLClassLoader(toURLArray(tomcatClasspathFiles), pluginClassloader)
+    private URLClassLoader createClassLoader(Set<File> tomcatClasspathFiles) {
+        new URLClassLoader(toURLArray(tomcatClasspathFiles), ClassLoader.systemClassLoader.parent)
     }
 
     /**
@@ -57,17 +51,6 @@ class TomcatThreadContextClassLoader implements ThreadContextClassLoader {
      * @return URL array
      */
     private URL[] toURLArray(Set<File> files) {
-        List<URL> urls = new ArrayList<URL>(files.size())
-
-        files.each { file ->
-            try {
-                urls << file.toURI().toURL()
-            }
-            catch(MalformedURLException e) {
-                throw new UncheckedIOException(e)
-            }
-        }
-
-        urls.toArray(new URL[urls.size()])
+        files.collect { file -> file.toURI().toURL() } as URL[]
     }
 }

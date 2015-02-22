@@ -21,9 +21,9 @@ package com.bmuschko.gradle.tomcat.embedded
  * @author Benjamin Muschko
  */
 enum TomcatVersion {
-    VERSION_6X('6.0', 'Tomcat 6x', 'com.bmuschko.gradle.tomcat.embedded.Tomcat6xServer'),
-    VERSION_7X('7.0', 'Tomcat 7x', 'com.bmuschko.gradle.tomcat.embedded.Tomcat7xServer'),
-    VERSION_8X('8.0', 'Tomcat 8x', 'com.bmuschko.gradle.tomcat.embedded.Tomcat8xServer')
+    VERSION_6X('6.0', 'Tomcat 6x'),
+    VERSION_7X('7.0', 'Tomcat 7x'),
+    VERSION_8X('8.0', 'Tomcat 8x')
 
     private static final TOMCAT_VERSIONS = [:]
 
@@ -37,20 +37,14 @@ enum TomcatVersion {
 
     private final String specVersion
     private final String description
-    private final String serverImplClass
 
-    TomcatVersion(String specVersion, String description, String serverImplClass) {
+    TomcatVersion(String specVersion, String description) {
         this.specVersion = specVersion
         this.description = description
-        this.serverImplClass = serverImplClass
     }
 
     String getDescription() {
         description
-    }
-
-    String getServerImplClass() {
-        serverImplClass
     }
 
     static TomcatVersion getTomcatVersionForSpec(String specVersion) {

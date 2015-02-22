@@ -15,8 +15,8 @@
  */
 package com.bmuschko.gradle.tomcat.tasks
 
-import org.gradle.api.file.FileCollection
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional

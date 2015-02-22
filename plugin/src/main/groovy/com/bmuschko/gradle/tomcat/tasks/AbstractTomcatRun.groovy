@@ -15,17 +15,17 @@
  */
 package com.bmuschko.gradle.tomcat.tasks
 
-import org.gradle.api.GradleException
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.file.FileCollection
-import com.bmuschko.gradle.tomcat.embedded.TomcatServerFactory
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
+import com.bmuschko.gradle.tomcat.embedded.factory.TomcatServerFactory
 import com.bmuschko.gradle.tomcat.internal.ShutdownMonitor
 import com.bmuschko.gradle.tomcat.internal.ssl.SSLKeyStore
 import com.bmuschko.gradle.tomcat.internal.ssl.SSLKeyStoreImpl
 import com.bmuschko.gradle.tomcat.internal.ssl.StoreType
 import com.bmuschko.gradle.tomcat.internal.utils.ThreadContextClassLoader
 import com.bmuschko.gradle.tomcat.internal.utils.TomcatThreadContextClassLoader
+import org.gradle.api.GradleException
+import org.gradle.api.InvalidUserDataException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 
 import java.util.logging.Level
@@ -114,12 +114,6 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     @Input
     Boolean daemon = Boolean.FALSE
-
-    /**
-     * The build script's classpath.
-     */
-    @InputFiles
-    FileCollection buildscriptClasspath
 
     /**
      * Classpath for Tomcat libraries.
@@ -220,7 +214,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     protected void start() {
         logger.info "Configuring Tomcat for ${getProject()}"
 
-        threadContextClassLoader.withClasspath(getBuildscriptClasspath().files, getTomcatClasspath().files) {
+        threadContextClassLoader.withClasspath(getTomcatClasspath().files) {
             validateConfigurationAndStartTomcat()
         }
     }

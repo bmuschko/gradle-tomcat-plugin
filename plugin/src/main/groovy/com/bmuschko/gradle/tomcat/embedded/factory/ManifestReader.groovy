@@ -13,22 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bmuschko.gradle.tomcat.embedded
-
-import spock.lang.Specification
+package com.bmuschko.gradle.tomcat.embedded.factory
 
 /**
- * Tomcat server factory test.
+ * Manifest reader.
  *
  * @author Benjamin Muschko
  */
-class TomcatServer6xFactoryIntegrationTest extends Specification {
-    def "Loads correct Tomcat server 6x implementation"() {
-        when:
-            TomcatServer tomcatServer = TomcatServerFactory.instance.tomcatServer
-
-        then:
-            tomcatServer
-            tomcatServer instanceof Tomcat6xServer
-    }
+interface ManifestReader {
+    String readAttributeValue(URL manifestUrl)
 }

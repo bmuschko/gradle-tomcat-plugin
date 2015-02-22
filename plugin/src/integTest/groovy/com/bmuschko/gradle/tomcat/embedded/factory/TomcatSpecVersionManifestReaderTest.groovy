@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.bmuschko.gradle.tomcat.embedded
+package com.bmuschko.gradle.tomcat.embedded.factory
 
 import spock.lang.Specification
 

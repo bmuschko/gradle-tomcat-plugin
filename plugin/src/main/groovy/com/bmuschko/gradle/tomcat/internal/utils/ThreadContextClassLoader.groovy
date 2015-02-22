@@ -19,9 +19,8 @@ public interface ThreadContextClassLoader {
     /**
      * Performs the closure with local thread context classloader.
      *
-     * @param buildscriptClasspathFiles Buildscript classpath files
      * @param tomcatClasspathFiles Tomcat classpath files
      * @param closure the given closure
      */
-    void withClasspath(Set<File> buildscriptClasspathFiles, Set<File> tomcatClasspathFiles, Closure closure)
+    void withClasspath(Set<File> tomcatClasspathFiles, Closure closure)
 }
