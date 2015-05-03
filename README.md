@@ -158,7 +158,7 @@ The Tomcat plugin exposes the following properties through the extension named `
 * `ajpPort`: The TCP port which Tomcat should listen for AJP requests on (defaults to `8009`).
 * `stopPort`: The TCP port which Tomcat should listen for admin requests on (defaults to `8081`).
 * `stopKey`: The key to pass to Tomcat when requesting it to stop (defaults to `null`).
-* `contextPath`: The URL context path under which the web application will be registered. Defaults to WAR name.
+* `contextPath`: The URL context path under which the web application will be registered (defaults to WAR name).
 * `enableSSL`: Determines whether the HTTPS connector should be created (defaults to `false`).
 * `daemon`: Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
 server has started. When false, this task blocks until the Tomcat server is stopped (defaults to `false`).
