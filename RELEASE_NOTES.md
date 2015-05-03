@@ -1,3 +1,11 @@
+### Version 2.2 (May 3, 2015)
+
+* Upgrade to Gradle Wrapper 2.3.
+* Register LifecycleListener that listens for AFTER_START event to determine when Tomcat is up and running to ensure that
+ integration and/or functional tests are only started when web application under tests is ready.
+* Added properties `contextPath` and `daemon` to extension.
+* Only add web resource if it actually exists - [Issue 116](https://github.com/bmuschko/gradle-tomcat-plugin/issues/116).
+
 ### Version 2.1 (February 22, 2015)
 
 * Proper classloader isolation from Gradle core - [Issue 45](https://github.com/bmuschko/gradle-tomcat-plugin/issues/45).
