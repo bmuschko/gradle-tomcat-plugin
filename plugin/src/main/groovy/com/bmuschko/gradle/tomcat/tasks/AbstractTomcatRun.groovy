@@ -289,7 +289,9 @@ abstract class AbstractTomcatRun extends Tomcat {
     }
 
     protected void addWebappResource(File resource) {
-        getServer().addWebappResource(resource)
+        if(resource.exists()) {
+            getServer().addWebappResource(resource)
+        }
     }
 
     /**
