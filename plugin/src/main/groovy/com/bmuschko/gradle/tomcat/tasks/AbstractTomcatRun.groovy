@@ -78,20 +78,20 @@ abstract class AbstractTomcatRun extends Tomcat {
     String stopKey = 'stopKey'
 
     /**
-     * The HTTP protocol handler class name to be used. Defaults to "org.apache.coyote.http11.Http11Protocol".
+     * The HTTP protocol handler class name to be used. Defaults to {@link org.apache.coyote.http11.Http11Protocol}.
      */
     @Input
     String httpProtocol = 'org.apache.coyote.http11.Http11Protocol'
 
     /**
-     * The HTTPS protocol handler class name to be used. Defaults to "org.apache.coyote.http11.Http11Protocol".
+     * The HTTPS protocol handler class name to be used. Defaults to {@link org.apache.coyote.http11.Http11Protocol}.
      */
     @Input
     String httpsProtocol = 'org.apache.coyote.http11.Http11Protocol'
 
     /**
      * The default web.xml. If it doesn't get defined an instance of org.apache.catalina.servlets.DefaultServlet and
-     * org.apache.jasper.servlet.JspServlet will be set up.
+     * {@link org.apache.jasper.servlet.JspServlet} will be set up.
      */
     @InputFile
     @Optional
@@ -190,7 +190,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     Integer ajpPort = 8009
 
     /**
-     * The AJP protocol handler class name to be used. Defaults to "org.apache.coyote.ajp.AjpProtocol".
+     * The AJP protocol handler class name to be used. Defaults to {@link org.apache.coyote.ajp.AjpProtocol}.
      */
     @Input
     String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
