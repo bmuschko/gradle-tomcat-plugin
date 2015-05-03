@@ -3,14 +3,12 @@ sourceCompatibility = jdk7
 targetCompatibility = jdk7
 
 dependencies {
-    def tomcatVersion = '8.0.8'
+    def tomcatVersion = '8.0.21'
 
     compile project(':embedded'),
             "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
             "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
-    compile("org.apache.tomcat:tomcat-jasper:${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-    }
+            "org.apache.tomcat:tomcat-jasper:${tomcatVersion}"
     testCompile project(path: ':embedded', configuration: 'integTestFixtures')
 }
 

@@ -17,7 +17,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'com.bmuschko'
-    version = '2.1'
+    version = '2.2'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
@@ -213,7 +213,7 @@ githubPages {
 
 
 idea.project {
-    jdkName = '1.6'
+    jdkName = '1.8'
 
     ipr.withXml { provider ->
         def node = provider.asNode()
