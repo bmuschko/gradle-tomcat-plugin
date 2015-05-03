@@ -313,8 +313,7 @@ class TomcatRunTest {
         assert tomcatRun.getServer().getContext().getDocBase() == webAppSourceDir.getCanonicalPath()
         assert tomcatRun.getServer().getContext().getPath() == "/" + contextPath
         assert tomcatRun.getServer().getContext().getReloadable() == true
-        assert tomcatRun.getServer().getContext().getLoader().getRepositories().size() == 1
-        assert tomcatRun.getServer().getContext().getLoader().getRepositories()[0] == new File(testDir, "jars").toURI().toURL().toString()
+        assert tomcatRun.getServer().getContext().getLoader().getRepositories().size() == 0
     }
 
     @Test

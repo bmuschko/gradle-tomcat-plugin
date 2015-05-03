@@ -21,6 +21,9 @@ package com.bmuschko.gradle.tomcat.embedded
  * @author Benjamin Muschko
  */
 class Tomcat6xServer extends BaseTomcatServerImpl {
+    def host
+    def httpConnector
+
     @Override
     String getServerClassName() {
         'org.apache.catalina.startup.Embedded'
@@ -57,6 +60,7 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
     void configureContainer() {
         def localHost = tomcat.createHost('localHost', new File('.').absolutePath)
         localHost.addChild(context)
+        this.host = localHost
 
         // Create engine
         addEngineToServer(localHost)
@@ -65,6 +69,7 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
     @Override
     void configureHttpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
         def httpConnector = createConnector(port, uriEncoding, protocolHandlerClassName)
+        this.httpConnector = httpConnector
         tomcat.addConnector httpConnector
     }
 
@@ -143,6 +148,11 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
         }
 
         tomcat.addEngine(engine)
+    }
+
+    @Override
+    void addLifecycleListener(Object lifecycleListener) {
+        host.addLifecycleListener(lifecycleListener)
     }
 
     /**

@@ -15,6 +15,8 @@
  */
 package com.bmuschko.gradle.tomcat.embedded
 
+import java.util.concurrent.CountDownLatch
+
 /**
  * Tomcat server interface.
  *
@@ -38,6 +40,7 @@ interface TomcatServer {
     void configureUser(TomcatUser user)
     void setConfigFile(URL configFile)
     void addWebappResource(File resource)
+    void addStartUpLifecycleListener(CountDownLatch startupBarrier, boolean daemon)
     void start()
     void stop()
     boolean isStopped()

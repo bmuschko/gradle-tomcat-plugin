@@ -28,6 +28,7 @@ import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 
+import java.util.concurrent.CountDownLatch
 import java.util.logging.Level
 
 import static com.bmuschko.gradle.tomcat.internal.LoggingHandler.withJdkFileLogger
@@ -346,28 +347,25 @@ abstract class AbstractTomcatRun extends Tomcat {
                 }
             }
 
+            final CountDownLatch startupBarrier = new CountDownLatch(1)
+            getServer().addStartUpLifecycleListener(startupBarrier, getDaemon())
+
             // Start server
             getServer().start()
 
             registerShutdownHook()
 
-            logger.quiet 'Started Tomcat Server'
-            logger.quiet "The Server is running at http://localhost:${getHttpPort()}${getServer().context.path}"
-
-            Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), daemon)
+            Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), getDaemon())
             shutdownMonitor.start()
 
-            if(!getDaemon()) {
-                shutdownMonitor.join()
-            }
+            startupBarrier.await()
         }
         catch(Exception e) {
-            throw new GradleException('An error occurred starting the Tomcat server.', e)
-        }
-        finally {
-            if(!getDaemon()) {
-                logger.info 'Tomcat server exiting.'
+            if(!getServer().stopped) {
+                getServer().stop()
             }
+
+            throw new GradleException('An error occurred starting the Tomcat server.', e)
         }
     }
 

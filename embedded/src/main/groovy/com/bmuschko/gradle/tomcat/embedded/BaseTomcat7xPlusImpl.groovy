@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor
  */
 abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
     String home
+    def httpConnector
 
     @Override
     String getServerClassName() {
@@ -58,6 +59,7 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
     void configureHttpConnector(int port, String uriEncoding, String protocolHandlerClassName) {
         def httpConnector = createConnector(protocolHandlerClassName, uriEncoding)
         httpConnector.port = port
+        this.httpConnector = httpConnector
 
         // Remove default connector and add new one
         tomcat.service.removeConnector tomcat.connector
@@ -126,5 +128,10 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
         if(configFile) {
             context.configFile = configFile
         }
+    }
+
+    @Override
+    void addLifecycleListener(Object lifecycleListener) {
+        tomcat.server.addLifecycleListener(lifecycleListener)
     }
 }

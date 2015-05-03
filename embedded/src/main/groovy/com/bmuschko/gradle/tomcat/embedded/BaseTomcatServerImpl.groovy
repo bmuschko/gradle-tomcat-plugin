@@ -1,5 +1,12 @@
 package com.bmuschko.gradle.tomcat.embedded
 
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
+import java.util.concurrent.CountDownLatch
+
 /**
  * Implementation of common Tomcat server logic.
  *
@@ -37,6 +44,13 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     }
 
     @Override
+    void addStartUpLifecycleListener(CountDownLatch startupBarrier, boolean daemon) {
+        def afterStartEventLifecycleListener = java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread().contextClassLoader,
+                [loadClass('org.apache.catalina.LifecycleListener')] as Class[], new AfterStartEventLifecycleListener(startupBarrier, daemon))
+        addLifecycleListener(afterStartEventLifecycleListener)
+    }
+
+    @Override
     void start() {
         stopped = false
         tomcat.start()
@@ -59,4 +73,36 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     boolean isStopped() {
         stopped
     }
+
+    private class AfterStartEventLifecycleListener implements InvocationHandler {
+        private final Logger logger = Logging.getLogger(AfterStartEventLifecycleListener)
+        private final CountDownLatch startupBarrier
+        private final boolean daemon
+
+        AfterStartEventLifecycleListener(CountDownLatch startupBarrier, boolean daemon) {
+            this.startupBarrier = startupBarrier
+            this.daemon = daemon
+        }
+
+        @Override
+        Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            String methodName = method.getName()
+
+            if(methodName == 'lifecycleEvent') {
+                def event = args[0]
+
+                if(event.type == 'after_start') {
+                    logger.quiet 'Started Tomcat Server'
+                    logger.quiet "The Server is running at http://localhost:${httpConnector.port}${context.path}"
+
+                    if(daemon) {
+                        startupBarrier.countDown()
+                    }
+                }
+            }
+        }
+    }
+
+    abstract void addLifecycleListener(lifecycleListener)
+    abstract Object getHttpConnector()
 }
