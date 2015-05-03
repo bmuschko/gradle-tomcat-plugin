@@ -32,7 +32,9 @@ class TomcatPluginExtension {
     Integer stopPort = 8081
     Integer ajpPort = 8009
     String stopKey = 'stopKey'
-    Boolean enableSSL = false
+    String contextPath
+    Boolean enableSSL = Boolean.FALSE
+    Boolean daemon = Boolean.FALSE
     String httpProtocol = DEFAULT_PROTOCOL_HANDLER
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER

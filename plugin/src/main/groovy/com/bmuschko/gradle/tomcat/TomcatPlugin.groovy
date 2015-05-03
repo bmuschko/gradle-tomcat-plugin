@@ -58,7 +58,9 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('httpsPort') { tomcatPluginExtension.httpsPort }
             conventionMapping.map(STOP_PORT_CONVENTION) { tomcatPluginExtension.stopPort }
             conventionMapping.map(STOP_KEY_CONVENTION) { tomcatPluginExtension.stopKey }
+            conventionMapping.map('contextPath') { tomcatPluginExtension.contextPath }
             conventionMapping.map('enableSSL') { tomcatPluginExtension.enableSSL }
+            conventionMapping.map('daemon') { tomcatPluginExtension.daemon }
             conventionMapping.map('httpProtocol') { tomcatPluginExtension.httpProtocol }
             conventionMapping.map('httpsProtocol') { tomcatPluginExtension.httpsProtocol }
             conventionMapping.map('ajpPort') { tomcatPluginExtension.ajpPort }
