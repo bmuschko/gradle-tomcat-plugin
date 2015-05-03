@@ -32,6 +32,8 @@ class TomcatPluginExtensionTest extends Specification {
         pluginExtension.stopPort == 8081
         pluginExtension.ajpPort == 8009
         pluginExtension.stopKey == 'stopKey'
+        !pluginExtension.contextPath
+        pluginExtension.daemon == Boolean.FALSE
         pluginExtension.httpProtocol == TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         pluginExtension.httpsProtocol == TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         pluginExtension.ajpProtocol == TomcatPluginExtension.DEFAULT_AJP_PROTOCOL_HANDLER

@@ -23,6 +23,7 @@ import com.bmuschko.gradle.tomcat.tasks.TomcatStop
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import com.bmuschko.gradle.tomcat.extension.TomcatPluginExtension
+import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.tomcat.tasks.*
 
 /**
@@ -58,7 +59,7 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('httpsPort') { tomcatPluginExtension.httpsPort }
             conventionMapping.map(STOP_PORT_CONVENTION) { tomcatPluginExtension.stopPort }
             conventionMapping.map(STOP_KEY_CONVENTION) { tomcatPluginExtension.stopKey }
-            conventionMapping.map('contextPath') { tomcatPluginExtension.contextPath }
+            conventionMapping.map('contextPath') { tomcatPluginExtension.contextPath ?: project.tasks.getByName(WarPlugin.WAR_TASK_NAME).baseName }
             conventionMapping.map('enableSSL') { tomcatPluginExtension.enableSSL }
             conventionMapping.map('daemon') { tomcatPluginExtension.daemon }
             conventionMapping.map('httpProtocol') { tomcatPluginExtension.httpProtocol }
