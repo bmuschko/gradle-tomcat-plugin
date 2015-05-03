@@ -153,7 +153,7 @@ dependencies {
 """
     }
 
-    protected String getBasicTomcat7xBuildFileContent(String version = '7.0.59') {
+    protected String getBasicTomcat7xBuildFileContent(String version = '7.0.61') {
         """
 dependencies {
     def tomcatVersion = '$version'
@@ -164,15 +164,13 @@ dependencies {
 """
     }
 
-    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.18') {
+    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.21') {
         """
 dependencies {
     def tomcatVersion = '$version'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
-           "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
-    }
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}"
 }
 """
     }
