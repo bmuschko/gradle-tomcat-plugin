@@ -145,7 +145,7 @@ class TomcatRun extends AbstractTomcatRun {
     protected void configureWebApplication() {
         super.configureWebApplication()
 
-        logger.info "web app loader classpath = ${getWebAppClasspath().asPath}"
+        logger.info "Web app loader classpath = ${getWebAppClasspath().files}"
       
         getWebAppClasspath().each { file ->
             addWebappResource(file)

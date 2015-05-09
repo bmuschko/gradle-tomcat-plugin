@@ -98,10 +98,10 @@ abstract class AbstractTomcatRun extends Tomcat {
     File webDefaultXml
 
     /**
-     * Defines additional runtime JARs that are not provided by the web application.
+     * Defines additional runtime JARs or directories that are not provided by the web application.
      */
     @InputFiles
-    Iterable<File> additionalRuntimeJars = []
+    Iterable<File> additionalRuntimeResources = []
 
     /**
      * Specifies the character encoding used to decode the URI bytes by the HTTP Connector. Defaults to "UTF-8".
@@ -301,8 +301,10 @@ abstract class AbstractTomcatRun extends Tomcat {
         setWebApplicationContext()
         getServer().createLoader(Thread.currentThread().contextClassLoader)
 
-        getAdditionalRuntimeJars().each { File additionalRuntimeJar ->
-            addWebappResource(additionalRuntimeJar)
+        logger.info "Additional runtime resources classpath = ${getAdditionalRuntimeResources()}"
+
+        getAdditionalRuntimeResources().each { file ->
+            addWebappResource(file)
         }
 
         getServer().context.reloadable = getReloadable()

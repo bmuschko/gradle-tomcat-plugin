@@ -15,13 +15,14 @@
  */
 package com.bmuschko.gradle.tomcat
 
-import org.gradle.api.InvalidUserDataException
-import org.gradle.api.Project
 import com.bmuschko.gradle.tomcat.embedded.Tomcat6xServer
 import com.bmuschko.gradle.tomcat.embedded.TomcatServer
 import com.bmuschko.gradle.tomcat.extension.TomcatPluginExtension
 import com.bmuschko.gradle.tomcat.tasks.TomcatRun
+import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
+import org.gradle.util.GFileUtils
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -63,6 +64,7 @@ class TomcatRunTest {
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getConfigFile() == null
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
+        assert tomcatRun.additionalRuntimeResources == []
     }
 
     @Test
@@ -77,6 +79,7 @@ class TomcatRunTest {
         assert tomcatRun.getWebDefaultXml() == webDefaultXml
         assert tomcatRun.getConfigFile() == null
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
+        assert tomcatRun.additionalRuntimeResources == []
     }
 
     @Test
@@ -91,6 +94,7 @@ class TomcatRunTest {
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getConfigFile() == configFile
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
+        assert tomcatRun.additionalRuntimeResources == []
     }
 
     @Test
@@ -104,6 +108,7 @@ class TomcatRunTest {
         assert tomcatRun.getWebDefaultXml() == null
         assert tomcatRun.getResolvedConfigFile().path == defaultConfigFile.toURI().toURL().path
         assert tomcatRun.getWebAppSourceDirectory() == webAppSourceDir
+        assert tomcatRun.additionalRuntimeResources == []
     }
 
     @Test
@@ -317,6 +322,28 @@ class TomcatRunTest {
     }
 
     @Test
+    public void testConfigureAdditionalClasspathForExistingDirectoryAndJarFile() {
+        File propsDir = new File(testDir, 'tmp/props')
+        GFileUtils.mkdirs(propsDir)
+        File jarFile = new File(testDir, 'tmp/my.jar')
+        GFileUtils.touch(jarFile)
+        createBasicTomcatServer()
+        tomcatRun.additionalRuntimeResources = [propsDir, jarFile]
+        tomcatRun.configureWebApplication()
+        assert tomcatRun.getServer().getContext().getLoader().getRepositories().size() == 2
+    }
+
+    @Test
+    public void testConfigureAdditionalClasspathForNonExistingDirectoryAndJarFile() {
+        File propsDir = new File(testDir, 'tmp/props')
+        File jarFile = new File(testDir, 'tmp/my.jar')
+        createBasicTomcatServer()
+        tomcatRun.additionalRuntimeResources = [propsDir, jarFile]
+        tomcatRun.configureWebApplication()
+        assert tomcatRun.getServer().getContext().getLoader().getRepositories().size() == 0
+    }
+
+    @Test
     public void testSetWebApplicationContextForRootContextUrl() {
         String contextPath = '/'
         tomcatRun.setContextPath contextPath
@@ -399,5 +426,13 @@ class TomcatRunTest {
         }
 
         file
+    }
+
+    private TomcatServer createBasicTomcatServer() {
+        TomcatServer server = new Tomcat6xServer()
+        tomcatRun.server = server
+        tomcatRun.contextPath = '/'
+        tomcatRun.webAppClasspath = project.files()
+        server
     }
 }

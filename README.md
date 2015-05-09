@@ -204,7 +204,7 @@ Furthermore, you can set the following optional task properties:
 * `contextPath`: The URL context path your web application will be registered under (defaults to WAR name).
 * `webDefaultXml`: The default web.xml. If it doesn't get defined an instance of `org.apache.catalina.servlets.DefaultServlet`
 and `org.apache.jasper.servlet.JspServlet` will be set up.
-* `additionalRuntimeJars`: Defines additional runtime JARs that are not provided by the web application.
+* `additionalRuntimeResources`: Defines additional runtime JARs or directories that are not provided by the web application.
 * `URIEncoding`: Specifies the character encoding used to decode the URI bytes by the HTTP Connector (defaults to `UTF-8`).
 * `daemon`: Specifies whether the Tomcat server should run in the background. When true, this task completes as soon as the
 server has started. When false, this task blocks until the Tomcat server is stopped (defaults to `false`).
@@ -461,5 +461,18 @@ task integrationTest(type: Test) {
 
 test {
     exclude '**/*IntegrationTest.*'
+}
+```
+
+<br>
+**How do I add JAR files or directories that are not part of my web application source code?**
+
+Every task of type `AbstractTomcatRun` exposes a property named `additionalRuntimeResources` that is used to mixed in
+with the web application runtime classpath.
+
+```groovy
+[tomcatRun, tomcatRunWar].each { task ->
+    task.additionalRuntimeResources << file('/Users/bmuschko/config/props')
+    task.additionalRuntimeResources << file('/Users/bmuschko/ext/jars/my.jar')
 }
 ```
