@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
         classpath 'org.ajoberstar:gradle-git:0.9.0'
     }
 }
@@ -17,7 +17,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'com.bmuschko'
-    version = '2.2'
+    version = '2.2.1'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 

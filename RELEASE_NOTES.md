@@ -1,3 +1,8 @@
+### Version 2.2.1 (May 9, 2015)
+
+* Upgrade to Gradle Wrapper 2.4.
+* Renamed property `additionalRuntimeJar` to `additionalRuntimeResources` to better express its intent - [Issue 41](https://github.com/bmuschko/gradle-tomcat-plugin/issues/41).
+
 ### Version 2.2 (May 3, 2015)
 
 * Upgrade to Gradle Wrapper 2.3.
