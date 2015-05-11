@@ -201,10 +201,11 @@ abstract class AbstractTomcatRun extends Tomcat {
     @Input
     @Optional
     List<TomcatUser> users = []
-    
+
     def server
     def realm
     URL resolvedConfigFile
+    Thread shutdownHook
 
     private final ThreadContextClassLoader threadContextClassLoader = new TomcatThreadContextClassLoader()
     private final SSLKeyStore sslKeyStore = new SSLKeyStoreImpl()
@@ -370,6 +371,10 @@ abstract class AbstractTomcatRun extends Tomcat {
             }
 
             throw new GradleException('An error occurred starting the Tomcat server.', e)
+        } finally {
+          if(shutdownHook) {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook)
+          }
         }
     }
 
@@ -389,14 +394,15 @@ abstract class AbstractTomcatRun extends Tomcat {
      * Registers shutdown hook that stops Tomcat's context lifecycle when triggered.
      */
     void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+        shutdownHook = new Thread() {
             @Override
             void run() {
                 if(!getServer().stopped) {
                     getServer().stop()
                 }
             }
-        })
+        }
+        Runtime.getRuntime().addShutdownHook(shutdownHook)
     }
 
     /**
