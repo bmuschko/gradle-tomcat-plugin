@@ -1,3 +1,7 @@
+### Version 2.2.2 (May 16, 2015)
+
+* Remove ShutdownHook to avoid memory leak - [Pull Request 109](https://github.com/bmuschko/gradle-tomcat-plugin/pull/109).
+
 ### Version 2.2.1 (May 9, 2015)
 
 * Upgrade to Gradle Wrapper 2.4.
