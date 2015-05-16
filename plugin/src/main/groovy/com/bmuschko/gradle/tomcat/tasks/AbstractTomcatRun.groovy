@@ -205,7 +205,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     def server
     def realm
     URL resolvedConfigFile
-    Thread shutdownHook
+    private Thread shutdownHook
 
     private final ThreadContextClassLoader threadContextClassLoader = new TomcatThreadContextClassLoader()
     private final SSLKeyStore sslKeyStore = new SSLKeyStoreImpl()
@@ -291,7 +291,7 @@ abstract class AbstractTomcatRun extends Tomcat {
 
     protected void addWebappResource(File resource) {
         if(resource.exists()) {
-            getServer().addWebappResource(resource)
+            server.addWebappResource(resource)
         }
     }
 
@@ -300,7 +300,7 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     protected void configureWebApplication() {
         setWebApplicationContext()
-        getServer().createLoader(Thread.currentThread().contextClassLoader)
+        server.createLoader(Thread.currentThread().contextClassLoader)
 
         logger.info "Additional runtime resources classpath = ${getAdditionalRuntimeResources()}"
 
@@ -308,11 +308,11 @@ abstract class AbstractTomcatRun extends Tomcat {
             addWebappResource(file)
         }
 
-        getServer().context.reloadable = getReloadable()
-        getServer().configureDefaultWebXml(getWebDefaultXml())
+        server.context.reloadable = getReloadable()
+        server.configureDefaultWebXml(getWebDefaultXml())
 
         if(getResolvedConfigFile()) {
-            getServer().configFile = getResolvedConfigFile()
+            server.configFile = getResolvedConfigFile()
         }
     }
 
@@ -320,18 +320,18 @@ abstract class AbstractTomcatRun extends Tomcat {
         try {
             logger.debug 'Starting Tomcat Server ...'
 
-            setServer(createServer())
-            getServer().home = getTemporaryDir().absolutePath
-            getServer().realm = realm
+            server = TomcatServerFactory.instance.tomcatServer
+            server.home = getTemporaryDir().absolutePath
+            server.realm = realm
 
             configureWebApplication()
 
-            getServer().configureContainer()
-            getServer().configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
-            getServer().configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
+            server.configureContainer()
+            server.configureHttpConnector(getHttpPort(), getURIEncoding(), getHttpProtocol())
+            server.configureAjpConnector(getAjpPort(), getURIEncoding(), getAjpProtocol())
 
             getUsers().each { TomcatUser user ->
-                getServer().configureUser(user)
+                server.configureUser(user)
             }
 
             if(getEnableSSL()) {
@@ -344,37 +344,33 @@ abstract class AbstractTomcatRun extends Tomcat {
                 }
 
                 if(getTruststoreFile()) {
-                    getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(),
+                    server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(),
                                                         getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
                 }
                 else {
-                    getServer().configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(), getKeystorePass())
+                    server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(), getKeystorePass())
                 }
             }
 
             final CountDownLatch startupBarrier = new CountDownLatch(1)
-            getServer().addStartUpLifecycleListener(startupBarrier, getDaemon())
+            server.addStartUpLifecycleListener(startupBarrier, getDaemon())
 
             // Start server
-            getServer().start()
+            server.start()
 
-            registerShutdownHook()
+            addShutdownHook()
 
-            Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), getServer(), getDaemon())
+            Thread shutdownMonitor = new ShutdownMonitor(getStopPort(), getStopKey(), server, getDaemon())
             shutdownMonitor.start()
 
             startupBarrier.await()
         }
         catch(Exception e) {
-            if(!getServer().stopped) {
-                getServer().stop()
-            }
-
+            stopServer()
             throw new GradleException('An error occurred starting the Tomcat server.', e)
-        } finally {
-          if(shutdownHook) {
-            Runtime.getRuntime().removeShutdownHook(shutdownHook)
-          }
+        }
+        finally {
+            removeShutdownHook()
         }
     }
 
@@ -386,23 +382,27 @@ abstract class AbstractTomcatRun extends Tomcat {
         getContextPath().startsWith('/') ? getContextPath() : '/' + getContextPath()
     }
 
-    def createServer() {
-        TomcatServerFactory.instance.tomcatServer
-    }
-
-    /**
-     * Registers shutdown hook that stops Tomcat's context lifecycle when triggered.
-     */
-    void registerShutdownHook() {
-        shutdownHook = new Thread() {
+    private void addShutdownHook() {
+        shutdownHook = new Thread(new Runnable() {
             @Override
             void run() {
-                if(!getServer().stopped) {
-                    getServer().stop()
-                }
+                stopServer()
             }
-        }
+        })
+
         Runtime.getRuntime().addShutdownHook(shutdownHook)
+    }
+
+    private void removeShutdownHook() {
+        if(shutdownHook) {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook)
+        }
+    }
+
+    private void stopServer() {
+        if(server && !server.stopped) {
+            server.stop()
+        }
     }
 
     /**
