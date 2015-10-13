@@ -215,8 +215,10 @@ abstract class AbstractTomcatRun extends Tomcat {
     @TaskAction
     protected void start() {
         logger.info "Configuring Tomcat for ${getProject()}"
-
-        threadContextClassLoader.withClasspath(getTomcatClasspath().files) {
+		def consolidatedClassPath = new TreeSet<File>()
+		consolidatedClassPath.addAll(getTomcatClasspath().files)
+		consolidatedClassPath.addAll(getWebAppClasspath().files)
+        threadContextClassLoader.withClasspath(consolidatedClassPath) {
             validateConfigurationAndStartTomcat()
         }
     }
