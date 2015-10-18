@@ -8,27 +8,27 @@ import spock.lang.Unroll
 class TomcatJasperIntegrationTest extends AbstractIntegrationTest {
     def setup() {
         buildFile << """
-apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
-"""
+            apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
+        """
     }
 
     @Unroll
     def "Runs Jasper compiler for #tomcatVersion with default conventions"() {
         setup:
-            setupWebAppDirectory()
-            createJspFiles(new File(integTestDir, 'src/main/webapp'))
+        setupWebAppDirectory()
+        createJspFiles(new File(integTestDir, 'src/main/webapp'))
 
         expect:
-            File outputDir = new File(integTestDir, 'build/jasper')
-            buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-            runTasks(integTestDir, TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
-            File compiledJspDir = new File(outputDir, 'org/apache/jsp')
-            compiledJspDir.exists()
-            new File(compiledJspDir, 'helloWorld_jsp.java').exists()
-            new File(compiledJspDir, 'date_jsp.java').exists()
+        File outputDir = new File(integTestDir, 'build/jasper')
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        runTasks(integTestDir, TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+        File compiledJspDir = new File(outputDir, 'org/apache/jsp')
+        compiledJspDir.exists()
+        new File(compiledJspDir, 'helloWorld_jsp.java').exists()
+        new File(compiledJspDir, 'date_jsp.java').exists()
 
         where:
-            tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X, TomcatVersion.VERSION_8X]
+        tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X, TomcatVersion.VERSION_8X]
     }
 
     /**
@@ -39,24 +39,24 @@ apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
     @Unroll
     def "Can use Jasper compiler validation for Tomcat version #tomcatVersion with attribute #validationAttribute"() {
         setup:
-            setupWebAppDirectory()
-            createJspFiles(new File(integTestDir, 'src/main/webapp'))
+        setupWebAppDirectory()
+        createJspFiles(new File(integTestDir, 'src/main/webapp'))
 
         expect:
-            File outputDir = new File(integTestDir, 'build/jasper')
-            buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-            buildFile << """
-tomcat {
-    jasper {
-        $validationAttribute = true
-    }
-}
-"""
-            runTasks(integTestDir, TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
-            File compiledJspDir = new File(outputDir, 'org/apache/jsp')
-            compiledJspDir.exists()
-            new File(compiledJspDir, 'helloWorld_jsp.java').exists()
-            new File(compiledJspDir, 'date_jsp.java').exists()
+        File outputDir = new File(integTestDir, 'build/jasper')
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << """
+            tomcat {
+                jasper {
+                    $validationAttribute = true
+                }
+            }
+        """
+        runTasks(integTestDir, TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+        File compiledJspDir = new File(outputDir, 'org/apache/jsp')
+        compiledJspDir.exists()
+        new File(compiledJspDir, 'helloWorld_jsp.java').exists()
+        new File(compiledJspDir, 'date_jsp.java').exists()
 
         where:
             tomcatVersion  | validationAttribute
@@ -70,47 +70,49 @@ tomcat {
     private void createJspFiles(File targetDir) {
         File helloWorldJspFile = new File(targetDir, 'helloWorld.jsp')
         helloWorldJspFile << """
-<html>
-    <body>
-        <%= "Hello World!" %>
-    </body>
-</html>
-"""
+            <html>
+                <body>
+                    <%= "Hello World!" %>
+                </body>
+            </html>
+        """
 
         File dateJspFile = new File(targetDir, 'date.jsp')
         dateJspFile << """
-<%@ page language="java" import="java.util.*" errorPage="" %>
-<html>
-    <body>
-        Current Date time: <%= new java.util.Date() %>
-    </body>
-</html>
-"""
+            <%@ page language="java" import="java.util.*" errorPage="" %>
+            <html>
+                <body>
+                    Current Date time: <%= new java.util.Date() %>
+                </body>
+            </html>
+        """
     }
 
     @Unroll
     def "Throws exception using Jasper compiler validation for Tomcat version #tomcatVersion with invalid attribute #validationAttribute"() {
         setup:
-            setupWebAppDirectory()
+        setupWebAppDirectory()
 
         when:
-            buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-            buildFile << """
-tomcat {
-    jasper {
-        $validationAttribute = true
-    }
-}
-"""
-            runTasks(integTestDir, TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << """
+            tomcat {
+                jasper {
+                    $validationAttribute = true
+                }
+            }
+        """
+        runTasks(integTestDir, TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
 
         then:
-            Throwable t = thrown(BuildException)
-            Throwable rootCause = ExceptionUtils.getRootCause(t)
-            rootCause.message == "The <jasper> type doesn't support the \"$validationAttribute\" attribute."
+        Throwable t = thrown(BuildException)
+        Throwable rootCause = ExceptionUtils.getRootCause(t)
+        rootCause.message == "The <jasper> type doesn't support the \"$validationAttribute\" attribute."
 
         where:
-            tomcatVersion << ['6.0.39', '7.0.42', '7.0.50', '8.0.3']
-            validationAttribute << ['validateXml', 'validateTld', 'validateXml', 'validateXml']
+        tomcatVersion | validationAttribute
+        '6.0.39'      | 'validateXml'
+        '7.0.42'      | 'validateTld'
+        '8.0.3'       | 'validateXml'
     }
 }
