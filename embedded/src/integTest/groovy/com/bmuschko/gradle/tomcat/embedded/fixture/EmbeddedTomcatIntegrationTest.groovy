@@ -4,9 +4,14 @@ import com.bmuschko.gradle.tomcat.embedded.TomcatServer
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
 import org.gradle.util.AvailablePortFinder
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 abstract class EmbeddedTomcatIntegrationTest extends Specification {
+    @Rule
+    TemporaryFolder temporaryFolder = new TemporaryFolder()
+
     TomcatServer tomcatServer
     Integer port
 
@@ -25,10 +30,6 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
         new Socket(InetAddress.getByName('localhost'), port)
     }
 
-    protected File createTmpDir(String dir) {
-        new File(System.properties['java.io.tmpdir'], dir)
-    }
-
     protected abstract TomcatServer createTomcatServer()
     protected abstract File getTomcatHomeDir()
     protected abstract void configureTomcatServer()
@@ -36,28 +37,32 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
 
     def "Indicates correct version"() {
         expect:
-           tomcatServer.version == getTomcatVersion()
+       tomcatServer.version == getTomcatVersion()
     }
 
     def "Can start server"() {
         when:
-            configureTomcatServer()
-            tomcatServer.start()
+        configureTomcatServer()
+        tomcatServer.start()
+
         then:
-            verifyCreatedSocket()
+        verifyCreatedSocket()
+
         cleanup:
-            tomcatServer.stop()
+        tomcatServer.stop()
     }
 
     def "Can start server with authentication user"() {
         when:
-            configureTomcatServer()
-            addUsers()
-            tomcatServer.start()
+        configureTomcatServer()
+        addUsers()
+        tomcatServer.start()
+
         then:
-            verifyCreatedSocket()
+        verifyCreatedSocket()
+
         cleanup:
-            tomcatServer.stop()
+        tomcatServer.stop()
     }
 
     private void addUsers() {

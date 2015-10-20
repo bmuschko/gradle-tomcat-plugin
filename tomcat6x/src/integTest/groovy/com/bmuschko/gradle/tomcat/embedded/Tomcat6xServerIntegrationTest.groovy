@@ -30,7 +30,7 @@ class Tomcat6xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
 
     @Override
     protected File getTomcatHomeDir() {
-        createTmpDir('tomcat6xHome')
+        temporaryFolder.newFolder('tomcat6xHome')
     }
 
     @Override

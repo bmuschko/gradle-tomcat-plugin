@@ -23,6 +23,8 @@ allprojects {
 
 subprojects {
     apply plugin: 'jacoco'
+    apply from: "$rootProject.projectDir/gradle/integration-test.gradle"
+    apply from: "$rootProject.projectDir/gradle/functional-test.gradle"
 
     def compatibilityVersion = 1.6
     sourceCompatibility = compatibilityVersion
@@ -41,32 +43,14 @@ subprojects {
         testCompile 'org.apache.commons:commons-lang3:3.3'
     }
 
-    sourceSets {
-        integrationTest {
-            groovy.srcDir file('src/integTest/groovy')
-            resources.srcDir file('src/integTest/resources')
-            compileClasspath = sourceSets.main.output + configurations.testRuntime
-            runtimeClasspath = output + compileClasspath
-        }
-    }
-
-    task integrationTest(type: Test) {
-        description = 'Runs the integration tests.'
-        group = 'verification'
-        testClassesDir = sourceSets.integrationTest.output.classesDir
-        classpath = sourceSets.integrationTest.runtimeClasspath
-        mustRunAfter test
-    }
-
     task jacocoIntegrationTestReport(type: JacocoReport) {
         sourceSets sourceSets.main
         executionData integrationTest
     }
 
-    check.dependsOn integrationTest
-
-    idea.module {
-        testSourceDirs += file('src/integTest/groovy')
+    task jacocoFunctionalTestReport(type: JacocoReport) {
+        sourceSets sourceSets.main
+        executionData functionalTest
     }
 }
 
