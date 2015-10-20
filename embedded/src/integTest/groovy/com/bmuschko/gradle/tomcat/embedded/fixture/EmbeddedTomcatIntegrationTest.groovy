@@ -37,7 +37,7 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
 
     def "Indicates correct version"() {
         expect:
-       tomcatServer.version == getTomcatVersion()
+        tomcatServer.version == getTomcatVersion()
     }
 
     def "Can start server"() {
