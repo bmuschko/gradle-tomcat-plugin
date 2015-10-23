@@ -1,3 +1,8 @@
+### Version 2.2.3 (October 23, 2015)
+
+* Fix for JasperInitializer in Tomcat 8 embedded mode - [Pull Request 133](https://github.com/bmuschko/gradle-tomcat-plugin/pull/133).
+* Upgrade to Gradle Wrapper 2.8.
+
 ### Version 2.2.2 (May 16, 2015)
 
 * Remove ShutdownHook to avoid memory leak - [Pull Request 109](https://github.com/bmuschko/gradle-tomcat-plugin/pull/109).
