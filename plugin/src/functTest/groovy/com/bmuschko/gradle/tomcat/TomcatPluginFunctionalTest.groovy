@@ -65,6 +65,39 @@ tomcatStop - Stops Tomcat.""")
     }
 
     @Unroll
+    def "Start and stop #tomcatVersion with #taskName for servlet context listener"() {
+        setup:
+        setupWebAppDirectory()
+        webComponentFixture.createServletContextListenerWebApp(temporaryFolder.root)
+
+        when:
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        buildFile << getTaskStartAndStopProperties()
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(taskName, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+        buildFile << """
+            dependencies {
+                providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+            }
+
+            tomcatStop.doLast {
+                println 'tomcatStop.doLast'
+            }
+        """
+        BuildResult buildResult = build('startAndStopTomcat')
+
+        then:
+        buildResult.standardOutput.contains(""":tomcatRun
+contextInitialized""")
+        buildResult.standardOutput.contains(""":tomcatStop
+contextDestroyed
+tomcatStop.doLast""")
+
+        where:
+        tomcatVersion             | taskName
+        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+    }
+
+    @Unroll
     def "Start and stop #tomcatVersion with #taskName for Servlet 2.x web app"() {
         setup:
         setupWebAppDirectory()

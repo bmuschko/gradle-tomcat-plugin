@@ -11,6 +11,11 @@ class WebComponentFixture {
         createJsp(jspDir)
     }
 
+    void createServletContextListenerWebApp(File projectDir) {
+        File javaSrcDir = createJavaSourceDirectory(projectDir)
+        createSimpleServletContextListener(javaSrcDir)
+    }
+
     private File createJavaSourceDirectory(File projectDir) {
         File javaSrcDir = new File(projectDir, 'src/main/java/com/bmuschko/web')
         boolean success = javaSrcDir.mkdirs()
@@ -119,5 +124,36 @@ public class ForwardServlet extends HttpServlet {
     private void createJsp(File jspDir) {
         File jspFile = new File(jspDir, 'forwarded.jsp')
         jspFile << 'Forward successful!'
+    }
+
+    private void createSimpleServletContextListener(File srcDir) {
+        File servletFile = new File(srcDir, 'SimpleServletContextListener.java')
+        servletFile << """
+package com.bmuschko.web;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
+@WebListener
+public class SimpleServletContextListener implements ServletContextListener {
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        System.out.println("contextInitialized");
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // If the tomcat stop is (incorrectly) asynchronous, ensure the build
+        // has time to finish before the System.out.println occurs.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new Error(e);
+        }
+        System.out.println("contextDestroyed");
+    }
+}
+"""
     }
 }
