@@ -4,6 +4,24 @@
 
 [![Build Status](https://snap-ci.com/bmuschko/gradle-tomcat-plugin/branch/master/build_image)](https://snap-ci.com/bmuschko/gradle-tomcat-plugin/branch/master)
 
+<table border=1>
+    <tr>
+        <td>
+            Over the past couple of years this plugin has seen many releases. Thanks to everyone involved! 
+            Unfortunately, I don't have much time to contribute anymore. In practice this means far less activity, 
+            responsiveness on issues and new releases from my end.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            I am 
+            <a href="https://discuss.gradle.org/t/looking-for-new-owners-for-gradle-plugins/9735">actively looking for contributors</a> 
+            willing to take on maintenance and implementation of the project. If you are interested and would love to see this 
+            plugin continue to thrive, shoot me a <a href="mailto:benjamin.muschko@gmail.com">mail</a>.
+        </td>
+    </tr>
+</table>
+
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
 Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
 6.x and 7.x are supported.
