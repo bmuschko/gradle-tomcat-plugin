@@ -104,7 +104,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         BuildResult result = buildAndFail(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
 
         then:
-        result.standardError.contains("jasper doesn't support the \"$validationAttribute\" attribute")
+        result.output.contains("jasper doesn't support the \"$validationAttribute\" attribute")
 
         where:
         tomcatVersion | validationAttribute

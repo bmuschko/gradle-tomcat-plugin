@@ -37,7 +37,7 @@ class TomcatPluginFunctionalTest extends AbstractFunctionalTest {
         BuildResult buildResult = build('tasks')
 
         then:
-        buildResult.standardOutput.contains("""Web application tasks
+        buildResult.output.contains("""Web application tasks
 ---------------------
 tomcatJasper - Runs the JSP compiler and turns JSP pages into Java source.
 tomcatRun - Uses your files as and where they are and deploys them to Tomcat.
@@ -206,7 +206,7 @@ tomcatStop - Stops Tomcat.""")
         BuildResult result = buildAndFail('startAndStopTomcat')
 
         then:
-        result.standardError.contains("File '$configFile.canonicalPath' specified for property 'configFile' does not exist.")
+        result.output.contains("File '$configFile.canonicalPath' specified for property 'configFile' does not exist.")
 
         where:
         tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X]
@@ -228,7 +228,7 @@ tomcatStop - Stops Tomcat.""")
         BuildResult result = build('startAndStopTomcat')
 
         then:
-        !result.standardOutput.contains('SLF4J: Class path contains multiple SLF4J bindings.')
+        !result.output.contains('SLF4J: Class path contains multiple SLF4J bindings.')
 
         where:
         tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X]
