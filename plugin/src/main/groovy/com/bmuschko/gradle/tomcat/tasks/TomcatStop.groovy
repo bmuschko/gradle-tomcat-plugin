@@ -53,6 +53,9 @@ class TomcatStop extends Tomcat {
             OutputStream out = s.outputStream
             out.write((getStopKey() + '\r\nstop\r\n').bytes)
             out.flush()
+            // Wait for the socket to be closed after the server is stopped.
+            // No response is actually written, so this always returns -1.
+            s.inputStream.read()
             s.close()
         }
         catch(ConnectException e) {
