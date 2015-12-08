@@ -1,3 +1,8 @@
+### Version 2.2.4 (December 7, 2015)
+
+* TomcatStop should wait for the server to stop - [Pull Request 137](https://github.com/bmuschko/gradle-tomcat-plugin/pull/137).
+* Upgrade to Gradle Wrapper 2.9.
+
 ### Version 2.2.3 (October 23, 2015)
 
 * Fix for JasperInitializer in Tomcat 8 embedded mode - [Pull Request 133](https://github.com/bmuschko/gradle-tomcat-plugin/pull/133).
