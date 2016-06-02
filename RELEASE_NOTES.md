@@ -1,3 +1,8 @@
+### Version 2.2.5 (June 2, 2016)
+
+* Remove use of Gradle internal methods.
+* Upgrade to Gradle Wrapper 2.13.
+
 ### Version 2.2.4 (December 7, 2015)
 
 * TomcatStop should wait for the server to stop - [Pull Request 137](https://github.com/bmuschko/gradle-tomcat-plugin/pull/137).
