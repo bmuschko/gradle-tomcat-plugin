@@ -24,33 +24,6 @@ abstract class AbstractFunctionalTest extends Specification {
         projectDir = temporaryFolder.root
         buildFile = temporaryFolder.newFile('build.gradle')
 
-        def pluginClasspathResource = getClass().classLoader.findResource("plugin-classpath.txt")
-        if (pluginClasspathResource == null) {
-            throw new IllegalStateException("Did not find plugin classpath resource, run 'functionalTestClasses' build task.")
-        }
-
-        def pluginClasspath = pluginClasspathResource.readLines()
-                .collect { it.replace('\\', '\\\\') } // escape backslashes in Windows paths
-                .collect { "'$it'" }
-                .join(", ")
-
-        // Add the logic under test to the test build
-        buildFile << """
-            buildscript {
-                dependencies {
-                    classpath files($pluginClasspath)
-                }
-            }
-        """
-
-        buildFile << """
-            apply plugin: 'java'
-
-            repositories {
-                mavenCentral()
-            }
-        """
-
         AvailablePortFinder availablePortFinder = AvailablePortFinder.createPrivate()
         httpPort = availablePortFinder.nextAvailable
         stopPort = availablePortFinder.nextAvailable
@@ -66,7 +39,7 @@ abstract class AbstractFunctionalTest extends Specification {
     }
 
     private GradleRunner createAndConfigureGradleRunner(String... arguments) {
-        GradleRunner.create().withProjectDir(projectDir).withArguments(arguments)
+        GradleRunner.create().withProjectDir(projectDir).withArguments(arguments).withPluginClasspath()
     }
 
     protected File createFile(File parent, String filename) {
@@ -141,6 +114,16 @@ abstract class AbstractFunctionalTest extends Specification {
             task startAndStopTomcat {
                 dependsOn $tomcatStartTask
                 finalizedBy $tomcatStopTask
+            }
+        """
+    }
+
+    protected String basicBuildScript() {
+        """
+            apply plugin: 'java'
+
+            repositories {
+                mavenCentral()
             }
         """
     }

@@ -7,8 +7,11 @@ import spock.lang.Unroll
 class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
     def setup() {
         buildFile << """
-            apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
+            plugins {
+                id 'com.bmuschko.tomcat'
+            }
         """
+        buildFile << basicBuildScript()
     }
 
     @Unroll

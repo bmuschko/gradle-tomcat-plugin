@@ -26,10 +26,13 @@ class TomcatPluginFunctionalTest extends AbstractFunctionalTest {
 
     def setup() {
         buildFile << """
-            apply plugin: com.bmuschko.gradle.tomcat.TomcatPlugin
+            plugins {
+                id 'com.bmuschko.tomcat'
+            }
 
             [tomcatRun, tomcatRunWar]*.daemon = true
         """
+        buildFile << basicBuildScript()
     }
 
     def "Adds default Tomcat tasks for Java project"() {

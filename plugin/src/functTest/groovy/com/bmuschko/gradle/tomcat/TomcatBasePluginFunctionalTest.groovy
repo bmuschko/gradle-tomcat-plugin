@@ -21,8 +21,11 @@ import spock.lang.Unroll
 class TomcatBasePluginFunctionalTest extends AbstractFunctionalTest {
     def setup() {
         buildFile << """
-            apply plugin: com.bmuschko.gradle.tomcat.TomcatBasePlugin
+            plugins {
+                id 'com.bmuschko.tomcat-base'
+            }
         """
+        buildFile << basicBuildScript()
     }
 
     @Unroll
