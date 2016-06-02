@@ -3,7 +3,6 @@ package com.bmuschko.gradle.tomcat
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.gradle.util.AvailablePortFinder
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
