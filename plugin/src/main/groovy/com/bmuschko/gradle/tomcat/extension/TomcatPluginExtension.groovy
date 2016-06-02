@@ -16,7 +16,6 @@
 package com.bmuschko.gradle.tomcat.extension
 
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
-import org.gradle.util.ConfigureUtil
 
 /**
  * Defines Tomcat plugin extension.
@@ -42,11 +41,15 @@ class TomcatPluginExtension {
     List<TomcatUser> users = []
 
     def jasper(Closure closure) {
-        ConfigureUtil.configure(closure, jasper)
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = jasper
+        closure()
     }
     
     def users(Closure closure) {
-        ConfigureUtil.configure(closure, users)
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = users
+        closure()
     }
     
     def user(Closure closure) {
