@@ -241,7 +241,7 @@ Note: `keystoreFile` and `truststoreFile` each require an instance of a `File` o
 
 ### Example
 
-In the following example code, wes declare a custom context file for the task `tomcatRun`.
+In the following example code, we declare a custom context file for the task `tomcatRun`.
 
 ```groovy
 tomcatRun.configFile = file('context.xml')
