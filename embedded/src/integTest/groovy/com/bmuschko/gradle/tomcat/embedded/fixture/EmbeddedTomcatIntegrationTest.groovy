@@ -3,7 +3,7 @@ package com.bmuschko.gradle.tomcat.embedded.fixture
 import com.bmuschko.gradle.tomcat.embedded.TomcatServer
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
-import org.gradle.util.AvailablePortFinder
+import com.bmuschko.gradle.tomcat.fixture.AvailablePortFinder
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification

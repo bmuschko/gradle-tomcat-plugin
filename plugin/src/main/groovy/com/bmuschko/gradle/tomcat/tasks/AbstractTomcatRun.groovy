@@ -63,6 +63,8 @@ abstract class AbstractTomcatRun extends Tomcat {
     /**
      * The TCP port which Tomcat should listen for HTTPS requests. Defaults to 8443.
      */
+    @Input
+    @Optional
     Integer httpsPort = 8443
 
     /**
@@ -202,9 +204,15 @@ abstract class AbstractTomcatRun extends Tomcat {
     @Optional
     List<TomcatUser> users = []
 
+    @Internal
     def server
+
+    @Internal
     def realm
+
+    @Internal
     URL resolvedConfigFile
+
     private Thread shutdownHook
 
     private final ThreadContextClassLoader threadContextClassLoader = new TomcatThreadContextClassLoader()
@@ -374,6 +382,7 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
     }
 
+    @Internal
     protected String getFullContextPath() {
         if(getContextPath() == '/' || getContextPath() == '') {
             return ''

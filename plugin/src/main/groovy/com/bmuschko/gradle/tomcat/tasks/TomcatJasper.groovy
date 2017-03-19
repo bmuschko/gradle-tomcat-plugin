@@ -105,6 +105,7 @@ class TomcatJasper extends Tomcat {
         ant.jasper(getJasperAttributes())
     }
 
+    @Internal
     private getJasperAttributes() {
         def jasperAttributes = ['uriroot': getUriroot(), 'outputDir': getOutputDir(),
                                 'classdebuginfo': getClassdebuginfo(), 'compilerSourceVM': getCompilerSourceVM(),

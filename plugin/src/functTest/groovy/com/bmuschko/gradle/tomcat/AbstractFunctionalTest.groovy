@@ -1,6 +1,7 @@
 package com.bmuschko.gradle.tomcat
 
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
+import com.bmuschko.gradle.tomcat.fixture.AvailablePortFinder
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule

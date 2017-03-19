@@ -19,6 +19,7 @@ import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 
 /**
@@ -89,6 +90,7 @@ class TomcatRun extends AbstractTomcatRun {
      *
      * @return Flag
      */
+    @Internal
     protected boolean isTomcat6x() {
         getServer().version == TomcatVersion.VERSION_6X
     }
@@ -98,6 +100,7 @@ class TomcatRun extends AbstractTomcatRun {
      *
      * @return Flag
      */
+    @Internal
     private boolean isClassesJarScanningRequired() {
         !isTomcat6x() && !existsWebXml()
     }
