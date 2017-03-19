@@ -76,7 +76,7 @@ abstract class AbstractFunctionalTest extends Specification {
         }
     }
 
-    protected String getBasicTomcat6xBuildFileContent(String version = '6.0.43') {
+    protected String getBasicTomcat6xBuildFileContent(String version = '6.0.51') {
         """
             dependencies {
                 def tomcatVersion = '$version'
@@ -87,7 +87,7 @@ abstract class AbstractFunctionalTest extends Specification {
         """
     }
 
-    protected String getBasicTomcat7xBuildFileContent(String version = '7.0.61') {
+    protected String getBasicTomcat7xBuildFileContent(String version = '7.0.76') {
         """
             dependencies {
                 def tomcatVersion = '$version'
@@ -98,7 +98,7 @@ abstract class AbstractFunctionalTest extends Specification {
         """
     }
 
-    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.21') {
+    protected String getBasicTomcat8xBuildFileContent(String version = '8.0.42') {
         """
             dependencies {
                 def tomcatVersion = '$version'
