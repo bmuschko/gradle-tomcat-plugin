@@ -60,9 +60,9 @@ class TomcatBasePluginFunctionalTest extends AbstractFunctionalTest {
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | 'myTomcatRun'
-        TomcatVersion.VERSION_6X  | 'myTomcatRunWar'
-        TomcatVersion.VERSION_7X  | 'myTomcatRun'
-        TomcatVersion.VERSION_7X  | 'myTomcatRunWar'
+        TomcatVersion.VERSION_6_0_X  | 'myTomcatRun'
+        TomcatVersion.VERSION_6_0_X  | 'myTomcatRunWar'
+        TomcatVersion.VERSION_7_0_X  | 'myTomcatRun'
+        TomcatVersion.VERSION_7_0_X  | 'myTomcatRunWar'
     }
 }

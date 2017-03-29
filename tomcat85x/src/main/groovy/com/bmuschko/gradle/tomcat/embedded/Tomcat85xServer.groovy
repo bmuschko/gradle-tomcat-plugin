@@ -18,15 +18,16 @@ package com.bmuschko.gradle.tomcat.embedded
 import java.lang.reflect.Constructor
 
 /**
- * Tomcat 8x server implementation.
+ * Tomcat 85x server implementation.
  *
  * @author Benjamin Muschko
  * @author Andrey Bloschetsov
+ * @author Martin Flower
  */
-class Tomcat8xServer extends BaseTomcat7xPlusImpl {
+class Tomcat85xServer extends BaseTomcat7xPlusImpl {
     @Override
     TomcatVersion getVersion() {
-        TomcatVersion.VERSION_8_0_X
+        TomcatVersion.VERSION_8_5_X
     }
 
     @Override

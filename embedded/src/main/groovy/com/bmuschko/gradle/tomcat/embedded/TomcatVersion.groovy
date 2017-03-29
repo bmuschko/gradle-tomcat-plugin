@@ -21,9 +21,14 @@ package com.bmuschko.gradle.tomcat.embedded
  * @author Benjamin Muschko
  */
 enum TomcatVersion {
-    VERSION_6X('6.0', 'Tomcat 6x'),
-    VERSION_7X('7.0', 'Tomcat 7x'),
-    VERSION_8X('8.0', 'Tomcat 8x')
+
+    // @see https://wiki.apache.org/tomcat/TomcatVersions
+
+    VERSION_6_0_X('6.0' , 'Tomcat 6.0.x'),
+    VERSION_7_0_X('7.0' , 'Tomcat 7.0.x'),
+    VERSION_8_0_X('8.0' , 'Tomcat 8.0.x'),
+    VERSION_8_5_X('8.5',  'Tomcat 8.5.x')
+//  VERSION_9_0_X('9.0' , 'Tomcat 9.0.x')
 
     private static final TOMCAT_VERSIONS = [:]
 
@@ -47,6 +52,8 @@ enum TomcatVersion {
         description
     }
 
+    // example from catalina.jar - META-INF/MANIFEST.MF:
+    //   Specification-Version: 8.5
     static TomcatVersion getTomcatVersionForSpec(String specVersion) {
         if(!TOMCAT_VERSIONS.containsKey(specVersion)) {
             throw new IllegalArgumentException("Unsupported specification version '$specVersion'")
@@ -57,14 +64,20 @@ enum TomcatVersion {
 
     static TomcatVersion getTomcatVersionForString(String version) {
         if(version.startsWith('6')) {
-            return VERSION_6X
+            return VERSION_6_0_X
         }
         else if(version.startsWith('7')) {
-            return VERSION_7X
+            return VERSION_7_0_X
         }
-        else if(version.startsWith('8')) {
-            return VERSION_8X
+        else if(version.startsWith('8.0')) {
+            return VERSION_8_0_X
         }
+        else if(version.startsWith('8.5')) {
+            return VERSION_8_5_X
+        }
+//      else if(version.startsWith('9.0')) {
+//          return VERSION_9_0_X
+//      }
 
         throw new IllegalArgumentException("Unsupported Tomcat version $version")
     }

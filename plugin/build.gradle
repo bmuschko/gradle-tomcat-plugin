@@ -2,5 +2,6 @@ dependencies {
     compile gradleApi(),
             project(':tomcat6x'),
             project(':tomcat7x'),
-            project(':tomcat8x')
+            project(':tomcat8x'),
+            project(':tomcat85x')
 }

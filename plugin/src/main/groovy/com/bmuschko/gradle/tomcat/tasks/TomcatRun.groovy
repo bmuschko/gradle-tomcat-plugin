@@ -92,7 +92,7 @@ class TomcatRun extends AbstractTomcatRun {
      */
     @Internal
     protected boolean isTomcat6x() {
-        getServer().version == TomcatVersion.VERSION_6X
+        getServer().version == TomcatVersion.VERSION_6_0_X
     }
 
     /**

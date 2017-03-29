@@ -61,10 +61,10 @@ tomcatStop - Stops Tomcat.""")
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
@@ -97,7 +97,7 @@ tomcatStop.doLast""")
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
     }
 
     @Unroll
@@ -124,12 +124,12 @@ tomcatStop.doLast""")
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
 
         // TODO: Not sure why that fails
-        //TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        //TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
@@ -142,10 +142,10 @@ tomcatStop.doLast""")
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
@@ -178,10 +178,10 @@ tomcatStop.doLast""")
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Unroll
@@ -199,19 +199,19 @@ tomcatStop.doLast""")
 
         where:
         tomcatVersion             | taskName
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_6X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
-        TomcatVersion.VERSION_7X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
     }
 
     @Ignore
-    def "Start and stop Tomcat 8x with tomcatRun task supporting default web app directory"() {
+    def "Start and stop Tomcat 8.0.x with tomcatRun task supporting default web app directory"() {
         setup:
         setupWebAppDirectory()
 
         expect:
-        buildFile << getBasicTomcatBuildFileContent(TomcatVersion.VERSION_8X)
+        buildFile << getBasicTomcatBuildFileContent(TomcatVersion.VERSION_8_0_X)
         buildFile << getTaskStartAndStopProperties()
         buildFile << getTomcatContainerLifecycleManagementBuildFileContent(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
         build('startAndStopTomcat')
@@ -224,6 +224,18 @@ tomcatStop.doLast""")
             [tomcatRun, tomcatRunWar, tomcatStop]*.stopKey = 'stopKey'
             [tomcatRun, tomcatRunWar, tomcatStop]*.stopPort = $stopPort
         """
+    }
+
+    @Ignore
+    def "Start and stop Tomcat 8.5.x with tomcatRun task supporting default web app directory"() {
+        setup:
+        setupWebAppDirectory()
+
+        expect:
+        buildFile << getBasicTomcatBuildFileContent(TomcatVersion.VERSION_8_5_X)
+        buildFile << getTaskStartAndStopProperties()
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+        build('startAndStopTomcat')
     }
 
     @Unroll
@@ -245,7 +257,7 @@ tomcatStop.doLast""")
         result.output.contains("File '$configFile.canonicalPath' specified for property 'configFile' does not exist.")
 
         where:
-        tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X]
+        tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X]
     }
 
     @Unroll
@@ -267,7 +279,7 @@ tomcatStop.doLast""")
         !result.output.contains('SLF4J: Class path contains multiple SLF4J bindings.')
 
         where:
-        tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X]
+        tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X]
     }
 
     @Unroll

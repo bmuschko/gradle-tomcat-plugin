@@ -24,7 +24,7 @@
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
 Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
-6.x, 7.x and 8.x are supported.
+6.0.x, 7.0.x, 8.0.x and 8.5.x are supported.
 
 The typical use case for this plugin is to support deployment during development. The plugin allows for rapid web application
 development due to the container's fast startup times. Gradle starts the embedded container in the same JVM. Currently,
@@ -49,7 +49,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.5'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.2.6'
     }
 }
 ```
@@ -95,10 +95,10 @@ in your build script:
 ### Assigning the Tomcat libraries
 
 Additionally, the Tomcat runtime libraries need to be added to the configuration `tomcat`. At the moment the Tomcat
-versions 6.x, 7.x and 8.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
+versions 6.0.x, 7.0.x, 8.0.x and 8.5.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
 versions.
 
-**Tomcat 6.x:**
+**Tomcat 6.0.x:**
 
 ```groovy
 repositories {
@@ -113,7 +113,7 @@ dependencies {
 }
 ```
 
-**Tomcat 7.x:**
+**Tomcat 7.0.x:**
 
 ```groovy
 repositories {
@@ -128,7 +128,22 @@ dependencies {
 }
 ```
 
-**Tomcat 8.x:**
+**Tomcat 8.0.x:**
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def tomcatVersion = '8.0.42'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+}
+```
+
+**Tomcat 8.5.x:**
 
 ```groovy
 repositories {
@@ -138,10 +153,11 @@ repositories {
 dependencies {
     def tomcatVersion = '8.5.12'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-           "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2",
            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
 }
 ```
+
 
 ## Tasks
 

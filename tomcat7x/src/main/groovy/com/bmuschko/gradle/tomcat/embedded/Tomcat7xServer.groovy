@@ -23,7 +23,7 @@ package com.bmuschko.gradle.tomcat.embedded
 class Tomcat7xServer extends BaseTomcat7xPlusImpl {
     @Override
     TomcatVersion getVersion() {
-        TomcatVersion.VERSION_7X
+        TomcatVersion.VERSION_7_0_X
     }
 
     @Override

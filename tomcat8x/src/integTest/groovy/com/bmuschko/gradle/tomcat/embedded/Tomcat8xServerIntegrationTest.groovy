@@ -41,6 +41,6 @@ class Tomcat8xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
 
     @Override
     protected TomcatVersion getTomcatVersion() {
-        TomcatVersion.VERSION_8X
+        TomcatVersion.VERSION_8_0_X
     }
 }
