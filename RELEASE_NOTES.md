@@ -5,6 +5,7 @@
 * Requires tomcat configuration in build.gradle:
 ** httpProtocol = "org.apache.coyote.http11.Http11Nio2Protocol"
 ** ajpProtocol  = "org.apache.coyote.ajp.AjpNio2Protocol"
+* Note TomcatPluginFunctionalTest.groovy for 8.5 is marked Ignore
 
 ### Version 2.2.5 (June 2, 2016)
 
