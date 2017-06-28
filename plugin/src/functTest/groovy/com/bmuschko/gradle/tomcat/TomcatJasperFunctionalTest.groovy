@@ -5,6 +5,10 @@ import org.gradle.testkit.runner.BuildResult
 import spock.lang.Unroll
 
 class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
+
+    private static final String VALIDATE_XML_ATTRIBUTE = 'validateXml'
+    private static final String VALIDATE_TLD_ATTRIBUTE = 'validateTld'
+
     def setup() {
         buildFile << """
             plugins {
@@ -30,7 +34,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         new File(compiledJspDir, 'date_jsp.java').exists()
 
         where:
-        tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X, TomcatVersion.VERSION_8_0_X] // TODO , TomcatVersion.VERSION_8_5_X
+        tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X, TomcatVersion.VERSION_8_0_X, TomcatVersion.VERSION_8_5_X]
     }
 
     /**
@@ -62,11 +66,11 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
 
         where:
         tomcatVersion  | validationAttribute
-        '6.0.29'       | 'validateXml'
-        '6.0.39'       | 'validateTld'
-        '7.0.42'       | 'validateXml'
-        '7.0.50'       | 'validateTld'
-        '8.0.3'        | 'validateTld'
+        '6.0.29'       | VALIDATE_XML_ATTRIBUTE
+        '6.0.39'       | VALIDATE_TLD_ATTRIBUTE
+        '7.0.42'       | VALIDATE_XML_ATTRIBUTE
+        '7.0.50'       | VALIDATE_TLD_ATTRIBUTE
+        '8.0.3'        | VALIDATE_TLD_ATTRIBUTE
     }
 
     private void createJspFiles(File targetDir) {
@@ -111,8 +115,8 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
 
         where:
         tomcatVersion | validationAttribute
-        '6.0.39'      | 'validateXml'
-        '7.0.42'      | 'validateTld'
-        '8.0.3'       | 'validateXml'
+        '6.0.39'      | VALIDATE_XML_ATTRIBUTE
+        '7.0.42'      | VALIDATE_TLD_ATTRIBUTE
+        '8.0.3'       | VALIDATE_XML_ATTRIBUTE
     }
 }
