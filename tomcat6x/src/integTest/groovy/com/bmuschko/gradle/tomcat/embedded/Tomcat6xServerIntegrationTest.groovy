@@ -42,6 +42,6 @@ class Tomcat6xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
 
     @Override
     protected TomcatVersion getTomcatVersion() {
-        TomcatVersion.VERSION_6X
+        TomcatVersion.VERSION_6_0_X
     }
 }

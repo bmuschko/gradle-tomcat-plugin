@@ -18,19 +18,19 @@ package com.bmuschko.gradle.tomcat.embedded
 import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcatIntegrationTest
 
 /**
- * Tomcat 7x server test.
+ * Tomcat 8x server test.
  *
  * @author Benjamin Muschko
  */
-class Tomcat7xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
+class Tomcat85xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
     @Override
     protected TomcatServer createTomcatServer() {
-        new Tomcat7xServer()
+        new Tomcat85xServer()
     }
 
     @Override
     protected File getTomcatHomeDir() {
-        temporaryFolder.newFolder('tomcat7xHome')
+        temporaryFolder.newFolder('tomcat85xHome')
     }
 
     @Override
@@ -41,6 +41,6 @@ class Tomcat7xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
 
     @Override
     protected TomcatVersion getTomcatVersion() {
-        TomcatVersion.VERSION_7_0_X
+        TomcatVersion.VERSION_8_5_X
     }
 }

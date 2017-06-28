@@ -3,7 +3,7 @@ sourceCompatibility = jdk7
 targetCompatibility = jdk7
 
 dependencies {
-    def tomcatVersion = '8.0.42'
+    def tomcatVersion = '8.5.12'
 
     compile project(':embedded'),
             "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",

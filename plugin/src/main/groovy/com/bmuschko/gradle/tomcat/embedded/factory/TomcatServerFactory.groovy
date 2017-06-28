@@ -43,9 +43,10 @@ class TomcatServerFactory {
         log.info "Resolved $tomcatVersion.description server implementation in classpath"
 
         switch(tomcatVersion) {
-            case TomcatVersion.VERSION_6X: return new Tomcat6xServer()
-            case TomcatVersion.VERSION_7X: return new Tomcat7xServer()
-            case TomcatVersion.VERSION_8X: return new Tomcat8xServer()
+            case TomcatVersion.VERSION_6_0_X: return new Tomcat6xServer()
+            case TomcatVersion.VERSION_7_0_X: return new Tomcat7xServer()
+            case TomcatVersion.VERSION_8_0_X: return new Tomcat8xServer()
+            case TomcatVersion.VERSION_8_5_X: return new Tomcat85xServer()
         }
     }
 

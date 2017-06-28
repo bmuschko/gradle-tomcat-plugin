@@ -31,7 +31,7 @@ class Tomcat6xServer extends BaseTomcatServerImpl {
 
     @Override
     TomcatVersion getVersion() {
-        TomcatVersion.VERSION_6X
+        TomcatVersion.VERSION_6_0_X
     }
 
     @Override

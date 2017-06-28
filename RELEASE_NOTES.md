@@ -1,3 +1,12 @@
+### Version 2.2.6 (2017)
+
+* Add Tomcat 8.5.x alongside 8.0.x
+* Updated tomcat versions to latest release version
+* Requires tomcat configuration in build.gradle:
+** httpProtocol = "org.apache.coyote.http11.Http11Nio2Protocol"
+** ajpProtocol  = "org.apache.coyote.ajp.AjpNio2Protocol"
+* Note TomcatPluginFunctionalTest.groovy for 8.5 is marked Ignore
+
 ### Version 2.2.5 (June 2, 2016)
 
 * Remove use of Gradle internal methods.

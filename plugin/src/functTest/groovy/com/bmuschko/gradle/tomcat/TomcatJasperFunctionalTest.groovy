@@ -30,7 +30,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         new File(compiledJspDir, 'date_jsp.java').exists()
 
         where:
-        tomcatVersion << [TomcatVersion.VERSION_6X, TomcatVersion.VERSION_7X, TomcatVersion.VERSION_8X]
+        tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X, TomcatVersion.VERSION_8_0_X] // TODO , TomcatVersion.VERSION_8_5_X
     }
 
     /**

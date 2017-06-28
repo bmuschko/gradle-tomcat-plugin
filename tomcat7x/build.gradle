@@ -1,5 +1,5 @@
 dependencies {
-    def tomcatVersion = '7.0.61'
+    def tomcatVersion = '7.0.76'
 
     compile project(':embedded'),
             "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",

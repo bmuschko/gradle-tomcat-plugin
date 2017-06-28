@@ -58,9 +58,10 @@ abstract class AbstractFunctionalTest extends Specification {
 
     protected String getBasicTomcatBuildFileContent(TomcatVersion tomcatVersion) {
         switch(tomcatVersion) {
-            case TomcatVersion.VERSION_6X: return getBasicTomcat6xBuildFileContent()
-            case TomcatVersion.VERSION_7X: return getBasicTomcat7xBuildFileContent()
-            case TomcatVersion.VERSION_8X: return getBasicTomcat8xBuildFileContent()
+            case TomcatVersion.VERSION_6_0_X: return getBasicTomcat6xBuildFileContent()
+            case TomcatVersion.VERSION_7_0_X: return getBasicTomcat7xBuildFileContent()
+            case TomcatVersion.VERSION_8_0_X: return getBasicTomcat8xBuildFileContent()
+            case TomcatVersion.VERSION_8_5_X: return getBasicTomcat85xBuildFileContent()
             default: throw new IllegalArgumentException("Unknown Tomcat version $tomcatVersion")
         }
     }
@@ -69,9 +70,10 @@ abstract class AbstractFunctionalTest extends Specification {
         TomcatVersion identifiedTomcatVersion = TomcatVersion.getTomcatVersionForString(tomcatVersion)
 
         switch(identifiedTomcatVersion) {
-            case TomcatVersion.VERSION_6X: return getBasicTomcat6xBuildFileContent(tomcatVersion)
-            case TomcatVersion.VERSION_7X: return getBasicTomcat7xBuildFileContent(tomcatVersion)
-            case TomcatVersion.VERSION_8X: return getBasicTomcat8xBuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_6_0_X: return getBasicTomcat6xBuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_7_0_X: return getBasicTomcat7xBuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_8_0_X: return getBasicTomcat8xBuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_8_5_X: return getBasicTomcat85BuildFileContent(tomcatVersion)
             default: throw new IllegalArgumentException("Unknown Tomcat version $tomcatVersion")
         }
     }
@@ -109,6 +111,17 @@ abstract class AbstractFunctionalTest extends Specification {
         """
     }
 
+    protected String getBasicTomcat85xBuildFileContent(String version = '8.5.12') {
+        """
+            dependencies {
+                def tomcatVersion = '$version'
+                tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
+                       "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}",
+                       "org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}"
+            }
+        """
+    }
+    
     protected String getTomcatContainerLifecycleManagementBuildFileContent(String tomcatStartTask, String tomcatStopTask) {
         """
             task startAndStopTomcat {
