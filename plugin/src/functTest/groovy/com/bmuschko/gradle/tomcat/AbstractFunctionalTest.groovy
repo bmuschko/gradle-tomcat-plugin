@@ -73,7 +73,7 @@ abstract class AbstractFunctionalTest extends Specification {
             case TomcatVersion.VERSION_6_0_X: return getBasicTomcat6xBuildFileContent(tomcatVersion)
             case TomcatVersion.VERSION_7_0_X: return getBasicTomcat7xBuildFileContent(tomcatVersion)
             case TomcatVersion.VERSION_8_0_X: return getBasicTomcat8xBuildFileContent(tomcatVersion)
-            case TomcatVersion.VERSION_8_5_X: return getBasicTomcat85BuildFileContent(tomcatVersion)
+            case TomcatVersion.VERSION_8_5_X: return getBasicTomcat85xBuildFileContent(tomcatVersion)
             default: throw new IllegalArgumentException("Unknown Tomcat version $tomcatVersion")
         }
     }
@@ -111,12 +111,12 @@ abstract class AbstractFunctionalTest extends Specification {
         """
     }
 
-    protected String getBasicTomcat85xBuildFileContent(String version = '8.5.12') {
+    protected String getBasicTomcat85xBuildFileContent(String version = '8.5.16') {
         """
             dependencies {
                 def tomcatVersion = '$version'
                 tomcat "org.apache.tomcat.embed:tomcat-embed-core:\${tomcatVersion}",
-                       "org.apache.tomcat.embed:tomcat-embed-logging-juli:\${tomcatVersion}",
+                       "org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2",
                        "org.apache.tomcat.embed:tomcat-embed-jasper:\${tomcatVersion}"
             }
         """
