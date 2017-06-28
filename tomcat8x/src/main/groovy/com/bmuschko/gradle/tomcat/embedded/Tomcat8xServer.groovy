@@ -42,7 +42,7 @@ class Tomcat8xServer extends BaseTomcat7xPlusImpl {
         Constructor constructor = standardRootClass.getConstructor(contextClass)
         context.resources = constructor.newInstance(context)
         Class jasperInitializer = loadClass('org.apache.jasper.servlet.JasperInitializer')
-        context.addServletContainerInitializer(jasperInitializer.newInstance(), null);
+        context.addServletContainerInitializer(jasperInitializer.newInstance(), null)
     }
 
     @Override
