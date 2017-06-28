@@ -2,6 +2,7 @@ com.bmuschko.gradle.tomcat
 com.bmuschko.gradle.tomcat.embedded
 com.bmuschko.gradle.tomcat.embedded.factory
 com.bmuschko.gradle.tomcat.extension
+com.bmuschko.gradle.tomcat.fixture
 com.bmuschko.gradle.tomcat.internal
 com.bmuschko.gradle.tomcat.internal.ssl
 com.bmuschko.gradle.tomcat.internal.utils
