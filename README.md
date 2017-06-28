@@ -143,16 +143,23 @@ dependencies {
 
 **Tomcat 8.5.x:**
 
+Please be aware that the dependency `tomcat-embed-logging-juli` is only required to enable container logging via Log4J 1.x (which is no longer support by the Log4J community). Log4J 2.x can be used for container logging without declaring any extra libraries.
+
 ```groovy
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    def tomcatVersion = '8.5.12'
+    def tomcatVersion = '8.5.16'
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
            "org.apache.tomcat.embed:tomcat-embed-logging-juli:8.5.2",
            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+}
+
+tomcat {
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
 }
 ```
 
