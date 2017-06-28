@@ -112,7 +112,8 @@ class TomcatJasper extends Tomcat {
                                 'compilerTargetVM': getCompilerTargetVM(), 'poolingEnabled': getPoolingEnabled(),
                                 'errorOnUseBeanInvalidClassAttribute': getErrorOnUseBeanInvalidClassAttribute(),
                                 'genStringAsCharArray': getGenStringAsCharArray(), 'ieClassId': getIeClassId(),
-                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces(), 'xpoweredBy': getXpoweredBy()]
+                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces(), 'xpoweredBy': getXpoweredBy(),
+                                'blockexternal': 'false']
         if(getValidateXml()) {
             jasperAttributes['validateXml'] = getValidateXml()
         }
