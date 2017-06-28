@@ -89,10 +89,8 @@ tomcatStop - Stops Tomcat.""")
         BuildResult buildResult = build('startAndStopTomcat')
 
         then:
-        buildResult.output.contains(""":$taskName
-contextInitialized""")
-        buildResult.output.contains(""":tomcatStop
-contextDestroyed
+        buildResult.output.contains('contextInitialized')
+        buildResult.output.contains("""contextDestroyed
 tomcatStop.doLast""")
 
         where:

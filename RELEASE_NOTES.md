@@ -2,6 +2,7 @@
 
 * Add Tomcat 8.5.x support.
 * `TomcatVersion` enum values have changed to reflect minor version.
+* Upgrade to Gradle Wrapper 4.0.
 
 ### Version 2.2.5 (June 2, 2016)
 
