@@ -15,7 +15,9 @@
  */
 package com.bmuschko.gradle.tomcat.extension
 
+import com.bmuschko.gradle.tomcat.embedded.TomcatRealm
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
+import com.bmuschko.gradle.tomcat.embedded.TomcatValve
 
 /**
  * Defines Tomcat plugin extension.
@@ -39,6 +41,8 @@ class TomcatPluginExtension {
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
     TomcatJasperConvention jasper = new TomcatJasperConvention()
     List<TomcatUser> users = []
+    List<TomcatValve> valves= []
+    TomcatRealm realm
 
     def jasper(Closure closure) {
         closure.resolveStrategy = Closure.DELEGATE_FIRST
@@ -57,6 +61,26 @@ class TomcatPluginExtension {
         TomcatUser user = new TomcatUser()
         closure.delegate = user
         users << user
+        closure()
+    }
+    def valves(Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = valves
+        closure()
+    }
+
+    def valve(Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        TomcatValve valve = new TomcatValve()
+        closure.delegate = valve
+        valves << valve
+        closure()
+    }
+    def realm(Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        TomcatRealm tmp = new TomcatRealm()
+        closure.delegate = tmp
+        realm = tmp
         closure()
     }
 }

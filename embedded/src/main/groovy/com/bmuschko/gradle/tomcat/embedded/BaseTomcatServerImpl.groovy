@@ -1,5 +1,6 @@
 package com.bmuschko.gradle.tomcat.embedded
 
+import org.gradle.api.GradleException
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 
@@ -51,6 +52,29 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     }
 
     @Override
+    void configureRealm(TomcatRealm input) {
+        setRealm(createTomcatObject(input))
+    }
+
+    protected createTomcatObject(TomcatObject input) {
+        if (input.className) {
+            def impl = loadClass(input.className).newInstance()
+            input.attributes?.each { key, value ->
+                impl[key] = value
+            }
+            return impl
+        }else{
+            throw new GradleException("Class name is mandatory for "+input)
+        }
+    }
+
+    @Override
+    void configureValve(TomcatValve valve) {
+        tomcat.engine.pipeline.addValve(createTomcatObject(valve))
+    }
+
+
+    @Override
     void start() {
         stopped = false
         tomcat.start()
@@ -61,7 +85,7 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
         context?.stop()
         context?.destroy()
 
-        if(!stopped) {
+        if (!stopped) {
             tomcat.stop()
             stopped = true
         }
@@ -88,14 +112,14 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
         Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String methodName = method.getName()
 
-            if(methodName == 'lifecycleEvent') {
+            if (methodName == 'lifecycleEvent') {
                 def event = args[0]
 
-                if(event.type == 'after_start') {
+                if (event.type == 'after_start') {
                     logger.quiet 'Started Tomcat Server'
                     logger.quiet "The Server is running at http://localhost:${httpConnector.port}${context.path}"
 
-                    if(daemon) {
+                    if (daemon) {
                         startupBarrier.countDown()
                     }
                 }
@@ -104,5 +128,6 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     }
 
     abstract void addLifecycleListener(lifecycleListener)
+
     abstract Object getHttpConnector()
 }

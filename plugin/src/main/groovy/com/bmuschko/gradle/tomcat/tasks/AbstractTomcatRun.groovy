@@ -15,7 +15,9 @@
  */
 package com.bmuschko.gradle.tomcat.tasks
 
+import com.bmuschko.gradle.tomcat.embedded.TomcatRealm
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
+import com.bmuschko.gradle.tomcat.embedded.TomcatValve
 import com.bmuschko.gradle.tomcat.embedded.factory.TomcatServerFactory
 import com.bmuschko.gradle.tomcat.internal.ShutdownMonitor
 import com.bmuschko.gradle.tomcat.internal.ssl.SSLKeyStore
@@ -124,6 +126,9 @@ abstract class AbstractTomcatRun extends Tomcat {
     @InputFiles
     FileCollection tomcatClasspath
 
+    @InputFiles
+    Iterable<File> additionalTomcatRuntimeResources = []
+
     /**
      * The path to the Tomcat context XML file.
      */
@@ -204,11 +209,16 @@ abstract class AbstractTomcatRun extends Tomcat {
     @Optional
     List<TomcatUser> users = []
 
-    @Internal
-    def server
+    @Input
+    @Optional
+    List<TomcatValve> valves = []
+
+    @Input
+    @Optional
+    TomcatRealm realm
 
     @Internal
-    def realm
+    def server
 
     @Internal
     URL resolvedConfigFile
@@ -224,7 +234,7 @@ abstract class AbstractTomcatRun extends Tomcat {
     protected void start() {
         logger.info "Configuring Tomcat for ${getProject()}"
 
-        threadContextClassLoader.withClasspath(getTomcatClasspath().files) {
+        threadContextClassLoader.withClasspath(getTomcatClasspath().files + getAdditionalTomcatRuntimeResources()) {
             validateConfigurationAndStartTomcat()
         }
     }
@@ -242,35 +252,35 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     protected void validateConfiguration() {
         // Check existence of default web.xml if provided
-        if(getWebDefaultXml()) {
+        if (getWebDefaultXml()) {
             logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
         }
 
         // Check the location of context.xml if it was provided.
-        if(getConfigFile()) {
+        if (getConfigFile()) {
             setResolvedConfigFile(getConfigFile().toURI().toURL())
             logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
 
         // Check HTTP(S) protocol handler class names
-        if(getHttpProtocol()) {
+        if (getHttpProtocol()) {
             logger.info "HTTP protocol handler classname = ${getHttpProtocol()}"
         }
 
-        if(getHttpsProtocol()) {
+        if (getHttpsProtocol()) {
             logger.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
         }
 
-        if(getOutputFile()) {
+        if (getOutputFile()) {
             logger.info "Output file = ${getOutputFile().canonicalPath}"
         }
 
-        if(getEnableSSL()) {
+        if (getEnableSSL()) {
             validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
             validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
 
-            if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
+            if (getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
                 throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
         }
@@ -284,21 +294,19 @@ abstract class AbstractTomcatRun extends Tomcat {
      * @param storeType identifies whether the store is a KeyStore or TrustStore
      */
     private void validateStore(File storeFile, String keyStorePassword, StoreType storeType) {
-        if(!storeFile ^ !keyStorePassword) {
+        if (!storeFile ^ !keyStorePassword) {
             throw new InvalidUserDataException("If you want to provide a $storeType.description then password and file may not be null or blank")
-        }
-        else if(storeFile && keyStorePassword) {
-            if(!storeFile.exists()) {
+        } else if (storeFile && keyStorePassword) {
+            if (!storeFile.exists()) {
                 throw new InvalidUserDataException("$storeType.description file does not exist at location $storeFile.canonicalPath")
-            }
-            else {
+            } else {
                 logger.info "$storeType.description file = ${storeFile}"
             }
         }
     }
 
     protected void addWebappResource(File resource) {
-        if(resource.exists()) {
+        if (resource.exists()) {
             server.addWebappResource(resource)
         }
     }
@@ -319,7 +327,7 @@ abstract class AbstractTomcatRun extends Tomcat {
         server.context.reloadable = getReloadable()
         server.configureDefaultWebXml(getWebDefaultXml())
 
-        if(getResolvedConfigFile()) {
+        if (getResolvedConfigFile()) {
             server.configFile = getResolvedConfigFile()
         }
     }
@@ -330,7 +338,9 @@ abstract class AbstractTomcatRun extends Tomcat {
 
             server = TomcatServerFactory.instance.tomcatServer
             server.home = getTemporaryDir().absolutePath
-            server.realm = realm
+            if(getRealm()){
+                server.configureRealm(getRealm())
+            }
 
             configureWebApplication()
 
@@ -342,8 +352,12 @@ abstract class AbstractTomcatRun extends Tomcat {
                 server.configureUser(user)
             }
 
-            if(getEnableSSL()) {
-                if(!getKeystoreFile()) {
+            getValves().each { TomcatValve valve ->
+                server.configureValve(valve)
+            }
+
+            if (getEnableSSL()) {
+                if (!getKeystoreFile()) {
                     final File keystore = project.file("$project.buildDir/tmp/ssl/keystore")
                     final String keyPassword = 'gradleTomcat'
                     sslKeyStore.createSSLCertificate(keystore, keyPassword, getPreserveSSLKey())
@@ -351,11 +365,10 @@ abstract class AbstractTomcatRun extends Tomcat {
                     keystorePass = keyPassword
                 }
 
-                if(getTruststoreFile()) {
+                if (getTruststoreFile()) {
                     server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(),
-                                                        getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
-                }
-                else {
+                            getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
+                } else {
                     server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(), getKeystorePass())
                 }
             }
@@ -373,7 +386,7 @@ abstract class AbstractTomcatRun extends Tomcat {
 
             startupBarrier.await()
         }
-        catch(Exception e) {
+        catch (Exception e) {
             stopServer()
             throw new GradleException('An error occurred starting the Tomcat server.', e)
         }
@@ -384,7 +397,7 @@ abstract class AbstractTomcatRun extends Tomcat {
 
     @Internal
     protected String getFullContextPath() {
-        if(getContextPath() == '/' || getContextPath() == '') {
+        if (getContextPath() == '/' || getContextPath() == '') {
             return ''
         }
 
@@ -403,13 +416,13 @@ abstract class AbstractTomcatRun extends Tomcat {
     }
 
     private void removeShutdownHook() {
-        if(shutdownHook) {
+        if (shutdownHook) {
             Runtime.getRuntime().removeShutdownHook(shutdownHook)
         }
     }
 
     private void stopServer() {
-        if(server && !server.stopped) {
+        if (server && !server.stopped) {
             server.stop()
         }
     }
@@ -425,4 +438,16 @@ abstract class AbstractTomcatRun extends Tomcat {
     void user(String username, String password, List<String> roles) {
         users << new TomcatUser(username: username, password: password, roles: roles)
     }
+
+    /**
+     * Adds a Tomcat value by providing required fields. Allows for adding valves in enhanced tasks without having to
+     * know the plugin's API class representing a Tomcat valve.
+     *
+     * @param className Class name
+     * @param attribute Attributes
+     */
+    void valve(String className, Map<String, Object> attributes) {
+        valves << new TomcatValve(className: className, attributes: attributes)
+    }
+
 }
