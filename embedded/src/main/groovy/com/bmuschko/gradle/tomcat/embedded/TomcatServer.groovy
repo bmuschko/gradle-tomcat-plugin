@@ -38,6 +38,8 @@ interface TomcatServer {
     void configureHttpsConnector(int port, String uriEncoding, String protocolHandlerClassName, File keystoreFile, String keyPassword, File truststoreFile, String trustPassword, String clientAuth)
     void configureDefaultWebXml(File webDefaultXml)
     void configureUser(TomcatUser user)
+    void configureValve(TomcatValve valve)
+    void configureRealm(TomcatRealm valve)
     void setConfigFile(URL configFile)
     void addWebappResource(File resource)
     void addStartUpLifecycleListener(CountDownLatch startupBarrier, boolean daemon)
