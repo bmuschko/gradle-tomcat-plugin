@@ -47,6 +47,7 @@ class TomcatServerFactory {
             case TomcatVersion.VERSION_7_0_X: return new Tomcat7xServer()
             case TomcatVersion.VERSION_8_0_X: return new Tomcat8xServer()
             case TomcatVersion.VERSION_8_5_X: return new Tomcat85xServer()
+            case TomcatVersion.VERSION_9_0_X: return new Tomcat9xServer()
         }
     }
 

@@ -1,0 +1,19 @@
+def jdk8 = '1.8'
+sourceCompatibility = jdk8
+targetCompatibility = jdk8
+
+dependencies {
+    def tomcatVersion = '9.0.0.M27'
+
+    compile project(':embedded'),
+            "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
+            "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
+            "org.apache.tomcat:tomcat-jasper:${tomcatVersion}"
+    testCompile project(path: ':embedded', configuration: 'integTestFixtures')
+}
+
+idea {
+    module {
+        jdkName = jdk8
+    }
+}

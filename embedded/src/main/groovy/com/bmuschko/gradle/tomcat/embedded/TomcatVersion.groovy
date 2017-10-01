@@ -27,7 +27,8 @@ enum TomcatVersion {
     VERSION_6_0_X('6.0' , 'Tomcat 6.0.x'),
     VERSION_7_0_X('7.0' , 'Tomcat 7.0.x'),
     VERSION_8_0_X('8.0' , 'Tomcat 8.0.x'),
-    VERSION_8_5_X('8.5',  'Tomcat 8.5.x')
+    VERSION_8_5_X('8.5',  'Tomcat 8.5.x'),
+    VERSION_9_0_X('9.0',  'Tomcat 9.0.x')
 
     private static final TOMCAT_VERSIONS = [:]
 
@@ -73,6 +74,9 @@ enum TomcatVersion {
         }
         else if(version.startsWith('8.5')) {
             return VERSION_8_5_X
+        }
+        else if(version.startsWith('9')) {
+            return VERSION_9_0_X
         }
 
         throw new IllegalArgumentException("Unsupported Tomcat version $version")

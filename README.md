@@ -22,7 +22,7 @@
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
 Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
-6.0.x, 7.0.x, 8.0.x and 8.5.x are supported.
+6.0.x, 7.0.x, 8.0.x, 8.5.x and 9.0.x are supported.
 
 The typical use case for this plugin is to support deployment during development. The plugin allows for rapid web application
 development due to the container's fast startup times. Gradle starts the embedded container in the same JVM. Currently,
@@ -93,7 +93,7 @@ in your build script:
 ### Assigning the Tomcat libraries
 
 Additionally, the Tomcat runtime libraries need to be added to the configuration `tomcat`. At the moment the Tomcat
-versions 6.0.x, 7.0.x, 8.0.x and 8.5.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
+versions 6.0.x, 7.0.x, 8.0.x, 8.5.x and 9.0.x are supported by the plugin. Make sure you don't mix up Tomcat libraries of different
 versions.
 
 **Tomcat 6.0.x:**
@@ -163,6 +163,27 @@ tomcat {
 }
 ```
 
+**Tomcat 9.0.x:**
+
+Please be aware that the dependency `tomcat-embed-logging-juli` is only required to enable container logging via Log4J 1.x (which is no longer support by the Log4J community). Log4J 2.x can be used for container logging without declaring any extra libraries.
+
+```groovy
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def tomcatVersion = '9.0.0.M27'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+           "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
+           "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+}
+
+tomcat {
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
+}
+```
 
 ## Tasks
 

@@ -236,6 +236,18 @@ tomcatStop.doLast""")
         build('startAndStopTomcat')
     }
 
+    @Ignore
+    def "Start and stop Tomcat 9.0.x with tomcatRun task supporting default web app directory"() {
+        setup:
+        setupWebAppDirectory()
+
+        expect:
+        buildFile << getBasicTomcatBuildFileContent(TomcatVersion.VERSION_9_0_X)
+        buildFile << getTaskStartAndStopProperties()
+        buildFile << getTomcatContainerLifecycleManagementBuildFileContent(TomcatPlugin.TOMCAT_RUN_TASK_NAME, TomcatPlugin.TOMCAT_STOP_TASK_NAME)
+        build('startAndStopTomcat')
+    }
+
     @Unroll
     def "Fails to execute tomcatRun with #tomcatVersion for non-existent config file"() {
         setup:
