@@ -29,19 +29,9 @@ class Tomcat6xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
     }
 
     @Override
-    protected File getTomcatHomeDir() {
-        temporaryFolder.newFolder('tomcat6xHome')
-    }
-
-    @Override
     protected void configureTomcatServer() {
         def localHost = tomcatServer.embedded.createHost('localHost', new File('.').absolutePath)
         tomcatServer.addEngineToServer(localHost)
         tomcatServer.configureHttpConnector(port, null, 'org.apache.coyote.http11.Http11Protocol')
-    }
-
-    @Override
-    protected TomcatVersion getTomcatVersion() {
-        TomcatVersion.VERSION_6_0_X
     }
 }

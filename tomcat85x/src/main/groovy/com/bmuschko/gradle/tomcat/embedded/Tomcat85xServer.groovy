@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 package com.bmuschko.gradle.tomcat.embedded
-
-import java.lang.reflect.Constructor
-
 /**
  * Tomcat 85x server implementation.
  *
@@ -24,35 +21,9 @@ import java.lang.reflect.Constructor
  * @author Andrey Bloschetsov
  * @author Martin Flower
  */
-class Tomcat85xServer extends BaseTomcat7xPlusImpl {
+class Tomcat85xServer extends BaseTomcat8xPlusImpl {
     @Override
     TomcatVersion getVersion() {
         TomcatVersion.VERSION_8_5_X
-    }
-
-    @Override
-    void setRealm(realm) {
-        tomcat.engine.realm = realm
-    }
-
-    @Override
-    void createContext(String fullContextPath, String webAppPath) {
-        super.createContext(fullContextPath, webAppPath)
-        Class standardRootClass = loadClass('org.apache.catalina.webresources.StandardRoot')
-        Class contextClass = loadClass('org.apache.catalina.Context')
-        Constructor constructor = standardRootClass.getConstructor(contextClass)
-        context.resources = constructor.newInstance(context)
-        Class jasperInitializer = loadClass('org.apache.jasper.servlet.JasperInitializer')
-        context.addServletContainerInitializer(jasperInitializer.newInstance(), null)
-    }
-
-    @Override
-    void addWebappResource(File resource) {
-        context.resources.createWebResourceSet(getResourceSetType('PRE'), '/WEB-INF/classes', resource.toURI().toURL(), '/')
-    }
-
-    def getResourceSetType(String name) {
-        Class resourceSetTypeClass = loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
-        resourceSetTypeClass.enumConstants.find { it.name() == name }
     }
 }

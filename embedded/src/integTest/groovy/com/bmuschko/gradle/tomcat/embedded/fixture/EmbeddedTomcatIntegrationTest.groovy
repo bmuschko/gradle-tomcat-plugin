@@ -31,9 +31,16 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
     }
 
     protected abstract TomcatServer createTomcatServer()
-    protected abstract File getTomcatHomeDir()
     protected abstract void configureTomcatServer()
-    protected abstract TomcatVersion getTomcatVersion()
+
+    private File getTomcatHomeDir() {
+        temporaryFolder.newFolder(tomcatServer.version.description)
+    }
+
+
+    private TomcatVersion getTomcatVersion() {
+        tomcatServer.version
+    }
 
     def "Indicates correct version"() {
         expect:

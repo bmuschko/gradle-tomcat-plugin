@@ -15,32 +15,16 @@
  */
 package com.bmuschko.gradle.tomcat.embedded
 
-import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcatIntegrationTest
+import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcat7xPlusIntegrationTest
 
 /**
  * Tomcat 8x server test.
  *
  * @author Benjamin Muschko
  */
-class Tomcat8xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
+class Tomcat8xServerIntegrationTest extends EmbeddedTomcat7xPlusIntegrationTest {
     @Override
     protected TomcatServer createTomcatServer() {
         new Tomcat8xServer()
-    }
-
-    @Override
-    protected File getTomcatHomeDir() {
-        temporaryFolder.newFolder('tomcat8xHome')
-    }
-
-    @Override
-    protected void configureTomcatServer() {
-        tomcatServer.embedded.getHost()
-        tomcatServer.embedded.port = port
-    }
-
-    @Override
-    protected TomcatVersion getTomcatVersion() {
-        TomcatVersion.VERSION_8_0_X
     }
 }
