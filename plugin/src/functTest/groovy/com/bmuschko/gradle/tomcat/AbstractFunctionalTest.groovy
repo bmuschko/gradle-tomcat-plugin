@@ -124,7 +124,7 @@ abstract class AbstractFunctionalTest extends Specification {
         """
     }
 
-    protected String getBasicTomcat9xBuildFileContent(String version = '9.0.0.M27') {
+    protected String getBasicTomcat9xBuildFileContent(String version = '9.0.1') {
         """
             dependencies {
                 def tomcatVersion = '$version'
