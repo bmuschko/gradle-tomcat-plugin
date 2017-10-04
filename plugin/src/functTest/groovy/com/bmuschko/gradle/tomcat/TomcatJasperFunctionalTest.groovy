@@ -71,6 +71,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         '7.0.42'       | VALIDATE_XML_ATTRIBUTE
         '7.0.50'       | VALIDATE_TLD_ATTRIBUTE
         '8.0.3'        | VALIDATE_TLD_ATTRIBUTE
+        '9.0.1'        | VALIDATE_XML_ATTRIBUTE
     }
 
     private void createJspFiles(File targetDir) {

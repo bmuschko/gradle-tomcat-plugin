@@ -37,7 +37,6 @@ abstract class EmbeddedTomcatIntegrationTest extends Specification {
         temporaryFolder.newFolder(tomcatServer.version.description)
     }
 
-
     private TomcatVersion getTomcatVersion() {
         tomcatServer.version
     }

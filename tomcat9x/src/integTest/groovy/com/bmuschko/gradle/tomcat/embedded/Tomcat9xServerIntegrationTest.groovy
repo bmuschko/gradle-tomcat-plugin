@@ -15,7 +15,7 @@
  */
 package com.bmuschko.gradle.tomcat.embedded
 
-import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcat7xPlusIntegrationTest
+import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcat9xPlusIntegrationTest
 
 /**
  * Tomcat 9x server test.
@@ -23,7 +23,7 @@ import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcat7xPlusIntegrati
  * @author Benjamin Muschko
  * @author Keisuke Kato
  */
-class Tomcat9xServerIntegrationTest extends EmbeddedTomcat7xPlusIntegrationTest {
+class Tomcat9xServerIntegrationTest extends EmbeddedTomcat9xPlusIntegrationTest {
     @Override
     protected TomcatServer createTomcatServer() {
         new Tomcat9xServer()
