@@ -137,6 +137,7 @@ class TomcatJasper extends Tomcat {
         jasperAttributes
     }
 
+    @Internal
     private TrimSpacesOption getTrimSpacesOption() {
         this.trimSpaces ? TrimSpacesOption.TRUE : TrimSpacesOption.FALSE
     }
