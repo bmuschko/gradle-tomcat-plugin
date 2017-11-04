@@ -1,3 +1,8 @@
+### Version 2.4 (November 4, 2017)
+
+* Add Tomcat 9.x support.
+* Upgrade to Gradle Wrapper 4.2.
+
 ### Version 2.3 (June 23, 2017)
 
 * Add Tomcat 8.5.x support.
