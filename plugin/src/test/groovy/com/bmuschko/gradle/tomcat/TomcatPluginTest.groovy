@@ -15,6 +15,7 @@
  */
 package com.bmuschko.gradle.tomcat
 
+import com.bmuschko.gradle.tomcat.options.TrimSpaces
 import org.gradle.api.Project
 import org.gradle.api.plugins.WarPlugin
 import com.bmuschko.gradle.tomcat.extension.TomcatPluginExtension
@@ -118,7 +119,7 @@ class TomcatPluginTest extends Specification {
             !task.genStringAsCharArray
             task.ieClassId == 'clsid:8AD9C840-044E-11D1-B3E9-00805F499D93'
             task.javaEncoding == 'UTF8'
-            !task.trimSpaces
+            task.trimSpaces == TrimSpaces.TRUE
             !task.xpoweredBy
     }
 

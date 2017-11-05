@@ -2,6 +2,7 @@ package com.bmuschko.gradle.tomcat
 
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
 import org.gradle.testkit.runner.BuildResult
+import spock.lang.Issue
 import spock.lang.Unroll
 
 class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
@@ -28,10 +29,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         File outputDir = temporaryFolder.newFolder('build', 'jasper')
         buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
         build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
-        File compiledJspDir = new File(outputDir, 'org/apache/jsp')
-        compiledJspDir.exists()
-        new File(compiledJspDir, 'helloWorld_jsp.java').exists()
-        new File(compiledJspDir, 'date_jsp.java').exists()
+        assertCompiledJsps(outputDir)
 
         where:
         tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X, TomcatVersion.VERSION_8_0_X, TomcatVersion.VERSION_8_5_X, TomcatVersion.VERSION_9_0_X]
@@ -59,10 +57,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
             }
         """
         build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
-        File compiledJspDir = new File(outputDir, 'org/apache/jsp')
-        compiledJspDir.exists()
-        new File(compiledJspDir, 'helloWorld_jsp.java').exists()
-        new File(compiledJspDir, 'date_jsp.java').exists()
+        assertCompiledJsps(outputDir)
 
         where:
         tomcatVersion  | validationAttribute
@@ -72,27 +67,6 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         '7.0.50'       | VALIDATE_TLD_ATTRIBUTE
         '8.0.3'        | VALIDATE_TLD_ATTRIBUTE
         '9.0.1'        | VALIDATE_XML_ATTRIBUTE
-    }
-
-    private void createJspFiles(File targetDir) {
-        File helloWorldJspFile = new File(targetDir, 'helloWorld.jsp')
-        helloWorldJspFile << """
-            <html>
-                <body>
-                    <%= "Hello World!" %>
-                </body>
-            </html>
-        """
-
-        File dateJspFile = new File(targetDir, 'date.jsp')
-        dateJspFile << """
-            <%@ page language="java" import="java.util.*" errorPage="" %>
-            <html>
-                <body>
-                    Current Date time: <%= new java.util.Date() %>
-                </body>
-            </html>
-        """
     }
 
     @Unroll
@@ -119,5 +93,56 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         '6.0.39'      | VALIDATE_XML_ATTRIBUTE
         '7.0.42'      | VALIDATE_TLD_ATTRIBUTE
         '8.0.3'       | VALIDATE_XML_ATTRIBUTE
+    }
+
+    @Issue("https://github.com/bmuschko/gradle-tomcat-plugin/issues/162")
+    def "Can use trim spaces option"() {
+        setup:
+        File webAppDir = setupWebAppDirectory()
+        createJspFiles(webAppDir)
+
+        expect:
+        File outputDir = temporaryFolder.newFolder('build', 'jasper')
+        buildFile << getBasicTomcatBuildFileContent(combinations[0])
+        buildFile << """
+            tomcat {
+                jasper {
+                    trimSpaces = com.bmuschko.gradle.tomcat.options.TrimSpaces.valueOf('${combinations[1]}')
+                }
+            }
+        """
+        build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+        assertCompiledJsps(outputDir)
+
+        where:
+        combinations << [['6.0.39', '7.0.42', '7.0.50', '8.0.3', '9.0.1'], ['TRUE', 'FALSE', 'SINGLE']].combinations()
+    }
+
+    static void createJspFiles(File targetDir) {
+        File helloWorldJspFile = new File(targetDir, 'helloWorld.jsp')
+        helloWorldJspFile << """
+            <html>
+                <body>
+                    <%= "Hello World!" %>
+                </body>
+            </html>
+        """
+
+        File dateJspFile = new File(targetDir, 'date.jsp')
+        dateJspFile << """
+            <%@ page language="java" import="java.util.*" errorPage="" %>
+            <html>
+                <body>
+                    Current Date time: <%= new java.util.Date() %>
+                </body>
+            </html>
+        """
+    }
+
+    static void assertCompiledJsps(File outputDir) {
+        File compiledJspDir = new File(outputDir, 'org/apache/jsp')
+        compiledJspDir.exists()
+        assert new File(compiledJspDir, 'helloWorld_jsp.java').exists()
+        assert new File(compiledJspDir, 'date_jsp.java').exists()
     }
 }

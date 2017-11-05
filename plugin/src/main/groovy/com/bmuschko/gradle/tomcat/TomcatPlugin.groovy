@@ -15,6 +15,7 @@
  */
 package com.bmuschko.gradle.tomcat
 
+import com.bmuschko.gradle.tomcat.options.TrimSpaces
 import com.bmuschko.gradle.tomcat.tasks.AbstractTomcatRun
 import com.bmuschko.gradle.tomcat.tasks.TomcatJasper
 import com.bmuschko.gradle.tomcat.tasks.TomcatRun
@@ -108,7 +109,7 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('genStringAsCharArray') { tomcatPluginExtension.jasper.genStringAsCharArray ?: false }
             conventionMapping.map('ieClassId') { tomcatPluginExtension.jasper.ieClassId ?: 'clsid:8AD9C840-044E-11D1-B3E9-00805F499D93' }
             conventionMapping.map('javaEncoding') { tomcatPluginExtension.jasper.javaEncoding ?: 'UTF8' }
-            conventionMapping.map('trimSpaces') { tomcatPluginExtension.jasper.trimSpaces ?: false }
+            conventionMapping.map('trimSpaces') { tomcatPluginExtension.jasper.trimSpaces ?: TrimSpaces.TRUE }
             conventionMapping.map('xpoweredBy') { tomcatPluginExtension.jasper.xpoweredBy ?: false }
         }
     }

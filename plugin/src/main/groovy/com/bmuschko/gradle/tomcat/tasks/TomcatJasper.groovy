@@ -15,7 +15,7 @@
  */
 package com.bmuschko.gradle.tomcat.tasks
 
-import org.apache.jasper.TrimSpacesOption
+import com.bmuschko.gradle.tomcat.options.TrimSpaces
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 
@@ -87,7 +87,7 @@ class TomcatJasper extends Tomcat {
 
     @Input
     @Optional
-    Boolean trimSpaces
+    TrimSpaces trimSpaces
 
     @Input
     @Optional
@@ -113,7 +113,7 @@ class TomcatJasper extends Tomcat {
                                 'compilerTargetVM': getCompilerTargetVM(), 'poolingEnabled': getPoolingEnabled(),
                                 'errorOnUseBeanInvalidClassAttribute': getErrorOnUseBeanInvalidClassAttribute(),
                                 'genStringAsCharArray': getGenStringAsCharArray(), 'ieClassId': getIeClassId(),
-                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpacesOption(), 'xpoweredBy': getXpoweredBy()]
+                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces()?.name(), 'xpoweredBy': getXpoweredBy()]
         if(getValidateXml()) {
             jasperAttributes['validateXml'] = getValidateXml()
         }
@@ -135,10 +135,5 @@ class TomcatJasper extends Tomcat {
         }
 
         jasperAttributes
-    }
-
-    @Internal
-    private TrimSpacesOption getTrimSpacesOption() {
-        this.trimSpaces ? TrimSpacesOption.TRUE : TrimSpacesOption.FALSE
     }
 }

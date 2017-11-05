@@ -15,6 +15,8 @@
  */
 package com.bmuschko.gradle.tomcat.extension
 
+import com.bmuschko.gradle.tomcat.options.TrimSpaces
+
 /**
  * Defines Jasper task convention.
  *
@@ -35,7 +37,7 @@ class TomcatJasperConvention {
     Boolean genStringAsCharArray
     String ieClassId
     String javaEncoding
-    Boolean trimSpaces
+    TrimSpaces trimSpaces
     Boolean xpoweredBy
     Boolean addWebXmlMappings
 }
