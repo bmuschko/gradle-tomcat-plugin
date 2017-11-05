@@ -6,4 +6,5 @@ com.bmuschko.gradle.tomcat.fixture
 com.bmuschko.gradle.tomcat.internal
 com.bmuschko.gradle.tomcat.internal.ssl
 com.bmuschko.gradle.tomcat.internal.utils
+com.bmuschko.gradle.tomcat.options
 com.bmuschko.gradle.tomcat.tasks
