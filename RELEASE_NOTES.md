@@ -1,3 +1,7 @@
+### Version 2.4.1 (November 5, 2017)
+
+* Fix initialization error NoClassDefFoundError for Jasper class - [Issue 162](https://github.com/bmuschko/gradle-tomcat-plugin/issues/162).
+
 ### Version 2.4 (November 4, 2017)
 
 * Add Tomcat 9.x support.

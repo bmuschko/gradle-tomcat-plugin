@@ -17,7 +17,7 @@ allprojects {
     apply plugin: 'groovy'
     apply plugin: 'idea'
     group = 'com.bmuschko'
-    version = '2.4'
+    version = '2.4.1'
     defaultTasks 'clean', 'build', 'createAllDeliverables'
 }
 
