@@ -15,7 +15,6 @@
  */
 package com.bmuschko.gradle.tomcat.tasks
 
-import org.apache.jasper.TrimSpacesOption
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 
@@ -138,7 +137,22 @@ class TomcatJasper extends Tomcat {
     }
 
     @Internal
-    private TrimSpacesOption getTrimSpacesOption() {
-        this.trimSpaces ? TrimSpacesOption.TRUE : TrimSpacesOption.FALSE
+    private Object getTrimSpacesOption() {
+        try {
+            Class trimSpacesOptionClass = loadClass('org.apache.jasper.TrimSpacesOption')
+            this.trimSpaces ? findEnum(trimSpacesOptionClass, 'TRUE')
+                            : findEnum(trimSpacesOptionClass, 'FALSE')
+        } catch(ClassNotFoundException) {
+            this.trimSpaces
+        }
+    }
+
+    private Class loadClass(String className) {
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        classLoader.loadClass(className)
+    }
+
+    private Object findEnum(Class clazz, String name) {
+        clazz.isEnum() ? clazz.enumConstants.find { it.name() == name } : null
     }
 }
