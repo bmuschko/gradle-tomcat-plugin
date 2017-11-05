@@ -322,7 +322,7 @@ To configure the Jasper compiler task you can choose to set the following proper
 * `genStringAsCharArray`: Should text strings be generated as char arrays, to improve performance in some cases (defaults to `false`).
 * `ieClassId`: The class-id value to be sent to Internet Explorer when using `<jsp:plugin>` tags (defaults to `clsid:8AD9C840-044E-11D1-B3E9-00805F499D93`).
 * `javaEncoding`: Java file encoding to use for generating java source files (defaults to `UTF8`).
-* `trimSpaces`: Should white spaces in template text between actions or directives be trimmed (defaults to `false`).
+* `trimSpaces`: Should white spaces in template text between actions or directives be trimmed (defaults to `TrimSpaces.TRUE`).
 * `xpoweredBy`: Determines whether X-Powered-By response header is added by generated servlet (defaults to `false`).
 
 ### Example
