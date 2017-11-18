@@ -38,7 +38,7 @@ import static com.bmuschko.gradle.tomcat.internal.LoggingHandler.withJdkFileLogg
  *
  * @author Benjamin Muschko
  */
-abstract class AbstractTomcatRun extends Tomcat {
+abstract class AbstractTomcatRun extends TomcatRunAlways {
     static final CONFIG_FILE = 'META-INF/context.xml'
 
     /**

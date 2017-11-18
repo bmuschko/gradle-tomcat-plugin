@@ -2,6 +2,7 @@ package com.bmuschko.gradle.tomcat
 
 import com.bmuschko.gradle.tomcat.embedded.TomcatVersion
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Issue
 import spock.lang.Unroll
 
@@ -60,13 +61,13 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         assertCompiledJsps(outputDir)
 
         where:
-        tomcatVersion  | validationAttribute
-        '6.0.29'       | VALIDATE_XML_ATTRIBUTE
-        '6.0.39'       | VALIDATE_TLD_ATTRIBUTE
-        '7.0.42'       | VALIDATE_XML_ATTRIBUTE
-        '7.0.50'       | VALIDATE_TLD_ATTRIBUTE
-        '8.0.3'        | VALIDATE_TLD_ATTRIBUTE
-        '9.0.1'        | VALIDATE_XML_ATTRIBUTE
+        tomcatVersion | validationAttribute
+        '6.0.29'      | VALIDATE_XML_ATTRIBUTE
+        '6.0.39'      | VALIDATE_TLD_ATTRIBUTE
+        '7.0.42'      | VALIDATE_XML_ATTRIBUTE
+        '7.0.50'      | VALIDATE_TLD_ATTRIBUTE
+        '8.0.3'       | VALIDATE_TLD_ATTRIBUTE
+        '9.0.1'       | VALIDATE_XML_ATTRIBUTE
     }
 
     @Unroll
@@ -118,6 +119,24 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         combinations << [['6.0.39', '7.0.42', '7.0.50', '8.0.3', '9.0.1'], ['TRUE', 'FALSE', 'SINGLE']].combinations()
     }
 
+    @Issue("https://github.com/bmuschko/gradle-tomcat-plugin/issues/158")
+    def "Runs Jasper compiler twice to verify up to date checking"() {
+        setup:
+        File webAppDir = setupWebAppDirectory()
+        createJspFiles(webAppDir)
+
+        expect:
+        File outputDir = temporaryFolder.newFolder('build', 'jasper')
+        buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
+        assertTaskOutcome(build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME), ':tomcatJasper', TaskOutcome.SUCCESS)
+        assertCompiledJsps(outputDir)
+        assertTaskOutcome(build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME), ':tomcatJasper', TaskOutcome.UP_TO_DATE)
+
+
+        where:
+        tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X, TomcatVersion.VERSION_8_0_X, TomcatVersion.VERSION_8_5_X, TomcatVersion.VERSION_9_0_X]
+    }
+
     static void createJspFiles(File targetDir) {
         File helloWorldJspFile = new File(targetDir, 'helloWorld.jsp')
         helloWorldJspFile << """
@@ -144,5 +163,9 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         compiledJspDir.exists()
         assert new File(compiledJspDir, 'helloWorld_jsp.java').exists()
         assert new File(compiledJspDir, 'date_jsp.java').exists()
+    }
+
+    static void assertTaskOutcome(BuildResult result, String expectedTaskName, TaskOutcome expectedOutcome) {
+        assert result.task(expectedTaskName).outcome.equals(expectedOutcome)
     }
 }

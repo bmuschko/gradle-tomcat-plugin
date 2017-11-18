@@ -24,7 +24,7 @@ import org.gradle.api.tasks.TaskAction
  *
  * @author Benjamin Muschko 
  */
-class TomcatStop extends Tomcat {
+class TomcatStop extends TomcatRunAlways {
     /**
      * The TCP port which Tomcat should listen for admin requests. Defaults to 8081.
      */

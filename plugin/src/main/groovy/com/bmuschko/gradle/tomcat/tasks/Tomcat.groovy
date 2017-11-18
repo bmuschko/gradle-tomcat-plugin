@@ -26,10 +26,5 @@ import org.gradle.api.plugins.WarPlugin
 class Tomcat extends DefaultTask {
     Tomcat() {
         group = WarPlugin.WEB_APP_GROUP
-
-        // No matter what the inputs and outputs make sure that run tasks are never up-to-date
-        outputs.upToDateWhen {
-            false
-        }
     }
 }
