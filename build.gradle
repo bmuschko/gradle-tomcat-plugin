@@ -4,14 +4,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
-        classpath 'org.ajoberstar:gradle-git:0.9.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'org.ajoberstar:gradle-git-publish:0.3.2'
     }
 }
 
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'github-pages'
+apply plugin: 'org.ajoberstar.git-publish'
 
 allprojects {
     apply plugin: 'groovy'
@@ -180,10 +180,11 @@ bintray {
     }
 }
 
-githubPages {
+gitPublish {
     repoUri = 'git@github.com:bmuschko/gradle-tomcat-plugin.git'
+    branch = 'gh-pages'
 
-    pages {
+    contents {
         from(aggregateGroovydocs.outputs.files) {
             into 'docs/groovydoc'
         }
