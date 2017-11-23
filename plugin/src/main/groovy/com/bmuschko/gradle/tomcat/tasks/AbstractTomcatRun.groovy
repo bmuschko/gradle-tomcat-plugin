@@ -38,8 +38,11 @@ import static com.bmuschko.gradle.tomcat.internal.LoggingHandler.withJdkFileLogg
  *
  * @author Benjamin Muschko
  */
-abstract class AbstractTomcatRun extends TomcatRunAlways {
-    static final CONFIG_FILE = 'META-INF/context.xml'
+abstract class AbstractTomcatRun extends Tomcat {
+    public static final CONFIG_FILE = 'META-INF/context.xml'
+    private final ThreadContextClassLoader threadContextClassLoader = new TomcatThreadContextClassLoader()
+    private final SSLKeyStore sslKeyStore = new SSLKeyStoreImpl()
+    private Thread shutdownHook
 
     /**
      * Forces context scanning if you don't use a context file. Defaults to true.
@@ -213,12 +216,9 @@ abstract class AbstractTomcatRun extends TomcatRunAlways {
     @Internal
     URL resolvedConfigFile
 
-    private Thread shutdownHook
-
-    private final ThreadContextClassLoader threadContextClassLoader = new TomcatThreadContextClassLoader()
-    private final SSLKeyStore sslKeyStore = new SSLKeyStoreImpl()
-
-    abstract void setWebApplicationContext()
+    AbstractTomcatRun() {
+        outputs.upToDateWhen { false }
+    }
 
     @TaskAction
     protected void start() {
@@ -425,4 +425,6 @@ abstract class AbstractTomcatRun extends TomcatRunAlways {
     void user(String username, String password, List<String> roles) {
         users << new TomcatUser(username: username, password: password, roles: roles)
     }
+
+    abstract void setWebApplicationContext()
 }

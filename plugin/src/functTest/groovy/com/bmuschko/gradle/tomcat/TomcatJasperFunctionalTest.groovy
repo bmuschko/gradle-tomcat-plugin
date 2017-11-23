@@ -6,10 +6,14 @@ import org.gradle.testkit.runner.TaskOutcome
 import spock.lang.Issue
 import spock.lang.Unroll
 
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
+
 class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
 
     private static final String VALIDATE_XML_ATTRIBUTE = 'validateXml'
     private static final String VALIDATE_TLD_ATTRIBUTE = 'validateTld'
+    private static final String JASPER_TASK_PATH = ":$TomcatPlugin.TOMCAT_JASPER_TASK_NAME".toString()
 
     def setup() {
         buildFile << """
@@ -22,7 +26,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
 
     @Unroll
     def "Runs Jasper compiler for #tomcatVersion with default conventions"() {
-        setup:
+        given:
         File webAppDir = setupWebAppDirectory()
         createJspFiles(webAppDir)
 
@@ -43,7 +47,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
      */
     @Unroll
     def "Can use Jasper compiler validation for Tomcat version #tomcatVersion with attribute #validationAttribute"() {
-        setup:
+        given:
         File webAppDir = setupWebAppDirectory()
         createJspFiles(webAppDir)
 
@@ -72,7 +76,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
 
     @Unroll
     def "Throws exception using Jasper compiler validation for Tomcat version #tomcatVersion with invalid attribute #validationAttribute"() {
-        setup:
+        given:
         setupWebAppDirectory()
 
         when:
@@ -98,7 +102,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
 
     @Issue("https://github.com/bmuschko/gradle-tomcat-plugin/issues/162")
     def "Can use trim spaces option"() {
-        setup:
+        given:
         File webAppDir = setupWebAppDirectory()
         createJspFiles(webAppDir)
 
@@ -120,18 +124,27 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
     }
 
     @Issue("https://github.com/bmuschko/gradle-tomcat-plugin/issues/158")
-    def "Runs Jasper compiler twice to verify up to date checking"() {
-        setup:
+    @Unroll
+    def "Runs Jasper compiler twice to verify up to date checking for Tomcat version #tomcatVersion"() {
+        given:
         File webAppDir = setupWebAppDirectory()
         createJspFiles(webAppDir)
-
-        expect:
         File outputDir = temporaryFolder.newFolder('build', 'jasper')
         buildFile << getBasicTomcatBuildFileContent(tomcatVersion)
-        assertTaskOutcome(build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME), ':tomcatJasper', TaskOutcome.SUCCESS)
-        assertCompiledJsps(outputDir)
-        assertTaskOutcome(build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME), ':tomcatJasper', TaskOutcome.UP_TO_DATE)
 
+        when:
+        def result = build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+
+        then:
+        assertTaskOutcome(result, JASPER_TASK_PATH, SUCCESS)
+        assertCompiledJsps(outputDir)
+
+        when:
+        result = build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+
+        then:
+        assertTaskOutcome(result, JASPER_TASK_PATH, UP_TO_DATE)
+        assertCompiledJsps(outputDir)
 
         where:
         tomcatVersion << [TomcatVersion.VERSION_6_0_X, TomcatVersion.VERSION_7_0_X, TomcatVersion.VERSION_8_0_X, TomcatVersion.VERSION_8_5_X, TomcatVersion.VERSION_9_0_X]
@@ -166,6 +179,6 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
     }
 
     static void assertTaskOutcome(BuildResult result, String expectedTaskName, TaskOutcome expectedOutcome) {
-        assert result.task(expectedTaskName).outcome.equals(expectedOutcome)
+        assert result.task(expectedTaskName).outcome == expectedOutcome
     }
 }
