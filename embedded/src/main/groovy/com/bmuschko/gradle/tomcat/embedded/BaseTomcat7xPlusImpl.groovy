@@ -4,9 +4,6 @@ import java.lang.reflect.Constructor
 
 /**
  * Base Tomcat 7x and higher implementation.
- *
- * @author Benjamin Muschko
- * @author Andrey Bloschetsov
  */
 abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
     String home

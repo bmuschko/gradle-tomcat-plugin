@@ -25,8 +25,6 @@ import org.gradle.api.tasks.Optional
 /**
  * Deploys an exploded web application to an embedded Tomcat web container. Does not require that the web application
  * be assembled into a war, saving time during the development cycle.
- *
- * @author Benjamin Muschko
  */
 class TomcatRun extends AbstractTomcatRun {
     /**

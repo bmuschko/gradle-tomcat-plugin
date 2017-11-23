@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 package com.bmuschko.gradle.tomcat.embedded
+
 /**
  * Tomcat 8x server implementation.
- *
- * @author Benjamin Muschko
- * @author Andrey Bloschetsov
  */
 class Tomcat8xServer extends BaseTomcat8xPlusImpl {
     @Override

@@ -20,8 +20,6 @@ import org.gradle.api.logging.Logging
 
 /**
  * SSL keystore representation.
- *
- * @author Benjamin Muschko
  */
 class SSLKeyStoreImpl implements SSLKeyStore {
     private final static Logger logger = Logging.getLogger(SSLKeyStoreImpl)

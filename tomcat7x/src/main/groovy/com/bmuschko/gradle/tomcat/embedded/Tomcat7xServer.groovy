@@ -17,8 +17,6 @@ package com.bmuschko.gradle.tomcat.embedded
 
 /**
  * Tomcat 7x server implementation.
- *
- * @author Benjamin Muschko
  */
 class Tomcat7xServer extends BaseTomcat7xPlusImpl {
     @Override

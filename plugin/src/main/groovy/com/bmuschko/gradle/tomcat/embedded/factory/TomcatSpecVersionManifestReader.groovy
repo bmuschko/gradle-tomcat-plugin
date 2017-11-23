@@ -19,9 +19,6 @@ import java.util.jar.Manifest
 
 /**
  * Tomcat specification version manifest reader.
- *
- * @author Benjamin Muschko
- * @author Andrey Bloschetsov
  */
 class TomcatSpecVersionManifestReader implements ManifestReader {
     static final String ATTR_SPEC_TITLE = 'Apache Tomcat'

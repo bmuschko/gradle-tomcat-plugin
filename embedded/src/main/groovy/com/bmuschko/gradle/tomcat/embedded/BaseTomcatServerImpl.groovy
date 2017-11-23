@@ -9,9 +9,6 @@ import java.util.concurrent.CountDownLatch
 
 /**
  * Implementation of common Tomcat server logic.
- *
- * @author Benjamin Muschko
- * @author Andrey Bloschetsov
  */
 abstract class BaseTomcatServerImpl implements TomcatServer {
     final tomcat

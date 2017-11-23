@@ -19,8 +19,6 @@ import com.bmuschko.gradle.tomcat.options.TrimSpaces
 
 /**
  * Defines Jasper task convention.
- *
- * @author Benjamin Muschko
  */
 class TomcatJasperConvention {
     Boolean validateXml

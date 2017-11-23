@@ -30,8 +30,6 @@ import org.gradle.api.plugins.tomcat.tasks.*
 /**
  * <p>A {@link Plugin} which applies the {@link TomcatBasePlugin} and creates preconfigured tasks which run the web
  * application using an embedded Tomcat web container.</p>
- *
- * @author Benjamin Muschko
  */
 class TomcatPlugin implements Plugin<Project> {
     static final String TOMCAT_EXTENSION_NAME = 'tomcat'

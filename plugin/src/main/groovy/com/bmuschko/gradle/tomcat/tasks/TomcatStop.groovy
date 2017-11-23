@@ -21,8 +21,6 @@ import org.gradle.api.tasks.TaskAction
 
 /**
  * Stops the embedded Tomcat web container.
- *
- * @author Benjamin Muschko 
  */
 class TomcatStop extends Tomcat {
     /**

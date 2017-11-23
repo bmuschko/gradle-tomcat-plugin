@@ -29,8 +29,6 @@ import spock.lang.Specification
 
 /**
  * Test case for Tomcat plugin.
- *
- * @author Benjamin Muschko
  */
 class TomcatPluginTest extends Specification {
     private Project project

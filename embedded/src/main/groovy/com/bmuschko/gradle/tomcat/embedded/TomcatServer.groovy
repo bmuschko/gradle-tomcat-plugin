@@ -19,8 +19,6 @@ import java.util.concurrent.CountDownLatch
 
 /**
  * Tomcat server interface.
- *
- * @author Benjamin Muschko
  */
 interface TomcatServer {
     String getServerClassName()

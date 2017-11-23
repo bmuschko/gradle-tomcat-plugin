@@ -35,8 +35,6 @@ import static com.bmuschko.gradle.tomcat.internal.LoggingHandler.withJdkFileLogg
 
 /**
  * Base class for all tasks which deploy a web application to an embedded Tomcat web container.
- *
- * @author Benjamin Muschko
  */
 abstract class AbstractTomcatRun extends Tomcat {
     public static final CONFIG_FILE = 'META-INF/context.xml'

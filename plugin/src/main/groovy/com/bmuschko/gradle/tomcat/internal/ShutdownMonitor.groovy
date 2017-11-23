@@ -19,8 +19,6 @@ import groovy.util.logging.Slf4j
 
 /**
  * Monitor that keeps thread running until stop command got issued.
- *
- * @author Benjamin Muschko
  */
 @Slf4j
 class ShutdownMonitor extends Thread {

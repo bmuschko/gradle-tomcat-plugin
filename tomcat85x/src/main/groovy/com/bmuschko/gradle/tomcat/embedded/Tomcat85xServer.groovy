@@ -16,10 +16,6 @@
 package com.bmuschko.gradle.tomcat.embedded
 /**
  * Tomcat 85x server implementation.
- *
- * @author Benjamin Muschko
- * @author Andrey Bloschetsov
- * @author Martin Flower
  */
 class Tomcat85xServer extends BaseTomcat8xPlusImpl {
     @Override

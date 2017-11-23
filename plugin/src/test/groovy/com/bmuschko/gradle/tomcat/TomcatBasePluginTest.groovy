@@ -33,8 +33,6 @@ import spock.lang.Unroll
 
 /**
  * Test case for Tomcat base plugin.
- *
- * @author Benjamin Muschko
  */
 class TomcatBasePluginTest extends Specification {
     private Project project

@@ -20,8 +20,6 @@ import org.gradle.api.plugins.WarPlugin
 
 /**
  * Parent class for all Tomcat tasks.
- *
- * @author Benjamin Muschko
  */
 class Tomcat extends DefaultTask {
     Tomcat() {

@@ -24,8 +24,6 @@ import org.gradle.api.GradleException
  * implementation class. Acts as a bootstrapper to make sure server implementation is running in
  * classloader different from Gradle's runtime classloader. This will make sure that there are no conflicting
  * libraries (e.g. JSP API provided by Gradle's Jetty plugin out-of-the-box).
- *
- * @author Benjamin Muschko
  */
 @Singleton
 @Slf4j

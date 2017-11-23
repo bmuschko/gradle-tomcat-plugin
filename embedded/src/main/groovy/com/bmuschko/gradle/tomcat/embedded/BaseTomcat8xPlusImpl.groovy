@@ -4,10 +4,6 @@ import java.lang.reflect.Constructor
 
 /**
  * Base Tomcat 8x and higher implementation.
- *
- * @author Benjamin Muschko
- * @author Andrey Bloschetsov
- * @author Keisuke Kato
  */
 abstract class BaseTomcat8xPlusImpl extends BaseTomcat7xPlusImpl {
     @Override

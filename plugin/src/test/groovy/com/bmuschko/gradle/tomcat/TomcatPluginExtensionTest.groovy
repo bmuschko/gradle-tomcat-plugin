@@ -20,8 +20,6 @@ import spock.lang.Specification
 
 /**
  * Test case for Tomcat plugin extension.
- *
- * @author Benjamin Muschko
  */
 class TomcatPluginExtensionTest extends Specification {
     TomcatPluginExtension pluginExtension = new TomcatPluginExtension()

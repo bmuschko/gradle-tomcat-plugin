@@ -21,8 +21,6 @@ import org.gradle.api.tasks.*
 
 /**
  * Task to run the JSP compiler and turn JSP pages into Java source.
- *
- * @author Benjamin Muschko
  */
 class TomcatJasper extends Tomcat {
     @InputFiles

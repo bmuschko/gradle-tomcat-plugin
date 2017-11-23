@@ -32,8 +32,6 @@ import static org.junit.Assert.fail
 
 /**
  * Test case for TomcatRunWar task.
- *
- * @author Benjamin Muschko
  */
 class TomcatRunWarTest {
     private final File testDir = new File("build/tmp/tests")

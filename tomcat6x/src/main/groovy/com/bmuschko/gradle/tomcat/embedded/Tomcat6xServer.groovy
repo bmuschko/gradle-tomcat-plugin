@@ -17,8 +17,6 @@ package com.bmuschko.gradle.tomcat.embedded
 
 /**
  * Tomcat 6x server implementation.
- *
- * @author Benjamin Muschko
  */
 class Tomcat6xServer extends BaseTomcatServerImpl {
     def host

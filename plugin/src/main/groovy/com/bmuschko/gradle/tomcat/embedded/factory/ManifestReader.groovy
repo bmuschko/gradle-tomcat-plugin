@@ -17,8 +17,6 @@ package com.bmuschko.gradle.tomcat.embedded.factory
 
 /**
  * Manifest reader.
- *
- * @author Benjamin Muschko
  */
 interface ManifestReader {
     String readAttributeValue(URL manifestUrl)

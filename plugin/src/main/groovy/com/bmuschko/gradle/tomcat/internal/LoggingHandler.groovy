@@ -19,8 +19,6 @@ import java.util.logging.*
 
 /**
  * Logging handler support.
- *
- * @author Benjamin Muschko
  */
 class LoggingHandler {
     /**

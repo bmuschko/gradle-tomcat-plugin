@@ -19,8 +19,6 @@ import com.bmuschko.gradle.tomcat.embedded.TomcatUser
 
 /**
  * Defines Tomcat plugin extension.
- *
- * @author Benjamin Muschko
  */
 class TomcatPluginExtension {
     final static String DEFAULT_PROTOCOL_HANDLER = 'org.apache.coyote.http11.Http11Protocol'

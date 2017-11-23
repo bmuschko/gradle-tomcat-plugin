@@ -17,8 +17,6 @@ package com.bmuschko.gradle.tomcat.embedded
 
 /**
  * Tomcat server version.
- *
- * @author Benjamin Muschko
  */
 enum TomcatVersion {
 

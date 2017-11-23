@@ -17,8 +17,6 @@ package com.bmuschko.gradle.tomcat.internal.ssl
 
 /**
  * Store type representation.
- *
- * @author Benjamin Muschko
  */
 enum StoreType {
     TRUST('TrustStore'), KEY('KeyStore')

@@ -27,8 +27,6 @@ import org.gradle.api.plugins.WarPluginConvention
 /**
  * <p>A {@link Plugin} which applies the {@link WarPlugin} and provides tasks for managing a web application using an embedded
  * Tomcat web container.</p>
- *
- * @author Benjamin Muschko
  */
 class TomcatBasePlugin implements Plugin<Project> {
     static final String TOMCAT_CONFIGURATION_NAME = 'tomcat'

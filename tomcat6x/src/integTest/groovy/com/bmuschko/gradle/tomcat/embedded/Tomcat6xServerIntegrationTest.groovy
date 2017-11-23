@@ -19,8 +19,6 @@ import com.bmuschko.gradle.tomcat.embedded.fixture.EmbeddedTomcatIntegrationTest
 
 /**
  * Tomcat 6x server test.
- *
- * @author Benjamin Muschko
  */
 class Tomcat6xServerIntegrationTest extends EmbeddedTomcatIntegrationTest {
     @Override
