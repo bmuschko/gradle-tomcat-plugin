@@ -352,7 +352,6 @@ repositories {
 }
 ```
 
-<br>
 **Why do I get a `java.lang.ClassCastException` on `javax.servlet.Servlet`?**
 
 Tomcat is very sensitive to having multiple versions of the dependencies `javax.servlet:servlet-api` and `javax.servlet:jsp-api`
@@ -380,7 +379,6 @@ providedCompile 'javax.servlet:servlet-api:2.5',
                 'javax.servlet:jsp-api:2.0'
 ```
 
-<br>
 **How do I remote debug my Tomcat started up by the plugin?**
 
 If you want to be able to debug your application remotely you have to set the following JVM options in your `GRADLE_OPTS`
@@ -402,7 +400,6 @@ Check your IDE documentation on how to configure connecting to the remote debugg
 * [IntelliJ Remote Run/Debug Configuration](http://www.jetbrains.com/idea/webhelp/run-debug-configuration-remote.html)
 * [Eclipse Remote Debugging](http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.jdt.doc.user%2Fconcepts%2Fcremdbug.htm)
 
-<br>
 **My Tomcat container needs to use a JNDI datasource. How do I set up my project?**
 
 First of all you got to make sure to declare the connection pool dependency using the `tomcat` configuration.
@@ -439,7 +436,6 @@ of context attributes. The following example shows how to set up a MySQL JNDI da
 </Context>
 ```
 
-<br>
 **How do I use hot code deployment with the plugin?**
 
 The plugin provides out-of-the-box support for swapping out byte code through the property `reloadable`. By default this option
@@ -502,7 +498,6 @@ If a file has been recompiled JRebel indicates this by writing it to the console
 JRebel: Reloading class 'de.muschko.web.controller.TestController'.
 ```
 
-<br>
 **In need to run in-container integration tests as part of my build. What needs to be done?**
 
 Usually unit and integration tests are kept separate by convention. One convention could be to name the test source
@@ -541,7 +536,6 @@ test {
 }
 ```
 
-<br>
 **How do I add JAR files or directories that are not part of my web application source code?**
 
 Every task of type `AbstractTomcatRun` exposes a property named `additionalRuntimeResources` that is used to mixed in
