@@ -1,3 +1,8 @@
+### Version 2.4.2 (November 23, 2017)
+
+* Jasper task adheres to up to date checking - [Pull Request 165](https://github.com/bmuschko/gradle-tomcat-plugin/pull/165).
+* Upgrade to Gradle Wrapper 4.3.1.
+
 ### Version 2.4.1 (November 5, 2017)
 
 * Fix initialization error NoClassDefFoundError for Jasper class - [Issue 162](https://github.com/bmuschko/gradle-tomcat-plugin/issues/162).
