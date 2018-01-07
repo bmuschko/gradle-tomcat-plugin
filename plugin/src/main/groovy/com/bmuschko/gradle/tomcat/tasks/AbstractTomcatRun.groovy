@@ -199,6 +199,14 @@ abstract class AbstractTomcatRun extends Tomcat {
     String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
 
     /**
+     * Add context resources cacheSize: 0 =unchange, lt 0 =disable caching, gt 0 =max size cache
+     */
+    @Input
+    @Optional
+    Integer cacheSize = 0
+
+
+    /**
      * The list of Tomcat users. Defaults to an empty list.
      */
     @Input
@@ -307,6 +315,13 @@ abstract class AbstractTomcatRun extends Tomcat {
     protected void configureWebApplication() {
         setWebApplicationContext()
         server.createLoader(Thread.currentThread().contextClassLoader)
+
+        // FIX: large project cache warning in tomcat.
+        if (getCacheSize() > 0) {
+            server.context.resources.cacheMaxSize = getCacheSize()
+        } else if (getCacheSize() < 0) {
+            server.context.resources.cachingAllowed = false
+        }
 
         logger.info "Additional runtime resources classpath = ${getAdditionalRuntimeResources()}"
 

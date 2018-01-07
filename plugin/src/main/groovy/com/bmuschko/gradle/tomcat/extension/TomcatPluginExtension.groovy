@@ -35,6 +35,7 @@ class TomcatPluginExtension {
     String httpProtocol = DEFAULT_PROTOCOL_HANDLER
     String httpsProtocol = DEFAULT_PROTOCOL_HANDLER
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
+    Integer cacheSize = 0
     TomcatJasperConvention jasper = new TomcatJasperConvention()
     List<TomcatUser> users = []
 
