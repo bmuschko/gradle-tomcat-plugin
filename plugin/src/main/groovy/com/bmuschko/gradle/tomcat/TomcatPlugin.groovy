@@ -66,6 +66,7 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('ajpPort') { tomcatPluginExtension.ajpPort }
             conventionMapping.map('ajpProtocol') { tomcatPluginExtension.ajpProtocol }
             conventionMapping.map('users') { tomcatPluginExtension.users }
+            conventionMapping.map('cacheSize') { tomcatPluginExtension.cacheSize }
         }
     }
 
