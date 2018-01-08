@@ -21,6 +21,7 @@ import com.bmuschko.gradle.tomcat.tasks.TomcatRun
 import com.bmuschko.gradle.tomcat.tasks.TomcatRunWar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.WarPluginConvention
 
@@ -57,7 +58,10 @@ class TomcatBasePlugin implements Plugin<Project> {
                 File webAppDir = getWarConvention(project).webAppDir
                 webAppDir.exists() ? webAppDir : null
             }
-            conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir.exists() ? project.sourceSets.main.output.classesDir : null }
+            conventionMapping.map('classesDirectory') {
+                File acd = (project.sourceSets.main.output.classesDirs != null) ? project.sourceSets.main.output.classesDirs.first() : null
+                (acd != null && acd.exists()) ? acd : null
+            }
         }
     }
 
