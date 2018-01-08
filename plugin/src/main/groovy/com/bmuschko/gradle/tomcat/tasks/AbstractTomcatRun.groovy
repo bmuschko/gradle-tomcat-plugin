@@ -311,22 +311,6 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
     }
 
-    protected void addWebappAdditionalFile(String webAppMountPoint, File file) {
-        if (file.exists()) {
-            getServer().context.resources.createWebResourceSet(getResourceSetType('PRE'),
-                    webAppMountPoint, file.toURI().toURL(), '/')
-        }
-    }
-
-    static Class loadClass(String className) {
-        ClassLoader classLoader = Thread.currentThread().contextClassLoader
-        classLoader.loadClass(className)
-    }
-
-    static def getResourceSetType(String name) {
-        Class resourceSetTypeClass = loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
-        resourceSetTypeClass.enumConstants.find { it.name() == name }
-    }
 
     /**
      * Configures web application
@@ -341,24 +325,43 @@ abstract class AbstractTomcatRun extends Tomcat {
             addWebappResource(file)
         }
 
-        logger.info "Additional web resources = ${getAdditionalWebResources()}"
-        getAdditionalWebResources().each { awr ->
-            if (awr.exists()) {
-                if (awr.isFile()) {
-                    addWebappAdditionalFile("/", awr)
-                    logger.debug "\tadd web resource: /${awr.name}"
-                } else {
-                    FileTree tree = project.fileTree(dir: awr).matching {
-                        exclude "**/WEB-INF/lib", "**/WEB-INF/classes", "**/WEB-INF/web.xml", "**/META-INF/"
-                    }
 
-                    tree.visit { element ->
-                        addWebappAdditionalFile("/${element.relativePath.pathString}", element.file)
-                        logger.debug "\tadd web resource: /${element.relativePath.pathString}"
+
+        boolean awrWarning = false
+        Iterable<File> awrfiles = getAdditionalWebResources()
+        if (awrfiles) {
+            awrfiles.each { File awr ->
+                if (awr.exists()) {
+                    if (awr.isFile()) {
+                        if(server.metaClass.respondsTo(server, "addWebappAdditionalFile", "/", awr)) {
+                            server.metaClass.invokeMethod(server,"addWebappAdditionalFile", "/", awr)
+                        } else {
+                            awrWarning = true
+                        }
+                        logger.debug "\tadd web resource: /${awr.name}"
+                    } else {
+                        FileTree tree = project.fileTree(dir: awr).matching {
+                            exclude "**/WEB-INF/lib", "**/WEB-INF/classes", "**/WEB-INF/web.xml", "**/META-INF/"
+                        }
+
+                        tree.visit { element ->
+                            if(server.metaClass.respondsTo(server, "addWebappAdditionalFile", "/${element.relativePath.pathString}", element.file)) {
+                                server.metaClass.invokeMethod(server,"addWebappAdditionalFile", "/${element.relativePath.pathString}", element.file)
+                            } else {
+                                awrWarning = true
+                            }
+
+                            logger.debug "\tadd web resource: /${element.relativePath.pathString}"
+                        }
                     }
                 }
+
             }
+
+            if (awrWarning) logger.warn("additionalWebResources (Additional web resources) only support tomcat 8+")
+            else logger.info "Additional web resources = ${awrfiles}"
         }
+
 
         server.context.reloadable = getReloadable()
         server.configureDefaultWebXml(getWebDefaultXml())
