@@ -26,6 +26,7 @@ import com.bmuschko.gradle.tomcat.internal.utils.TomcatThreadContextClassLoader
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.*
 
 import java.util.concurrent.CountDownLatch
@@ -105,6 +106,16 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     @InputFiles
     Iterable<File> additionalRuntimeResources = []
+
+
+    /**
+     * Defines additional web file or directories that are not provided by the web application.
+     * In task TomcatRunWar, you can add src/main/webapp as liveedit web resources.
+     *
+     * exclue: WEB-INF/lib, WEB-INF/classes, WEB-INF/web.xml, META-INF/
+     */
+    @InputFiles
+    Iterable<File> additionalWebResources = []
 
     /**
      * Specifies the character encoding used to decode the URI bytes by the HTTP Connector. Defaults to "UTF-8".
@@ -309,6 +320,23 @@ abstract class AbstractTomcatRun extends Tomcat {
         }
     }
 
+    protected void addWebappAdditionalFile(String webAppMountPoint, File file) {
+        if (file.exists()) {
+            getServer().context.resources.createWebResourceSet(getResourceSetType('PRE'),
+                    webAppMountPoint, file.toURI().toURL(), '/')
+        }
+    }
+
+    static Class loadClass(String className) {
+        ClassLoader classLoader = Thread.currentThread().contextClassLoader
+        classLoader.loadClass(className)
+    }
+
+    static def getResourceSetType(String name) {
+        Class resourceSetTypeClass = loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
+        resourceSetTypeClass.enumConstants.find { it.name() == name }
+    }
+
     /**
      * Configures web application
      */
@@ -327,6 +355,25 @@ abstract class AbstractTomcatRun extends Tomcat {
 
         getAdditionalRuntimeResources().each { file ->
             addWebappResource(file)
+        }
+
+        logger.info "Additional web resources = ${getAdditionalWebResources()}"
+        getAdditionalWebResources().each { awr ->
+            if (awr.exists()) {
+                if (awr.isFile()) {
+                    addWebappAdditionalFile("/", awr)
+                    logger.debug "\tadd web resource: /${awr.name}"
+                } else {
+                    FileTree tree = project.fileTree(dir: awr).matching {
+                        exclude "**/WEB-INF/lib", "**/WEB-INF/classes", "**/WEB-INF/web.xml", "**/META-INF/"
+                    }
+
+                    tree.visit { element ->
+                        addWebappAdditionalFile("/${element.relativePath.pathString}", element.file)
+                        logger.debug "\tadd web resource: /${element.relativePath.pathString}"
+                    }
+                }
+            }
         }
 
         server.context.reloadable = getReloadable()
@@ -366,7 +413,7 @@ abstract class AbstractTomcatRun extends Tomcat {
 
                 if(getTruststoreFile()) {
                     server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(),
-                                                        getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
+                            getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
                 }
                 else {
                     server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(), getKeystorePass())
