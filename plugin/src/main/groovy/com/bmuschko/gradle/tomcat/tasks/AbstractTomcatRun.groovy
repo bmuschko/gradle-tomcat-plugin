@@ -23,6 +23,7 @@ import com.bmuschko.gradle.tomcat.internal.ssl.SSLKeyStoreImpl
 import com.bmuschko.gradle.tomcat.internal.ssl.StoreType
 import com.bmuschko.gradle.tomcat.internal.utils.ThreadContextClassLoader
 import com.bmuschko.gradle.tomcat.internal.utils.TomcatThreadContextClassLoader
+import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
@@ -317,10 +318,12 @@ abstract class AbstractTomcatRun extends Tomcat {
         server.createLoader(Thread.currentThread().contextClassLoader)
 
         // FIX: large project cache warning in tomcat.
-        if (getCacheSize() > 0) {
-            server.context.resources.cacheMaxSize = getCacheSize()
-        } else if (getCacheSize() < 0) {
-            server.context.resources.cachingAllowed = false
+        if (getCacheSize() != 0) { // only config cacheSize when cacheSize!=0
+            if(server.metaClass.respondsTo(server, "setResourcesCacheSize", getCacheSize())){
+                server.metaClass.invokeMethod(server,"setResourcesCacheSize", getCacheSize())
+            } else {
+                logger.warn("CacheSize setting only support tomcat 8+")
+            }
         }
 
         logger.info "Additional runtime resources classpath = ${getAdditionalRuntimeResources()}"
