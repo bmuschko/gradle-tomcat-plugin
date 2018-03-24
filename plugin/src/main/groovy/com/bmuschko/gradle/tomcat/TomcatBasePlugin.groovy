@@ -57,7 +57,7 @@ class TomcatBasePlugin implements Plugin<Project> {
                 File webAppDir = getWarConvention(project).webAppDir
                 webAppDir.exists() ? webAppDir : null
             }
-            conventionMapping.map('classesDirectory') { project.sourceSets.main.output.classesDir.exists() ? project.sourceSets.main.output.classesDir : null }
+            conventionMapping.map('classesDirectories') { project.sourceSets.main.output.classesDirs.any { it.exists() } ? project.sourceSets.main.output.classesDirs : null }
         }
     }
 

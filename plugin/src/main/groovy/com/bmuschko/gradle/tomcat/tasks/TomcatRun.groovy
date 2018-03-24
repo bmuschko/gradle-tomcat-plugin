@@ -43,12 +43,12 @@ class TomcatRun extends AbstractTomcatRun {
     File webAppSourceDirectory
 
     /**
-     * The directory containing the compiled class files. This property is optional as a web application project may
+     * The directories containing the compiled class files. This property is optional as a web application project may
      * simply not contain any classes.
      */
-    @InputDirectory
+    @InputFiles
     @Optional
-    File classesDirectory
+    FileCollection classesDirectories
 
     @Override
     protected void validateConfiguration() {
@@ -98,7 +98,7 @@ class TomcatRun extends AbstractTomcatRun {
      *
      * @return Flag
      */
-    @Internal
+    @Internal('private method, ignore for task validation')
     private boolean isClassesJarScanningRequired() {
         !isTomcat6x() && !existsWebXml()
     }
@@ -127,16 +127,18 @@ class TomcatRun extends AbstractTomcatRun {
      */
     private void setupClassesJarScanning() {
         getServer().context.jarScanner.scanAllDirectories = true
-        File resolvedClassesDirectory = getClassesDirectory()
+        FileCollection resolvedClassesDirectories = getClassesDirectories()
 
-        if(resolvedClassesDirectory) {
-            File metaInfDir = new File(resolvedClassesDirectory, 'META-INF')
+        if(resolvedClassesDirectories) {
+            resolvedClassesDirectories.each {
+                File metaInfDir = new File(it, 'META-INF')
 
-            if(!metaInfDir.exists()) {
-                boolean success = metaInfDir.mkdir()
+                if(!metaInfDir.exists()) {
+                    boolean success = metaInfDir.mkdir()
 
-                if(!success) {
-                    logger.warn "Failed to create META-INF directory in classes directory $resolvedClassesDirectory.absolutePath"
+                    if(!success) {
+                        logger.warn "Failed to create META-INF directory in classes directory $it.absolutePath"
+                    }
                 }
             }
         }

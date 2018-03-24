@@ -60,7 +60,7 @@ tomcatStop - Stops Tomcat.""")
         build('startAndStopTomcat')
 
         where:
-        tomcatVersion             | taskName
+        tomcatVersion                | taskName
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
         TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
@@ -94,8 +94,8 @@ tomcatStop - Stops Tomcat.""")
 tomcatStop.doLast""")
 
         where:
-        tomcatVersion             | taskName
-        TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
+        tomcatVersion               | taskName
+        TomcatVersion.VERSION_7_0_X | TomcatPlugin.TOMCAT_RUN_TASK_NAME
     }
 
     @Unroll
@@ -121,7 +121,7 @@ tomcatStop.doLast""")
         build('startAndStopTomcat')
 
         where:
-        tomcatVersion             | taskName
+        tomcatVersion                | taskName
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
         TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
@@ -139,7 +139,7 @@ tomcatStop.doLast""")
         build('startAndStopTomcat')
 
         where:
-        tomcatVersion             | taskName
+        tomcatVersion                | taskName
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
         TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
@@ -175,7 +175,7 @@ tomcatStop.doLast""")
         build('startAndStopTomcat')
 
         where:
-        tomcatVersion             | taskName
+        tomcatVersion                | taskName
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
         TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
@@ -196,7 +196,7 @@ tomcatStop.doLast""")
         !new File(temporaryFolder.root, 'logs/tomcat.log.lck').exists()
 
         where:
-        tomcatVersion             | taskName
+        tomcatVersion                | taskName
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME
         TomcatVersion.VERSION_6_0_X  | TomcatPlugin.TOMCAT_RUN_WAR_TASK_NAME
         TomcatVersion.VERSION_7_0_X  | TomcatPlugin.TOMCAT_RUN_TASK_NAME

@@ -104,7 +104,7 @@ class TomcatJasper extends Tomcat {
         ant.jasper(getJasperAttributes())
     }
 
-    @Internal
+    @Internal('private method, ignore for task validation')
     private getJasperAttributes() {
         def jasperAttributes = ['uriroot': getUriroot(), 'outputDir': getOutputDir(),
                                 'classdebuginfo': getClassdebuginfo(), 'compilerSourceVM': getCompilerSourceVM(),
