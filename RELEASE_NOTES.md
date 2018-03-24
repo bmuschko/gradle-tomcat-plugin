@@ -1,3 +1,8 @@
+### Version 2.5 (March 24, 2018)
+
+* Stop using deprecated SourceSet method[Issue 168](https://github.com/bmuschko/gradle-tomcat-plugin/issues/168).
+* Upgrade to Gradle Wrapper 4.6.
+
 ### Version 2.4.2 (November 23, 2017)
 
 * Jasper task adheres to up to date checking - [Pull Request 165](https://github.com/bmuschko/gradle-tomcat-plugin/pull/165).
