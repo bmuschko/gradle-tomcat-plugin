@@ -1,6 +1,6 @@
 # Gradle Tomcat plugin [![Build Status](https://travis-ci.org/bmuschko/gradle-tomcat-plugin.svg?branch=master)](https://travis-ci.org/bmuschko/gradle-tomcat-plugin)
 
-![Tomcat Logo](http://tomcat.apache.org/images/tomcat.gif)
+![Tomcat Logo](http://tomcat.apache.org/res/images/tomcat.png)
 
 <table border=1>
     <tr>
