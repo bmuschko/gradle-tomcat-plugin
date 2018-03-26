@@ -23,6 +23,7 @@ import com.bmuschko.gradle.tomcat.internal.ssl.SSLKeyStoreImpl
 import com.bmuschko.gradle.tomcat.internal.ssl.StoreType
 import com.bmuschko.gradle.tomcat.internal.utils.ThreadContextClassLoader
 import com.bmuschko.gradle.tomcat.internal.utils.TomcatThreadContextClassLoader
+import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
@@ -199,6 +200,14 @@ abstract class AbstractTomcatRun extends Tomcat {
     String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
 
     /**
+     * Add context resources cacheSize: 0 =unchange, lt 0 =disable caching, gt 0 =max size cache
+     */
+    @Input
+    @Optional
+    Integer cacheSize = 0
+
+
+    /**
      * The list of Tomcat users. Defaults to an empty list.
      */
     @Input
@@ -307,6 +316,15 @@ abstract class AbstractTomcatRun extends Tomcat {
     protected void configureWebApplication() {
         setWebApplicationContext()
         server.createLoader(Thread.currentThread().contextClassLoader)
+
+        // FIX: large project cache warning in tomcat.
+        if (getCacheSize() != 0) { // only config cacheSize when cacheSize!=0
+            if(server.metaClass.respondsTo(server, "setResourcesCacheSize", getCacheSize())){
+                server.metaClass.invokeMethod(server,"setResourcesCacheSize", getCacheSize())
+            } else {
+                logger.warn("CacheSize setting only support tomcat 8+")
+            }
+        }
 
         logger.info "Additional runtime resources classpath = ${getAdditionalRuntimeResources()}"
 

@@ -22,6 +22,7 @@ abstract class BaseTomcat8xPlusImpl extends BaseTomcat7xPlusImpl {
         context.addServletContainerInitializer(jasperInitializer.newInstance(), null)
     }
 
+
     @Override
     void addWebappResource(File resource) {
         context.resources.createWebResourceSet(getResourceSetType('PRE'), '/WEB-INF/classes', resource.toURI().toURL(), '/')
@@ -30,5 +31,13 @@ abstract class BaseTomcat8xPlusImpl extends BaseTomcat7xPlusImpl {
     def getResourceSetType(String name) {
         Class resourceSetTypeClass = loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
         resourceSetTypeClass.enumConstants.find { it.name() == name }
+    }
+
+    void setResourcesCacheSize(int cacheSize) {
+        if (cacheSize > 0) {
+            context.resources.cacheMaxSize = cacheSize
+        } else if (cacheSize < 0) {
+            context.resources.cachingAllowed = false
+        }
     }
 }
