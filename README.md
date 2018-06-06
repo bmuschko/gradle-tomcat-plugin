@@ -404,10 +404,23 @@ Check your IDE documentation on how to configure connecting to the remote debugg
 
 First of all you got to make sure to declare the connection pool dependency using the `tomcat` configuration.
 
+**Tomcat 6.0.x:**
+
 ```groovy
 def tomcatVersion = '6.0.35'
 tomcat "org.apache.tomcat:dbcp:${tomcatVersion}"
 ```
+
+See [coordinates on Maven Central](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.apache.tomcat%22%20AND%20a%3A%22dbcp%22) for details.
+
+**Later versions:**
+
+```groovy
+def tomcatVersion = '9.0.8'
+tomcat "org.apache.tomcat:tomcat-dbcp:${tomcatVersion}"
+```
+
+See [coordinates on Maven Central](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.apache.tomcat%22%20AND%20a%3A%22tomcat-dbcp%22) for details.
 
 If you decide to go with the default settings place your `context.xml` in the directory `src/main/webapp/META-INF`. To
 set a custom location you can use the convention property `configFile`. Here's an example on how to set it for the tasks
