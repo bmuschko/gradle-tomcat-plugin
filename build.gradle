@@ -69,6 +69,7 @@ task uberJar(type: Jar, dependsOn: subprojects.assemble) {
                    'Built-Gradle': gradle.gradleVersion
     }
 }
+uberJar.mustRunAfter(jar)
 
 task sourcesJar(type: Jar) {
     description = 'Creates sources JAR.'
