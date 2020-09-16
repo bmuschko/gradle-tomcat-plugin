@@ -19,6 +19,8 @@ import com.bmuschko.gradle.tomcat.options.TrimSpaces
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 
+import java.nio.file.Path
+
 /**
  * Task to run the JSP compiler and turn JSP pages into Java source.
  */
@@ -95,6 +97,10 @@ class TomcatJasper extends Tomcat {
     @Optional
     Boolean addWebXmlMappings
 
+    @InputFiles
+    @Optional
+    FileCollection jspFiles
+
     @TaskAction
     void start() {
         logger.info "Running Jasper for ${getProject()}"
@@ -130,6 +136,17 @@ class TomcatJasper extends Tomcat {
 
         if(getCompiler()) {
             jasperAttributes['compiler'] = getCompiler()
+        }
+
+        if(getJspFiles()) {
+            // process filecollection into a comma-separated list of relative paths from uriroot
+            StringBuilder fileList = new StringBuilder()
+            Path basePath = getUriroot().toPath()
+            getJspFiles().each({ file ->
+                fileList.append(basePath.relativize(file.toPath()).toString())
+                fileList.append(',')
+            })
+            jasperAttributes['jspFiles'] = fileList.substring(0, fileList.length()-1).toString()
         }
 
         jasperAttributes

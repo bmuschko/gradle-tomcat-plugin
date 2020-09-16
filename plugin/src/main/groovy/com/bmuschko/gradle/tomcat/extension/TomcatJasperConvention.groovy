@@ -16,6 +16,7 @@
 package com.bmuschko.gradle.tomcat.extension
 
 import com.bmuschko.gradle.tomcat.options.TrimSpaces
+import org.gradle.api.file.FileCollection
 
 /**
  * Defines Jasper task convention.
@@ -38,4 +39,5 @@ class TomcatJasperConvention {
     TrimSpaces trimSpaces
     Boolean xpoweredBy
     Boolean addWebXmlMappings
+    FileCollection jspFiles
 }
