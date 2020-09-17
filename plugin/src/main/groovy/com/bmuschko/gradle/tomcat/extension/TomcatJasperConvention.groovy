@@ -40,4 +40,5 @@ class TomcatJasperConvention {
     Boolean xpoweredBy
     Boolean addWebXmlMappings
     FileCollection jspFiles
+    Boolean failOnError
 }

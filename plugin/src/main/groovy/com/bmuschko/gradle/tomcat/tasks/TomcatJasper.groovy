@@ -101,6 +101,10 @@ class TomcatJasper extends Tomcat {
     @Optional
     FileCollection jspFiles
 
+    @Input
+    @Optional
+    Boolean failOnError
+
     @TaskAction
     void start() {
         logger.info "Running Jasper for ${getProject()}"
@@ -117,7 +121,8 @@ class TomcatJasper extends Tomcat {
                                 'compilerTargetVM': getCompilerTargetVM(), 'poolingEnabled': getPoolingEnabled(),
                                 'errorOnUseBeanInvalidClassAttribute': getErrorOnUseBeanInvalidClassAttribute(),
                                 'genStringAsCharArray': getGenStringAsCharArray(), 'ieClassId': getIeClassId(),
-                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces()?.name(), 'xpoweredBy': getXpoweredBy()]
+                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces()?.name(),
+                                'xpoweredBy': getXpoweredBy(), 'failOnError': getFailOnError()]
         if(getValidateXml()) {
             jasperAttributes['validateXml'] = getValidateXml()
         }
