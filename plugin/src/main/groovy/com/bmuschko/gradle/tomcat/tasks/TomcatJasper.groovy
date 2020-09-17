@@ -146,7 +146,9 @@ class TomcatJasper extends Tomcat {
                 fileList.append(basePath.relativize(file.toPath()).toString())
                 fileList.append(',')
             })
-            jasperAttributes['jspFiles'] = fileList.substring(0, fileList.length()-1).toString()
+            if(fileList.length() > 0) {
+                jasperAttributes['jspFiles'] = fileList.substring(0, fileList.length() - 1).toString()
+            }
         }
 
         jasperAttributes
