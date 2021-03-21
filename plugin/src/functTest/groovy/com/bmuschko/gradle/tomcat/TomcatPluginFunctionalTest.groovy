@@ -90,8 +90,8 @@ tomcatStop - Stops Tomcat.""")
 
         then:
         buildResult.output.contains('contextInitialized')
-        buildResult.output.contains("""contextDestroyed
-tomcatStop.doLast""")
+        buildResult.output.contains('contextDestroyed')
+        buildResult.output.contains('tomcatStop.doLast')
 
         where:
         tomcatVersion               | taskName
