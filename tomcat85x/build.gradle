@@ -1,7 +1,3 @@
-def jdk7 = '1.7'
-sourceCompatibility = jdk7
-targetCompatibility = jdk7
-
 dependencies {
     def tomcatVersion = '8.5.16'
 
@@ -10,10 +6,4 @@ dependencies {
             "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
             "org.apache.tomcat:tomcat-jasper:${tomcatVersion}"
     testCompile project(path: ':embedded', configuration: 'integTestFixtures')
-}
-
-idea {
-    module {
-        jdkName = jdk7
-    }
 }
