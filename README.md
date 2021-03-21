@@ -1,4 +1,4 @@
-# Gradle Tomcat plugin [![Build Status](https://github.com/bmuschko/gradle-tomcat-plugin/workflows/Build%20and%20Release%20%5BLinux%5D/badge.svg)](https://github.com/bmuschko/gradle-vagrant-plugin/actions?query=workflow%3A%22Build+and+Release+%5BLinux%5D%22)
+# Gradle Tomcat plugin [![Build Status](https://github.com/bmuschko/gradle-tomcat-plugin/workflows/Build%20and%20Release%20%5BLinux%5D/badge.svg)](https://github.com/bmuschko/gradle-tomcat-plugin/actions?query=workflow%3A%22Build+and+Release+%5BLinux%5D%22)
 
 ![Tomcat Logo](http://tomcat.apache.org/res/images/tomcat.png)
 
