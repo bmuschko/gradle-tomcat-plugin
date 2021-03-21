@@ -21,7 +21,7 @@
 </table>
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
-Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
+Gradle build. It extends the [War plugin](https://docs.gradle.org/current/userguide/war_plugin.html). At the moment the Tomcat versions
 6.0.x, 7.0.x, 8.0.x, 8.5.x and 9.0.x are supported.
 
 The typical use case for this plugin is to support deployment during development. The plugin allows for rapid web application
