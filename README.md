@@ -38,12 +38,12 @@ To use the plugin's functionality, you will need to add the its binary artifact 
 
 The plugin JAR needs to be defined in the classpath of your build script. It is directly available on
 [Bintray](https://bintray.com/bmuschko/gradle-plugins/com.bmuschko%3Agradle-tomcat-plugin).
-The following code snippet shows an example on how to retrieve it from Bintray:
+The following code snippet shows an example on how to retrieve it from Maven Central:
 
 ```groovy
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
