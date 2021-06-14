@@ -16,3 +16,8 @@ task integrationTest(type: Test) {
 }
 
 check.dependsOn integrationTest
+
+task jacocoIntegrationTestReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData integrationTest
+}

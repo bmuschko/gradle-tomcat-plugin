@@ -1,5 +1,8 @@
+apply plugin: 'java-gradle-plugin'
+
 dependencies {
-    compile gradleApi(),
+    implementation gradleApi(),
+            project(':embedded'),
             project(':tomcat6x'),
             project(':tomcat7x'),
             project(':tomcat8x'),

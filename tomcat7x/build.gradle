@@ -1,9 +1,9 @@
 dependencies {
     def tomcatVersion = '7.0.76'
 
-    compile project(':embedded'),
+    implementation project(':embedded'),
             "org.apache.tomcat:tomcat-catalina:${tomcatVersion}",
             "org.apache.tomcat:tomcat-coyote:${tomcatVersion}",
             "org.apache.tomcat:tomcat-jasper:${tomcatVersion}"
-    testCompile project(path: ':embedded', configuration: 'integTestFixtures')
+    testImplementation project(path: ':embedded', configuration: 'integTestFixtures')
 }

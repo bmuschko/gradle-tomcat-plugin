@@ -22,3 +22,8 @@ check.dependsOn functionalTest
 gradlePlugin {
     testSourceSets sourceSets.functionalTest
 }
+
+task jacocoFunctionalTestReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData functionalTest
+}

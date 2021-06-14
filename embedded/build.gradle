@@ -1,5 +1,5 @@
 dependencies {
-    compile gradleApi()
+    implementation gradleApi()
 }
 
 configurations {
@@ -8,7 +8,7 @@ configurations {
 
 task integTestFixturesJar(type: Jar) {
     description = 'Creates integration test fixtures JAR.'
-    classifier = 'testfixtures'
+    archiveClassifier = 'testfixtures'
     from sourceSets.integrationTest.output
     include '**/fixture/*.class'
 }
