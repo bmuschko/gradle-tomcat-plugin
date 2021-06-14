@@ -98,7 +98,6 @@ class TomcatRun extends AbstractTomcatRun {
      *
      * @return Flag
      */
-    @Internal('private method, ignore for task validation')
     private boolean isClassesJarScanningRequired() {
         !isTomcat6x() && !existsWebXml()
     }

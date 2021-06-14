@@ -17,7 +17,13 @@ package com.bmuschko.gradle.tomcat.tasks
 
 import com.bmuschko.gradle.tomcat.options.TrimSpaces
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
 
 /**
  * Task to run the JSP compiler and turn JSP pages into Java source.
@@ -104,8 +110,7 @@ class TomcatJasper extends Tomcat {
         ant.jasper(getJasperAttributes())
     }
 
-    @Internal('private method, ignore for task validation')
-    private getJasperAttributes() {
+    private Map getJasperAttributes() {
         def jasperAttributes = ['uriroot': getUriroot(), 'outputDir': getOutputDir(),
                                 'classdebuginfo': getClassdebuginfo(), 'compilerSourceVM': getCompilerSourceVM(),
                                 'compilerTargetVM': getCompilerTargetVM(), 'poolingEnabled': getPoolingEnabled(),
