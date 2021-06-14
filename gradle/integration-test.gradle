@@ -2,7 +2,7 @@ sourceSets {
     integrationTest {
         groovy.srcDir file('src/integTest/groovy')
         resources.srcDir file('src/integTest/resources')
-        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
         runtimeClasspath += output + compileClasspath
     }
 }
@@ -13,20 +13,6 @@ task integrationTest(type: Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
     mustRunAfter test
-
-    reports {
-        html.destination = project.file("$html.destination/integration")
-        junitXml.destination = project.file("$junitXml.destination/integration")
-    }
 }
 
 check.dependsOn integrationTest
-
-idea.module {
-    sourceSets.integrationTest.allSource.srcDirs.each {
-        testSourceDirs += it
-    }
-
-    scopes.TEST.plus += [configurations.integrationTestCompile]
-    scopes.TEST.plus += [configurations.integrationTestRuntime]
-}

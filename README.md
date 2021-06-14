@@ -1,4 +1,4 @@
-# Gradle Tomcat plugin [![Build Status](https://travis-ci.org/bmuschko/gradle-tomcat-plugin.svg?branch=master)](https://travis-ci.org/bmuschko/gradle-tomcat-plugin)
+# Gradle Tomcat plugin [![Build Status](https://github.com/bmuschko/gradle-tomcat-plugin/workflows/Build%20and%20Release%20%5BLinux%5D/badge.svg)](https://github.com/bmuschko/gradle-tomcat-plugin/actions?query=workflow%3A%22Build+and+Release+%5BLinux%5D%22)
 
 ![Tomcat Logo](http://tomcat.apache.org/res/images/tomcat.png)
 
@@ -21,7 +21,7 @@
 </table>
 
 The plugin provides deployment capabilities of web applications to an embedded Tomcat web container in any given
-Gradle build. It extends the [War plugin](http://www.gradle.org/war_plugin.html). At the moment the Tomcat versions
+Gradle build. It extends the [War plugin](https://docs.gradle.org/current/userguide/war_plugin.html). At the moment the Tomcat versions
 6.0.x, 7.0.x, 8.0.x, 8.5.x and 9.0.x are supported.
 
 The typical use case for this plugin is to support deployment during development. The plugin allows for rapid web application
@@ -38,12 +38,12 @@ To use the plugin's functionality, you will need to add the its binary artifact 
 
 The plugin JAR needs to be defined in the classpath of your build script. It is directly available on
 [Bintray](https://bintray.com/bmuschko/gradle-plugins/com.bmuschko%3Agradle-tomcat-plugin).
-The following code snippet shows an example on how to retrieve it from Bintray:
+The following code snippet shows an example on how to retrieve it from Maven Central:
 
 ```groovy
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
