@@ -32,6 +32,8 @@ subprojects {
     }
 }
 
+jar.enabled = false
+
 task uberJar(type: Jar, dependsOn: subprojects.assemble) {
     description = 'Creates Uberjar.'
 
