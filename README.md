@@ -36,18 +36,17 @@ To use the plugin's functionality, you will need to add the its binary artifact 
 
 ### Adding the plugin binary to the build
 
-The plugin JAR needs to be defined in the classpath of your build script. It is directly available on
-[Bintray](https://bintray.com/bmuschko/gradle-plugins/com.bmuschko%3Agradle-tomcat-plugin).
-The following code snippet shows an example on how to retrieve it from Maven Central:
+The plugin JAR needs to be defined in the classpath of your build script. It is directly available on the Gradle plugin portal.
+The following code snippet shows an example on how to retrieve it:
 
 ```groovy
 buildscript {
     repositories {
-        mavenCentral()
+        gradlePluginPortal()
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.6.0'
     }
 }
 ```
@@ -78,7 +77,7 @@ The JAR file comes with two plugins:
 </table>
 
 The `com.bmuschko.tomcat` plugin helps you get started quickly. If you are OK if the preconfigured tasks, this is the
-preferrable option. Most plugin users will go with this option. To use the Tomcat plugin, include the following code snippet
+preferable option. Most plugin users will go with this option. To use the Tomcat plugin, include the following code snippet
 in your build script:
 
     apply plugin: 'com.bmuschko.tomcat'

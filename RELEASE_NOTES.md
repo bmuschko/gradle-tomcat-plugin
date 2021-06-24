@@ -1,6 +1,11 @@
+### Version 2.6.0 (June 23, 2021)
+
+* Gradle 6.2.2 shows deprecation warning regarding jasperAttributes - [Issue 194](https://github.com/bmuschko/gradle-tomcat-plugin/issues/194).
+* tomcatRun fails with Gradle 7.0 due to @Internal annotation on private getter - [Issue 200](https://github.com/bmuschko/gradle-tomcat-plugin/issues/200).
+
 ### Version 2.5 (March 24, 2018)
 
-* Stop using deprecated SourceSet method[Issue 168](https://github.com/bmuschko/gradle-tomcat-plugin/issues/168).
+* Stop using deprecated SourceSet method - [Issue 168](https://github.com/bmuschko/gradle-tomcat-plugin/issues/168).
 * Upgrade to Gradle Wrapper 4.6.
 
 ### Version 2.4.2 (November 23, 2017)
