@@ -1,7 +1,7 @@
 plugins {
     id 'base'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.8.4'
+    id 'com.gradle.plugin-publish' version '0.14.0'
     id 'org.ajoberstar.git-publish' version '2.1.3'
 }
 
@@ -100,70 +100,19 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact uberJar
-            artifact sourcesJar
-            artifact groovydocJar
-
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('name', 'Gradle Tomcat plugin')
-                root.appendNode('description', 'Gradle plugin supporting deployment of your web application to an embedded Tomcat web container.')
-                root.appendNode('url', 'https://github.com/bmuschko/gradle-tomcat-plugin')
-                root.appendNode('inceptionYear', '2010')
-
-                def scm = root.appendNode('scm')
-                scm.appendNode('url', 'https://github.com/bmuschko/gradle-tomcat-plugin')
-                scm.appendNode('connection', 'scm:https://bmuschko@github.com/bmuschko/gradle-tomcat-plugin.git')
-                scm.appendNode('developerConnection', 'scm:git://github.com/bmuschko/gradle-tomcat-plugin.git')
-
-                def license = root.appendNode('licenses').appendNode('license')
-                license.appendNode('name', 'The Apache Software License, Version 2.0')
-                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
-                license.appendNode('distribution', 'repo')
-
-                def developers = root.appendNode('developers')
-                def bmuschko = developers.appendNode('developer')
-                bmuschko.appendNode('id', 'bmuschko')
-                bmuschko.appendNode('name', 'Benjamin Muschko')
-                bmuschko.appendNode('email', 'benjamin.muschko@gmail.com')
-            }
         }
     }
 }
 
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.getProperty('bintrayUser') : null
-    key =  project.hasProperty('bintrayKey') ? project.getProperty('bintrayKey') : null
-    publications = ['mavenJava']
-    publish = true
+pluginBundle {
+    website = "https://github.com/bmuschko/gradle-tomcat-plugin"
+    vcsUrl = "https://github.com/bmuschko/gradle-tomcat-plugin"
+    tags = ['gradle', 'tomcat', 'web', 'container', 'embedded']
 
-    pkg {
-        repo = 'gradle-plugins'
-        name = 'com.bmuschko:gradle-tomcat-plugin'
-        desc = 'Gradle plugin supporting deployment of your web application to an embedded Tomcat web container.'
-        websiteUrl = "https://github.com/bmuschko/${project.name}"
-        issueTrackerUrl = "https://github.com/bmuschko/${project.name}/issues"
-        vcsUrl = "https://github.com/bmuschko/${project.name}.git"
-        licenses = ['Apache-2.0']
-        labels = ['gradle', 'tomcat', 'web', 'container', 'embedded']
-        publicDownloadNumbers = true
-
-        version {
-            vcsTag = "v$project.version"
-            attributes = ['gradle-plugin': ["com.bmuschko.tomcat:${project.group}:${project.name}",
-                                            "com.bmuschko.tomcat-base:${project.group}:${project.name}"]]
-
-            gpg {
-                sign = true
-                passphrase = project.hasProperty('gpgPassphrase') ? project.getProperty('gpgPassphrase') : null
-            }
-
-            mavenCentralSync {
-                sync = true
-                user = project.hasProperty('mavenCentralUserToken') ? project.getProperty('mavenCentralUserToken') : null
-                password = project.hasProperty('mavenCentralPassword') ? project.getProperty('mavenCentralPassword') : null
-                close = '1'
-            }
-        }
+    mavenCoordinates {
+        groupId = project.group.toString()
+        artifactId = project.name
+        version = project.version.toString()
     }
 }
 
