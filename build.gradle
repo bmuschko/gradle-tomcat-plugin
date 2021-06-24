@@ -114,6 +114,17 @@ pluginBundle {
         artifactId = project.name
         version = project.version.toString()
     }
+
+    plugins {
+        tomcatBasePlugin {
+            id = 'com.bmuschko.tomcat-base'
+            displayName = 'Gradle Tomcat Base Plugin'
+        }
+        tomcatPlugin {
+            id = 'com.bmuschko.tomcat'
+            displayName = 'Gradle Tomcat Plugin'
+        }
+    }
 }
 
 gitPublish {
