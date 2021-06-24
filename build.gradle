@@ -119,10 +119,12 @@ pluginBundle {
         tomcatBasePlugin {
             id = 'com.bmuschko.tomcat-base'
             displayName = 'Gradle Tomcat Base Plugin'
+            description = 'Plugin that provides custom task types for interacting with an embedded Tomcat web container.'
         }
         tomcatPlugin {
             id = 'com.bmuschko.tomcat'
             displayName = 'Gradle Tomcat Plugin'
+            description = 'Plugin that provides tasks for deploying your web application to an embedded Tomcat web container.'
         }
     }
 }
