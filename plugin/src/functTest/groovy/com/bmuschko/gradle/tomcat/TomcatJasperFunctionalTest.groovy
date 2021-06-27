@@ -172,6 +172,40 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         combinations << [TOMCAT_VERSIONS, [false]].combinations()
     }
 
+    def "Can use jspFiles option"() {
+        given:
+        File webAppDir = setupWebAppDirectory()
+        createJspFiles(webAppDir)
+
+        File extraJspFile = new File(webAppDir, 'extraFile.jsp')
+        extraJspFile << """
+            <html>
+                <body>
+                    <%= "Hello World!" %>
+                </body>
+            </html>
+        """
+
+        expect:
+        File outputDir = temporaryFolder.newFolder('build', 'jasper')
+        buildFile << getBasicTomcatBuildFileContent(combinations[0])
+        buildFile << """
+            tomcat {
+                jasper {
+                    jspFiles = fileTree(webAppDir).matching {
+                      include 'helloWorld.jsp'
+                      include 'date.jsp'
+                    }
+                }
+            }
+        """
+        build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+        assertCompiledJsps(outputDir)
+
+        where:
+        combinations << [TOMCAT_VERSIONS].combinations()
+    }
+
     @Issue("https://github.com/bmuschko/gradle-tomcat-plugin/issues/158")
     @Unroll
     def "Runs Jasper compiler twice to verify up to date checking for Tomcat version #tomcatVersion"() {
@@ -221,8 +255,8 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
     }
 
     static void createJspFilesWithCompileError(File targetDir) {
-        File helloWorldJspFile = new File(targetDir, 'compileError.jsp')
-        helloWorldJspFile << """
+        File compileErrorJspFile = new File(targetDir, 'compileError.jsp')
+        compileErrorJspFile << """
             <html>
                 <body>
                     <%= "Hello World!" %
@@ -237,6 +271,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         assert new File(compiledJspDir, 'helloWorld_jsp.java').exists()
         assert new File(compiledJspDir, 'date_jsp.java').exists()
         assert !new File(compiledJspDir, 'compileError_jsp.java').exists()
+        assert !new File(compiledJspDir, 'extraFile_jsp.java').exists()
     }
 
     static void assertTaskOutcome(BuildResult result, String expectedTaskName, TaskOutcome expectedOutcome) {
