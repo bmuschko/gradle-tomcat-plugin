@@ -145,12 +145,8 @@ class TomcatJasper extends Tomcat {
 
         if(getJspFiles()) {
             // process filecollection into a comma-separated list of relative paths from uriroot
-            StringBuilder fileList = new StringBuilder()
             Path basePath = getUriroot().toPath()
-            fileList = getJspFiles().collect { file -> basePath.relativize(file.toPath()).toString() }.join(',')
-            if(fileList.length() > 0) {
-                jasperAttributes['jspFiles'] = fileList.substring(0, fileList.length() - 1).toString()
-            }
+            jasperAttributes['jspFiles'] = getJspFiles().collect { file -> basePath.relativize(file.toPath()).toString() }.join(',')
         }
 
         jasperAttributes
