@@ -14,6 +14,7 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
     private static final String VALIDATE_XML_ATTRIBUTE = 'validateXml'
     private static final String VALIDATE_TLD_ATTRIBUTE = 'validateTld'
     private static final String JASPER_TASK_PATH = ":$TomcatPlugin.TOMCAT_JASPER_TASK_NAME".toString()
+    public static final ArrayList<String> TOMCAT_VERSIONS = ['6.0.39', '7.0.42', '7.0.50', '8.0.3', '9.0.1']
 
     def setup() {
         buildFile << """
@@ -120,7 +121,55 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         assertCompiledJsps(outputDir)
 
         where:
-        combinations << [['6.0.39', '7.0.42', '7.0.50', '8.0.3', '9.0.1'], ['TRUE', 'FALSE', 'SINGLE']].combinations()
+        combinations << [TOMCAT_VERSIONS, ['TRUE', 'FALSE']].combinations()
+    }
+
+    def "Can use failOnError = true option"() {
+        given:
+        File webAppDir = setupWebAppDirectory()
+        createJspFiles(webAppDir)
+        createJspFilesWithCompileError(webAppDir)
+
+        when:
+        File outputDir = temporaryFolder.newFolder('build', 'jasper')
+        buildFile << getBasicTomcatBuildFileContent(combinations[0])
+        buildFile << """
+            tomcat {
+                jasper {
+                    failOnError = ${combinations[1]}
+                }
+            }
+        """
+        BuildResult result = buildAndFail(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+
+        then:
+        result.output.contains("Task :tomcatJasper FAILED")
+
+        where:
+        combinations << [TOMCAT_VERSIONS, [true]].combinations()
+    }
+
+    def "Can use failOnError = false option"() {
+        given:
+        File webAppDir = setupWebAppDirectory()
+        createJspFiles(webAppDir)
+        createJspFilesWithCompileError(webAppDir)
+
+        expect:
+        File outputDir = temporaryFolder.newFolder('build', 'jasper')
+        buildFile << getBasicTomcatBuildFileContent(combinations[0])
+        buildFile << """
+            tomcat {
+                jasper {
+                    failOnError = ${combinations[1]}
+                }
+            }
+        """
+        build(TomcatPlugin.TOMCAT_JASPER_TASK_NAME)
+        assertCompiledJsps(outputDir)
+
+        where:
+        combinations << [TOMCAT_VERSIONS, [false]].combinations()
     }
 
     @Issue("https://github.com/bmuschko/gradle-tomcat-plugin/issues/158")
@@ -171,11 +220,23 @@ class TomcatJasperFunctionalTest extends AbstractFunctionalTest {
         """
     }
 
+    static void createJspFilesWithCompileError(File targetDir) {
+        File helloWorldJspFile = new File(targetDir, 'compileError.jsp')
+        helloWorldJspFile << """
+            <html>
+                <body>
+                    <%= "Hello World!" %
+                </body>
+            </html>
+        """
+    }
+
     static void assertCompiledJsps(File outputDir) {
         File compiledJspDir = new File(outputDir, 'org/apache/jsp')
         compiledJspDir.exists()
         assert new File(compiledJspDir, 'helloWorld_jsp.java').exists()
         assert new File(compiledJspDir, 'date_jsp.java').exists()
+        assert !new File(compiledJspDir, 'compileError_jsp.java').exists()
     }
 
     static void assertTaskOutcome(BuildResult result, String expectedTaskName, TaskOutcome expectedOutcome) {
