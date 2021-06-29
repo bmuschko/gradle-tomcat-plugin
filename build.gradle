@@ -133,6 +133,7 @@ pluginBundle {
 
 gitPublish {
     repoUri = 'git@github.com:bmuschko/gradle-tomcat-plugin.git'
+    branch = 'gh-pages'
 
     contents {
         from(aggregateGroovydocs.outputs.files) {
