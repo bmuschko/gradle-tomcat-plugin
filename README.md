@@ -46,7 +46,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.6.0'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.7.0'
     }
 }
 ```

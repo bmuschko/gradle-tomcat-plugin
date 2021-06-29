@@ -1,3 +1,7 @@
+### Version 2.7.0 (June 29, 2021)
+
+* Add jspFiles and failOnError parameter for passing to the jspc ant task - [Pull Request 195](https://github.com/bmuschko/gradle-tomcat-plugin/pull/195).
+
 ### Version 2.6.0 (June 23, 2021)
 
 * Gradle 6.2.2 shows deprecation warning regarding jasperAttributes - [Issue 194](https://github.com/bmuschko/gradle-tomcat-plugin/issues/194).
