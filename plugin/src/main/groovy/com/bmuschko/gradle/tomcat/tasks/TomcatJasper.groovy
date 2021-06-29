@@ -25,6 +25,8 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
+import java.nio.file.Path
+
 /**
  * Task to run the JSP compiler and turn JSP pages into Java source.
  */
@@ -101,6 +103,14 @@ class TomcatJasper extends Tomcat {
     @Optional
     Boolean addWebXmlMappings
 
+    @InputFiles
+    @Optional
+    FileCollection jspFiles
+
+    @Input
+    @Optional
+    Boolean failOnError
+
     @TaskAction
     void start() {
         logger.info "Running Jasper for ${getProject()}"
@@ -116,7 +126,8 @@ class TomcatJasper extends Tomcat {
                                 'compilerTargetVM': getCompilerTargetVM(), 'poolingEnabled': getPoolingEnabled(),
                                 'errorOnUseBeanInvalidClassAttribute': getErrorOnUseBeanInvalidClassAttribute(),
                                 'genStringAsCharArray': getGenStringAsCharArray(), 'ieClassId': getIeClassId(),
-                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces()?.name(), 'xpoweredBy': getXpoweredBy()]
+                                'javaEncoding': getJavaEncoding(), 'trimSpaces': getTrimSpaces()?.name(),
+                                'xpoweredBy': getXpoweredBy(), 'failOnError': getFailOnError()]
         if(getValidateXml()) {
             jasperAttributes['validateXml'] = getValidateXml()
         }
@@ -135,6 +146,12 @@ class TomcatJasper extends Tomcat {
 
         if(getCompiler()) {
             jasperAttributes['compiler'] = getCompiler()
+        }
+
+        if(getJspFiles()) {
+            // process filecollection into a comma-separated list of relative paths from uriroot
+            Path basePath = getUriroot().toPath()
+            jasperAttributes['jspFiles'] = getJspFiles().collect { file -> basePath.relativize(file.toPath()).toString() }.join(',')
         }
 
         jasperAttributes

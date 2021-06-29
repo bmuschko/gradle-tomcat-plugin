@@ -109,6 +109,8 @@ class TomcatPlugin implements Plugin<Project> {
             conventionMapping.map('javaEncoding') { tomcatPluginExtension.jasper.javaEncoding ?: 'UTF8' }
             conventionMapping.map('trimSpaces') { tomcatPluginExtension.jasper.trimSpaces ?: TrimSpaces.TRUE }
             conventionMapping.map('xpoweredBy') { tomcatPluginExtension.jasper.xpoweredBy ?: false }
+            conventionMapping.map('jspFiles') { tomcatPluginExtension.jasper.jspFiles ?: null }
+            conventionMapping.map('failOnError') { tomcatPluginExtension.jasper.failOnError == null ? true : tomcatPluginExtension.jasper.failOnError }
         }
     }
 }

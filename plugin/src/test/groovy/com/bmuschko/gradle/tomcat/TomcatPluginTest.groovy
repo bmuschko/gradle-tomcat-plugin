@@ -119,6 +119,8 @@ class TomcatPluginTest extends Specification {
             task.javaEncoding == 'UTF8'
             task.trimSpaces == TrimSpaces.TRUE
             !task.xpoweredBy
+            task.failOnError == true
+            task.jspFiles == null
     }
 
     def "Can configure tasks with extension"() {
