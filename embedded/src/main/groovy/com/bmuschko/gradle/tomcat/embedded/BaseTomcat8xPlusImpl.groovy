@@ -27,6 +27,11 @@ abstract class BaseTomcat8xPlusImpl extends BaseTomcat7xPlusImpl {
         context.resources.createWebResourceSet(getResourceSetType('PRE'), '/WEB-INF/classes', resource.toURI().toURL(), '/')
     }
 
+    @Override
+    void addResource(Resource resource) {
+        context.resources.createWebResourceSet(getResourceSetType('PRE'), resource.mountpoint, resource.path.toURI().toURL(), '/')
+    }
+
     def getResourceSetType(String name) {
         Class resourceSetTypeClass = loadClass('org.apache.catalina.WebResourceRoot$ResourceSetType')
         resourceSetTypeClass.enumConstants.find { it.name() == name }

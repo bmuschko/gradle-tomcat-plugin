@@ -244,6 +244,7 @@ server has started. When false, this task blocks until the Tomcat server is stop
 * `ajpProtocol`: The AJP protocol handler class name to be used (defaults to `org.apache.coyote.ajp.AjpProtocol`).
 * `users`: List of users with `username`, `password` and `roles`. Used to configure tomcat with basic authentication 
 with these users.
+* `resources`: List of additional resources with `path` and `mountpoint` for serving static files.
 
 ### Example
 
@@ -268,6 +269,13 @@ tomcat {
             username = 'user2'
             password = 'abcdef'
             roles = ['manager']
+        }
+    }
+
+    resources {
+        resource {
+            path = new File(projectDir, "src/assets/vendor")
+            mountpoint = "/client"
         }
     }
 }

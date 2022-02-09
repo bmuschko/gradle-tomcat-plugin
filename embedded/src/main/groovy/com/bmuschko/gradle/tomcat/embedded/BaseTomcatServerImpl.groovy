@@ -41,6 +41,11 @@ abstract class BaseTomcatServerImpl implements TomcatServer {
     }
 
     @Override
+    void addResource(Resource resource) {
+        // TODO: how to implement this here for Tomcat 7x?
+    }
+
+    @Override
     void addStartUpLifecycleListener(CountDownLatch startupBarrier, boolean daemon) {
         def afterStartEventLifecycleListener = java.lang.reflect.Proxy.newProxyInstance(Thread.currentThread().contextClassLoader,
                 [loadClass('org.apache.catalina.LifecycleListener')] as Class[], new AfterStartEventLifecycleListener(startupBarrier, daemon))

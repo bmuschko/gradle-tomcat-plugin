@@ -15,6 +15,7 @@
  */
 package com.bmuschko.gradle.tomcat.extension
 
+import com.bmuschko.gradle.tomcat.embedded.Resource
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
 
 /**
@@ -37,6 +38,7 @@ class TomcatPluginExtension {
     String ajpProtocol = DEFAULT_AJP_PROTOCOL_HANDLER
     TomcatJasperConvention jasper = new TomcatJasperConvention()
     List<TomcatUser> users = []
+    List<Resource> resources = []
 
     def jasper(Closure closure) {
         closure.resolveStrategy = Closure.DELEGATE_FIRST
@@ -55,6 +57,20 @@ class TomcatPluginExtension {
         TomcatUser user = new TomcatUser()
         closure.delegate = user
         users << user
+        closure()
+    }
+
+    def resources(Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        closure.delegate = resources
+        closure()
+    }
+
+    def resource(Closure closure) {
+        closure.resolveStrategy = Closure.DELEGATE_FIRST
+        Resource resource = new Resource()
+        closure.delegate = resource
+        resources << resource
         closure()
     }
 }
