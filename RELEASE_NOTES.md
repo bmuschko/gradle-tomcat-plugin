@@ -1,3 +1,7 @@
+### Version 2.8.0 (UNRELEASED)
+
+* Add option to set the ajp secret. 
+
 ### Version 2.7.0 (June 29, 2021)
 
 * Add jspFiles and failOnError parameter for passing to the jspc ant task - [Pull Request 195](https://github.com/bmuschko/gradle-tomcat-plugin/pull/195).

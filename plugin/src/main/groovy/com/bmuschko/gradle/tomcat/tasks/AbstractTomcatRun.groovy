@@ -26,7 +26,13 @@ import com.bmuschko.gradle.tomcat.internal.utils.TomcatThreadContextClassLoader
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.TaskAction
 
 import java.util.concurrent.CountDownLatch
 import java.util.logging.Level
@@ -199,6 +205,19 @@ abstract class AbstractTomcatRun extends Tomcat {
     String ajpProtocol = 'org.apache.coyote.ajp.AjpProtocol'
 
     /**
+     * Indicate if the secret for the ajp protocol is required. Defaults to true.
+     */
+    @Input
+    Boolean ajpSecretRequired = Boolean.TRUE
+
+    /**
+     * The secret for the ajp protocol.
+     */
+    @Input
+    @Optional
+    Boolean ajpSecret
+
+    /**
      * The list of Tomcat users. Defaults to an empty list.
      */
     @Input
@@ -240,35 +259,35 @@ abstract class AbstractTomcatRun extends Tomcat {
      */
     protected void validateConfiguration() {
         // Check existence of default web.xml if provided
-        if(getWebDefaultXml()) {
+        if (getWebDefaultXml()) {
             logger.info "Default web.xml = ${getWebDefaultXml().canonicalPath}"
         }
 
         // Check the location of context.xml if it was provided.
-        if(getConfigFile()) {
+        if (getConfigFile()) {
             setResolvedConfigFile(getConfigFile().toURI().toURL())
             logger.info "context.xml = ${getResolvedConfigFile().toString()}"
         }
 
         // Check HTTP(S) protocol handler class names
-        if(getHttpProtocol()) {
+        if (getHttpProtocol()) {
             logger.info "HTTP protocol handler classname = ${getHttpProtocol()}"
         }
 
-        if(getHttpsProtocol()) {
+        if (getHttpsProtocol()) {
             logger.info "HTTPS protocol handler classname = ${getHttpsProtocol()}"
         }
 
-        if(getOutputFile()) {
+        if (getOutputFile()) {
             logger.info "Output file = ${getOutputFile().canonicalPath}"
         }
 
-        if(getEnableSSL()) {
+        if (getEnableSSL()) {
             validateStore(getKeystoreFile(), getKeystorePass(), StoreType.KEY)
             validateStore(getTruststoreFile(), getTruststorePass(), StoreType.TRUST)
             def validClientAuthPhrases = ["true", "false", "want"]
 
-            if(getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
+            if (getClientAuth() && (!validClientAuthPhrases.contains(getClientAuth()))) {
                 throw new InvalidUserDataException("If specified, clientAuth must be one of: ${validClientAuthPhrases}")
             }
         }
@@ -282,21 +301,19 @@ abstract class AbstractTomcatRun extends Tomcat {
      * @param storeType identifies whether the store is a KeyStore or TrustStore
      */
     private void validateStore(File storeFile, String keyStorePassword, StoreType storeType) {
-        if(!storeFile ^ !keyStorePassword) {
+        if (!storeFile ^ !keyStorePassword) {
             throw new InvalidUserDataException("If you want to provide a $storeType.description then password and file may not be null or blank")
-        }
-        else if(storeFile && keyStorePassword) {
-            if(!storeFile.exists()) {
+        } else if (storeFile && keyStorePassword) {
+            if (!storeFile.exists()) {
                 throw new InvalidUserDataException("$storeType.description file does not exist at location $storeFile.canonicalPath")
-            }
-            else {
+            } else {
                 logger.info "$storeType.description file = ${storeFile}"
             }
         }
     }
 
     protected void addWebappResource(File resource) {
-        if(resource.exists()) {
+        if (resource.exists()) {
             server.addWebappResource(resource)
         }
     }
@@ -317,7 +334,7 @@ abstract class AbstractTomcatRun extends Tomcat {
         server.context.reloadable = getReloadable()
         server.configureDefaultWebXml(getWebDefaultXml())
 
-        if(getResolvedConfigFile()) {
+        if (getResolvedConfigFile()) {
             server.configFile = getResolvedConfigFile()
         }
     }
@@ -340,8 +357,8 @@ abstract class AbstractTomcatRun extends Tomcat {
                 server.configureUser(user)
             }
 
-            if(getEnableSSL()) {
-                if(!getKeystoreFile()) {
+            if (getEnableSSL()) {
+                if (!getKeystoreFile()) {
                     final File keystore = project.file("$project.buildDir/tmp/ssl/keystore")
                     final String keyPassword = 'gradleTomcat'
                     sslKeyStore.createSSLCertificate(keystore, keyPassword, getPreserveSSLKey())
@@ -349,11 +366,10 @@ abstract class AbstractTomcatRun extends Tomcat {
                     keystorePass = keyPassword
                 }
 
-                if(getTruststoreFile()) {
+                if (getTruststoreFile()) {
                     server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(),
-                                                        getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
-                }
-                else {
+                            getKeystorePass(), getTruststoreFile(), getTruststorePass(), getClientAuth())
+                } else {
                     server.configureHttpsConnector(getHttpsPort(), getURIEncoding(), getHttpsProtocol(), getKeystoreFile(), getKeystorePass())
                 }
             }
@@ -371,7 +387,7 @@ abstract class AbstractTomcatRun extends Tomcat {
 
             startupBarrier.await()
         }
-        catch(Exception e) {
+        catch (Exception e) {
             stopServer()
             throw new GradleException('An error occurred starting the Tomcat server.', e)
         }
@@ -382,7 +398,7 @@ abstract class AbstractTomcatRun extends Tomcat {
 
     @Internal
     protected String getFullContextPath() {
-        if(getContextPath() == '/' || getContextPath() == '') {
+        if (getContextPath() == '/' || getContextPath() == '') {
             return ''
         }
 
@@ -401,13 +417,13 @@ abstract class AbstractTomcatRun extends Tomcat {
     }
 
     private void removeShutdownHook() {
-        if(shutdownHook) {
+        if (shutdownHook) {
             Runtime.getRuntime().removeShutdownHook(shutdownHook)
         }
     }
 
     private void stopServer() {
-        if(server && !server.stopped) {
+        if (server && !server.stopped) {
             server.stop()
         }
     }
