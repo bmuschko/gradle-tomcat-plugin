@@ -96,7 +96,7 @@ abstract class BaseTomcat7xPlusImpl extends BaseTomcatServerImpl {
         httpsConnector
     }
 
-    private createConnector(String protocolHandlerClassName, String uriEncoding) {
+    def createConnector(String protocolHandlerClassName, String uriEncoding) {
         Class connectorClass = loadClass('org.apache.catalina.connector.Connector')
         Constructor constructor = connectorClass.getConstructor([String] as Class[])
         def connector = constructor.newInstance([protocolHandlerClassName] as Object[])

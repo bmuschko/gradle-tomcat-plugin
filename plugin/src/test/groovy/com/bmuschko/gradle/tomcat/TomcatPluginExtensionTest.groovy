@@ -35,5 +35,7 @@ class TomcatPluginExtensionTest extends Specification {
         pluginExtension.httpProtocol == TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         pluginExtension.httpsProtocol == TomcatPluginExtension.DEFAULT_PROTOCOL_HANDLER
         pluginExtension.ajpProtocol == TomcatPluginExtension.DEFAULT_AJP_PROTOCOL_HANDLER
+        pluginExtension.ajpSecretRequired == Boolean.TRUE
+        !pluginExtension.ajpSecret
     }
 }

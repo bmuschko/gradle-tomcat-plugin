@@ -18,7 +18,7 @@ package com.bmuschko.gradle.tomcat.embedded
 /**
  * Tomcat 9x server implementation.
  */
-class Tomcat9xServer extends BaseTomcat8xPlusImpl {
+class Tomcat9xServer extends BaseTomcat9xPlusImpl {
     @Override
     TomcatVersion getVersion() {
         TomcatVersion.VERSION_9_0_X
