@@ -15,6 +15,7 @@
  */
 package com.bmuschko.gradle.tomcat.tasks
 
+import com.bmuschko.gradle.tomcat.embedded.Resource
 import com.bmuschko.gradle.tomcat.embedded.TomcatUser
 import com.bmuschko.gradle.tomcat.embedded.factory.TomcatServerFactory
 import com.bmuschko.gradle.tomcat.internal.ShutdownMonitor
@@ -205,6 +206,13 @@ abstract class AbstractTomcatRun extends Tomcat {
     @Optional
     List<TomcatUser> users = []
 
+    /**
+     * A list of additional resources to serve. Defaults to an empty list.
+     */
+    @Input
+    @Optional
+    List<Resource> resources = []
+
     @Internal
     def server
 
@@ -338,6 +346,10 @@ abstract class AbstractTomcatRun extends Tomcat {
 
             getUsers().each { TomcatUser user ->
                 server.configureUser(user)
+            }
+
+            getResources().each { Resource resource ->
+                server.addResource(resource)
             }
 
             if(getEnableSSL()) {
