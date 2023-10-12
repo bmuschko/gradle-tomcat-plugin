@@ -20,6 +20,10 @@ the container cannot be forked as a separate process. This plugin also can't dep
 you are looking for this capability, please have a look at the [Cargo plugin](https://github.com/bmuschko/gradle-cargo-plugin)
 instead.
 
+Additionally the plugin can be used in a continuous integration environment to detect problems with jsps before the runtime 
+translation and compilation of those jsps.  Further the plugin can allow the build process to translate and precompile the
+jsps for inclusion in a warfile.  The primary task for this use is the tomcatJasper task.
+
 ## Usage
 
 To use the plugin's functionality, you will need to add the its binary artifact to your build script's classpath and apply the plugin.
@@ -549,3 +553,25 @@ with the web application runtime classpath.
     task.additionalRuntimeResources << file('/Users/bmuschko/ext/jars/my.jar')
 }
 ```
+
+**How do I compile the java files produced in the translation phase of tomcatJasper?**
+
+```
+
+tomcat {
+    jasper {
+        webXmlFragment = file("$webAppDir/WEB-INF/generated_web.xml")
+    }
+}
+
+task compileJasperJava(type: JavaCompile)  {
+  source = 'build/jasper'
+  classpath = compileJava.classpath + project.sourceSets.main.output
+  destinationDir = compileJava.destinationDir
+}
+
+tomcatJasper.finalizedBy compileJasperJava
+war.dependsOn tomcatJasper
+```
+
+You will also need to take the webXmlFragment generated and push it into your web.xml file before your war file has been generated.
